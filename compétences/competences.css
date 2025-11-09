@@ -325,12 +325,6 @@ header.scrolled .logo img {
     margin: 0;
 }
 
-.localisation {
-    font-size: 1.4rem;
-    color: white;
-    margin-top: 0.6rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-}
 
 /* Ligne décorative  */
 .banniere-delimitation {
@@ -368,15 +362,14 @@ header.scrolled .logo img {
 
 
 
+/* ----------------------------------------------------- STYLE POUR LE CONTENU COMPETENCES ---------------------------------------------------- */
 
 
-
-div.boite{
+.boite{
     backdrop-filter: blur(10px);
     width: 65%;
-    /* height: 900px; */
     border-radius: 3vw;
-    color: white;
+    color: rgb(255, 255, 255);
     margin-bottom: 0 auto 30px;
     display: flex;
     flex-direction: column;
@@ -390,11 +383,11 @@ section.titre{
     display: flex;
     margin-bottom: 10px;
     flex-direction: column;
-    /* align-items:  center; */
+    align-items:  center;
 }
 
 hr.titre_dessus{
-    margin-top: 20px;
+    margin-top: 20px; /* distance entre bar et titre "langage de programmation" */
     align-self: center;
     background-color: white;
     border: none;
@@ -404,7 +397,7 @@ hr.titre_dessus{
 
 
 .titre h1{
-    font-size: 40px;
+    font-size: 40px; /* titre comme "langage de programmation" */
     font-weight: bold;
     text-align: center;
     padding: 20px 10px;
@@ -412,18 +405,18 @@ hr.titre_dessus{
 }
 
 .container h1{
-    font-size: 20px;
+    font-size: 20px; /* titre comme "HTML: La structure d'une page web" */
     font-weight: bold;
 }
 
 .container h2{
-    font-size: 20px;
+    font-size: 20px; /* texte de l'expérience "2mois d'expérience" */
     font-weight: 500;
     font-style: italic;
 }
 
 .container p{
-    font-size: 18px;
+    font-size: 18px; /* texte descriptif de la compétence */
 }
 
 @keyframes slide {
@@ -440,9 +433,8 @@ hr.titre_dessus{
     overflow: hidden;
     padding: 60px 0 20px 0;
     white-space: nowrap;
-    align-self: centermm;
+    align-self: center;
 }
-
 
 
 .logos:hover .logos-slide{
