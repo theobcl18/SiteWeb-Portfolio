@@ -11,9 +11,9 @@
 /* Corps de la page */
 body {
     height: 100vh;
-    background-image : url('');
+    background-image: url('');
     background-position: center;
-    background-size: cover;w
+    background-size: cover;
     overflow-x: hidden;
 }
 
@@ -110,8 +110,6 @@ header {
     background-color: #ffffff;
     color: #000000;
 }
-
-
 
 /* -------------------------- BURGER MENU -------------------------------------- */
 

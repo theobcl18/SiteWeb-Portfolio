@@ -163,6 +163,11 @@ header.scrolled .logo img {
     color: #000000;
 }
 
+a.active {
+  pointer-events: none; /* désactive le clic */
+  color: gray; /* couleur différente pour indiquer que c’est la page active */
+  cursor: default;
+}
 
 
 /* -------------------------- BURGER MENU -------------------------------------- */
