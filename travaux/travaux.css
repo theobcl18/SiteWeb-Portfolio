@@ -165,11 +165,22 @@ header.scrolled .logo img {
     color: #000000;
 }
 
-a.active {
-  pointer-events: none; /* désactive le clic */
-  color: gray; /* couleur différente pour indiquer que c’est la page active */
-  cursor: default;
+
+
+/*  ------------------ Animation spécifique pour le lien (links)  actif ---------------- */
+
+.links a.active {
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffd700;
+  pointer-events: none;
+  animation: glow 2s ease-in-out infinite alternate;
 }
+
+@keyframes glow {
+  from { text-shadow: 0 0 5px #ffd700; }
+  to { text-shadow: 0 0 20px #ffd700; }
+}
+
 
 
 /* -------------------------- BURGER MENU -------------------------------------- */
