@@ -503,6 +503,43 @@ ul a{
 /* ------------------------------------------------------------ STYLE POUR LE CONTENU PRINCIPAL --------------------------------------------------------- */
 
 
+
+/* ================ Bouton rond CV ==================== */
+.cv-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.cv-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    background-color: white;
+    color: black;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.cv-button:hover {
+    transform: scale(1.1);
+    background-color: #0b8297;
+    color: white;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+
+/* ========================================
+   STYLES POUR LA TIMELINE
+   ======================================== */
+
+
 div.boite{
     backdrop-filter: blur(10px);
     width: 65%;
@@ -579,6 +616,7 @@ div.tableau h1 {
     font-size: calc(1em + 0.55vw);
     font-weight: bold;
     color: rgb(255, 255, 255);
+    padding-bottom: 15px;
 }
 
 div.tableau h4 {
@@ -613,22 +651,11 @@ div.item hr{
     width: 85%;
 }
 
-.item1{
-    grid-row: 1/2;
-
-}
-
-.item2{
-    grid-row: 2/3;
-}
-
-.item3{
-    grid-row: 3/4;
-}
-
-.item4{
-    grid-row: 4/5;
-}
+.item1{ grid-row: 1/2; }
+.item2{ grid-row: 2/3; }
+.item3{ grid-row: 3/4; }
+.item4{ grid-row: 4/5; }
+.item5{ grid-row: 5/6; }
 
 .item_gauche {
     margin-left: auto;
@@ -890,6 +917,7 @@ div.item:hover h4 {
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
+
 /* =============== Responsive MAP ================================*/
 @media (max-width: 768px) {
     #map-parcours {
@@ -903,35 +931,4 @@ div.item:hover h4 {
     .section-carte .titre h1 {
         font-size: 1.8em;
     }
-}
-
-
-/* ================ Bouton rond CV ==================== */
-.cv-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.cv-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 70px;
-    height: 70px;
-    background-color: white;
-    color: black;
-    border-radius: 50%;
-    font-weight: bold;
-    font-size: 2rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.cv-button:hover {
-    transform: scale(1.1);
-    background-color: #0b8297;
-    color: white;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
 }
