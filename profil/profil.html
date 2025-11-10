@@ -112,7 +112,44 @@
                 </div>
                 
                 <div class="carte-container">
+                    <div id="bandeau"> 
+                        <h1> Parcours scolaire et professionnel</h1>
+                    </div>
                     <div id="map-parcours"></div>
+                    <div class="leaflet-control-minimap leaflet-container leaflet-touch leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom leaflet-control" tabindex="0" style="width: 19px; height: 19px; position: relative;">
+                        <div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(-65px, -65px, 0px);">
+                            <div class="leaflet-pane leaflet-tile-pane">
+                                <div class="leaflet-layer " style="z-index: 1; opacity: 1;">
+                                    <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);">
+                                        <img alt="" src="https://b.tile.openstreetmap.fr/hot/5/15/10.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, -206px, 0px); opacity: 1;">
+                                        <img alt="" src="https://c.tile.openstreetmap.fr/hot/5/16/10.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, -206px, 0px); opacity: 1;">
+                                        <img alt="" src="https://c.tile.openstreetmap.fr/hot/5/15/11.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-138px, 50px, 0px); opacity: 1;">
+                                        <img alt="" src="https://a.tile.openstreetmap.fr/hot/5/16/11.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(118px, 50px, 0px); opacity: 1;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="leaflet-pane leaflet-overlay-pane">
+                                <svg pointer-events="none" class="leaflet-zoom-animated" width="23" height="23" viewBox="63 63 23 23" style="transform: translate3d(63px, 63px, 0px);">
+                                    <g>
+                                    <path class="leaflet-interactive" stroke="#ff7800" stroke-opacity="1" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="#ff7800" fill-opacity="0.2" fill-rule="evenodd" d="M64 80L64 70L86 70L86 80z"></path>
+                                    <path class="leaflet-interactive" stroke="#000000" stroke-opacity="1" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="#000000" fill-opacity="0.3" fill-rule="evenodd" d="M0 0">
+                                    </path>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="leaflet-pane leaflet-shadow-pane"></div>
+                        <div class="leaflet-pane leaflet-marker-pane"></div>
+                        <div class="leaflet-pane leaflet-tooltip-pane"></div>
+                        <div class="leaflet-pane leaflet-popup-pane"></div>
+                    </div>
+                    <div class="leaflet-control-container">
+                        <div class="leaflet-top leaflet-left"></div>
+                        <div class="leaflet-top leaflet-right"></div>
+                        <div class="leaflet-bottom leaflet-left"></div>
+                        <div class="leaflet-bottom leaflet-right"></div>
+                    </div>
+                    <a class="leaflet-control-minimap-toggle-display leaflet-control-minimap-toggle-display-bottomright          minimized-bottomright" href="#" title="Show MiniMap" style="width: 19px; height: 19px;"></a>
+                </div>
                 </div>
             </section>
             <!-- FIN SECTION CARTE -->
@@ -192,6 +229,15 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
+  
+
+
+    <!-- Leaflet Plugins -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+      <!-- Leaflet Plugins -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-
+minimap/3.6.1/Control.MiniMap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.js"></script>
     <script src="script.profil.js"></script> <!-- Script de la carte -->
     <script src="script.js"></script>
     <script>AOS.init();</script>

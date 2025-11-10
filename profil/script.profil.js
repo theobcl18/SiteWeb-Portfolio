@@ -117,7 +117,7 @@ rennesMarker.bindPopup(`
     <a href="#item1" class="popup-link" onclick="document.querySelector('.item1').scrollIntoView({behavior: 'smooth'});">
         🔍 Voir l'expérience
     </a>
-    <a href="https://www.univ-rennes2.fr/" target="_blank" class="popup-link">
+    <a href="https://formations.univ-rennes2.fr/fr/formations/master-37/master-mention-geomatique-parcours-systeme-d-information-geographique-et-analyse-des-territoires-sigat-JEOC8L9A.html" target="_blank" class="popup-link">
         🌐 Site de l'université
     </a>
 `, {
@@ -151,63 +151,39 @@ addMarkerAnimation(biervreMarker);
 addMarkerAnimation(rennesMarker);
 
 
+// -------------Ajouter une MiniMap-----------------
+var miniMapLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
+var miniMap = new L.Control.MiniMap(miniMapLayer, { toggleDisplay: true, minimized: true, position: 'bottomright'
+}).addTo(map)
 
-/* -----------------Ajustement de la vue pour flècher chronologiquement le parcours--------------------
-// Coordonnées dans l'ordre chronologique
-var parcoursCoords = [
-    [49.3570, 0.0737],   // Baccalauréat (lycée)
-    [49.1829, -0.3707], // Université de Caen
-    [45.3397, 5.0531],  // Stage à Beaurepaire
-    [48.119, -1.7013]   // Master Rennes 2
+
+
+/* -----------------Ajustement de la vue pour flècher chronologiquement le parcours--------------------*/
+
+// create a red polyline from an array of LatLng points
+var latlngs = [
+    [49.3570, 0.0737],
+    [49.1829, -0.3707], 
+    [37.77, -122.43], 
+    [34.04, -118.2]
 ];
 
-// Tracé du parcours (ligne principale)
-var parcoursLine = L.polyline(parcoursCoords, {
-    color: '#35536eff',
-    weight: 2.5,
-    opacity: 0.8,
-    dashArray: '10,6'
-}).addTo(mapParcours);
+var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
 
-function midPoint(a, b){
-    return [(a[0]+b[0])/2, (a[1]+b[1])/2];
-}
-
-// Bearing en degrés (approximation)
-function bearing(a, b){
-    var lat1 = a[0]*Math.PI/180, lon1 = a[1]*Math.PI/180;
-    var lat2 = b[0]*Math.PI/180, lon2 = b[1]*Math.PI/180;
-    var y = Math.sin(lon2-lon1) * Math.cos(lat2);
-    var x = Math.cos(lat1)*Math.sin(lat2) - Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1);
-    var brng = Math.atan2(y, x) * 180/Math.PI;
-    return (brng + 360) % 360;
-}
-
-// Boucle pour placer une flèche sur chaque segment
-for (let i = 0; i < parcoursCoords.length - 1; i++) {
-    const start = parcoursCoords[i];
-    const end = parcoursCoords[i + 1];
-    const mid = midPoint(start, end);
-    const angle = bearing(start, end);
-
-    // Création d’un divIcon avec flèche SVG pivotée
-    const arrowHTML = `
-        <div class="arrow-icon" style="transform: rotate(${angle}deg);">
-            ➤
-        </div>
-    `;
-
-    const arrowIcon = L.divIcon({
-        html: arrowHTML,
-        className: 'arrow-container',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-    });
-
-    L.marker(mid, { icon: arrowIcon }).addTo(mapParcours);
-}*/
+// zoom the map to the polyline
+map.fitBounds(polyline.getBounds());
 // Fin de l'justement de la vue pour flècher chronologiquement le parcours
 
+
+
+// Ajouter des fonds de carte
+var basemaps = {
+    OSM: L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map),
+    ESRI:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
+    Carto: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'),
+    OrthoRM:L.tileLayer.wms('https://public.sig.rennesmetropole.fr/geoserver/ows?',{layers: 'raster:ortho2021'}),
+    PlanRM:L.tileLayer.wms('https://public.sig.rennesmetropole.fr/geoserver/ows?',{layers: 'ref_fonds:pvci_simple_gris'})
+    };
 
 
 // ---- Ajout d'une échelle--------

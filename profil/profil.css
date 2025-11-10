@@ -400,7 +400,6 @@ hr.titre_dessus{
     color: rgb(255, 255, 255);
 }
 
-
 .timeline-line {
     position: absolute;
     width: 2px;
@@ -636,6 +635,7 @@ div.item:hover h4 {
    ======================================== */
 
 /* Section de la carte */
+
 .section-carte {
     margin: 40px 0;
     padding: 0 20px;
@@ -651,6 +651,12 @@ div.item:hover h4 {
     font-size: 2.2em;
     font-weight: bold;
     margin: 10px 0;
+}
+
+#bandeau {
+    background-color: #b4a07e;
+    color:rgb(255, 255, 255);
+    text-align: center;
 }
 
 .section-carte .titre hr {
