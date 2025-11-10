@@ -180,7 +180,7 @@ function actualiserAffichage() {
 
 
 
-// Création d'un fond avec des particules
+/* Création d'un fond avec des particules
 
 const canvas = document.getElementById("canvas"); // Déclaration unique en global
 const ctx = canvas.getContext("2d");
@@ -243,5 +243,5 @@ function animate() {
 }
 
 initParticles(50); // Nombre de particules
-animate(); // Démarrer l'animation
+animate(); // Démarrer l'animation$/
 
