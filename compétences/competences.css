@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
 /* Reset les marges et les paddings par défaut */
 * {
     margin: 0;
@@ -16,21 +18,11 @@ body {
     display: flex;
     flex-direction: column;
     padding-top: 60px; /* Hauteur du header */
-   /* font-size: 1.4rem;
-    padding: 5rem;
-    overflow-x: hidden;  Supprimer le défilement horizontal 
-    text-align: justify;
-    background-attachment: fixed;
-    height: 100%; /* 100% de la hauteur de la page */
 }
-
-html {
-  scroll-behavior: smooth;
-}
-
 
 html {
     font-size: 65%;
+    scroll-behavior: smooth;
 }
 *, *::after, *::before {
     margin: 0;
@@ -43,6 +35,12 @@ html {
     box-sizing: border-box;
 } 
 
+section.contenu{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
 li {
     list-style: none;
@@ -98,6 +96,7 @@ header.scrolled .logo img {
      font-size: 1.5rem;
      font-weight: bold;
 }
+
 
 .navbar {
     gap: 1.5rem;
@@ -160,7 +159,6 @@ header.scrolled .logo img {
     color: #000000;
 }
 
-
 /*  ------------------ Animation spécifique pour le lien (links)  actif ---------------- */
 
 .links a.active {
@@ -174,7 +172,6 @@ header.scrolled .logo img {
   from { text-shadow: 0 0 5px #ffd700; }
   to { text-shadow: 0 0 20px #ffd700; }
 }
-
 
 /* -------------------------- BURGER MENU -------------------------------------- */
 
@@ -284,6 +281,137 @@ header.scrolled .logo img {
         width: unset;
     }
 }
+
+/*
+.container.et_menu_container {
+    z-index: 99;
+}
+@media (max-width: 980px) {
+    #logo, .logo_container, #main-header, .container
+Specificity: (0,1,0)
+ {
+        -webkit-transition: none;
+        transition: none;
+    }
+}
+
+.container {
+    text-align: left;
+    position: relative;
+}
+.container {
+    width: 80%;
+    max-width: 1080px;
+    margin: auto;
+  m
+
+#main-header, #et-top-navigation {
+    font-family: 'Source Sans Pro', Helvetica, Arial, Lucida, sans-serif;
+}
+
+#main-header {
+    line-height: 23px;
+    font-weight: 500;
+    top: 0;
+    background-color: #544a4a;
+    width: 100%;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+    position: relative;
+    z-index: 99999;
+}
+
+div.profile-container{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #1a1b1d;
+    padding-bottom: 1.8rem;
+}
+
+/* Structure de base 
+.entetecontainer {
+    display: flex;
+    justify-content: space-between;  Sépare le titre et les boutons, positionne le nom à gauche et les boutons à droite
+    align-items: center;  Centre verticalement 
+    flex-wrap: wrap;  Permet le passage à la ligne si nécessaire 
+    gap: 2rem;
+} */
+
+
+/* ------------------------------------------------------------ MAIN --------------------------------------------------------------- */
+
+
+main {
+    padding: 2rem;
+    flex: 1 0 auto;
+}
+
+
+/* Bienvenue sur mon portfolio */
+h2{
+    color: #ffffff;
+    padding-bottom: 0rem;
+    padding-top: 2rem;
+}
+
+p{
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    color: #ffffff;
+    line-height: 1.4; /* Pour améliorer la lisibilité à l'intérieur des paragraphes */
+}
+
+
+
+div.navigation{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0 0 20px 0;
+}
+
+nav{
+    width: 65%;
+    margin: 15px 0;
+}
+
+ul{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 20px;
+}
+
+.li {
+    list-style: none;
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    flex:1 0 10%;
+    text-align: center;
+    padding: 15px;
+    font-weight: 900;
+    border: 1px solid white;
+    box-sizing: unset;
+    background-color:#17970b;
+}
+
+li:hover{
+    transition: 0.5s;
+    transform: scale(1.10); /* grossit au survol du btn actif */
+} 
+
+li:hover a{
+    transition: 0.5s;
+    font-weight: 700;
+    color: #c7c9d3;
+}
+
+ul a{
+    font-weight: 500;
+    font-size: 1.8rem;;
+    text-decoration: none;
+    color: white;
+} */
 
 
 

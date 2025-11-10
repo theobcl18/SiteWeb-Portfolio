@@ -20,20 +20,27 @@ body {
     padding-top: 60px; /* Hauteur du header */
 }
 
+html {
+    font-size: 65%;
+    scroll-behavior: smooth;
+}
+*, *::after, *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+*, *::after, *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} 
+
 section.contenu{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-
-div.navigation{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin: 0 0 20px 0;
-}
-
 
 li {
     list-style: none;
@@ -166,7 +173,6 @@ header.scrolled .logo img {
   to { text-shadow: 0 0 20px #ffd700; }
 }
 
-
 /* -------------------------- BURGER MENU -------------------------------------- */
 
 .burger-menu {
@@ -276,6 +282,137 @@ header.scrolled .logo img {
     }
 }
 
+/*
+.container.et_menu_container {
+    z-index: 99;
+}
+@media (max-width: 980px) {
+    #logo, .logo_container, #main-header, .container
+Specificity: (0,1,0)
+ {
+        -webkit-transition: none;
+        transition: none;
+    }
+}
+
+.container {
+    text-align: left;
+    position: relative;
+}
+.container {
+    width: 80%;
+    max-width: 1080px;
+    margin: auto;
+  m
+
+#main-header, #et-top-navigation {
+    font-family: 'Source Sans Pro', Helvetica, Arial, Lucida, sans-serif;
+}
+
+#main-header {
+    line-height: 23px;
+    font-weight: 500;
+    top: 0;
+    background-color: #544a4a;
+    width: 100%;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+    position: relative;
+    z-index: 99999;
+}
+
+div.profile-container{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #1a1b1d;
+    padding-bottom: 1.8rem;
+}
+
+/* Structure de base 
+.entetecontainer {
+    display: flex;
+    justify-content: space-between;  Sépare le titre et les boutons, positionne le nom à gauche et les boutons à droite
+    align-items: center;  Centre verticalement 
+    flex-wrap: wrap;  Permet le passage à la ligne si nécessaire 
+    gap: 2rem;
+} */
+
+
+/* ------------------------------------------------------------ MAIN --------------------------------------------------------------- */
+
+
+main {
+    padding: 2rem;
+    flex: 1 0 auto;
+}
+
+
+/* Bienvenue sur mon portfolio */
+h2{
+    color: #ffffff;
+    padding-bottom: 0rem;
+    padding-top: 2rem;
+}
+
+p{
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    color: #ffffff;
+    line-height: 1.4; /* Pour améliorer la lisibilité à l'intérieur des paragraphes */
+}
+
+
+
+div.navigation{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0 0 20px 0;
+}
+
+nav{
+    width: 65%;
+    margin: 15px 0;
+}
+
+ul{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 20px;
+}
+
+.li {
+    list-style: none;
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    flex:1 0 10%;
+    text-align: center;
+    padding: 15px;
+    font-weight: 900;
+    border: 1px solid white;
+    box-sizing: unset;
+    background-color:#17970b;
+}
+
+li:hover{
+    transition: 0.5s;
+    transform: scale(1.10); /* grossit au survol du btn actif */
+} 
+
+li:hover a{
+    transition: 0.5s;
+    font-weight: 700;
+    color: #c7c9d3;
+}
+
+ul a{
+    font-weight: 500;
+    font-size: 1.8rem;;
+    text-decoration: none;
+    color: white;
+} */
+
 
 /* ----------------------------------------------------- BANNIERE D INTRODUCTION ---------------------------------------------------- */
 
@@ -291,7 +428,7 @@ header.scrolled .logo img {
   justify-content: center;
   align-items: center;
   overflow: visible; /* Permet à la vague absolue de dépasser */
-  margin-bottom: 7rem; /* 👈 ajuste comme tu veux (ex: 50px) */
+  margin-bottom: 7rem;
 }
 
 
@@ -311,10 +448,27 @@ header.scrolled .logo img {
     margin-bottom: 1rem;
 }
 
+.slogan-box {
+    background-color: rgba(255, 255, 255, 0.25);
+    padding: 0.5rem 1.2rem;
+    margin: 0.5rem auto;
+    border-radius: 12px;
+    display: inline-block;
+    max-width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.slogan-box .slogan {
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0;
+}
+
 
 /* Ligne décorative  */
 .banniere-delimitation {
-  position: absolute;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -328,6 +482,7 @@ header.scrolled .logo img {
     height: auto;
     display: block;
 }
+
 
 /* ----------------------------------- RESPONSIVE BANNIERE ----------------------------------*/
 
@@ -345,7 +500,7 @@ header.scrolled .logo img {
   }
 }
 
-
+/* ------------------------------------------------------------ STYLE POUR LE CONTENU PRINCIPAL --------------------------------------------------------- */
 
 
 div.boite{
@@ -735,7 +890,7 @@ div.item:hover h4 {
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-/* Responsive */
+/* =============== Responsive MAP ================================*/
 @media (max-width: 768px) {
     #map-parcours {
         height: 400px;
@@ -750,3 +905,33 @@ div.item:hover h4 {
     }
 }
 
+
+/* ================ Bouton rond CV ==================== */
+.cv-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.cv-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    background-color: white;
+    color: black;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.cv-button:hover {
+    transform: scale(1.1);
+    background-color: #0b8297;
+    color: white;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
