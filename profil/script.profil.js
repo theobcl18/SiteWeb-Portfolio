@@ -151,46 +151,7 @@ addMarkerAnimation(biervreMarker);
 addMarkerAnimation(rennesMarker);
 
 
-// -------------Ajouter une MiniMap-----------------
-var miniMapLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
-var miniMap = new L.Control.MiniMap(miniMapLayer, { toggleDisplay: true, minimized: true, position: 'bottomright'
-}).addTo(map)
 
-
-
-/* -----------------Ajustement de la vue pour flècher chronologiquement le parcours--------------------*/
-
-// create a red polyline from an array of LatLng points
-var latlngs = [
-    [49.3570, 0.0737],
-    [49.1829, -0.3707], 
-    [37.77, -122.43], 
-    [34.04, -118.2]
-];
-
-var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
-
-// zoom the map to the polyline
-map.fitBounds(polyline.getBounds());
-// Fin de l'justement de la vue pour flècher chronologiquement le parcours
-
-
-
-// Ajouter des fonds de carte
-var basemaps = {
-    OSM: L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map),
-    ESRI:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
-    Carto: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'),
-    OrthoRM:L.tileLayer.wms('https://public.sig.rennesmetropole.fr/geoserver/ows?',{layers: 'raster:ortho2021'}),
-    PlanRM:L.tileLayer.wms('https://public.sig.rennesmetropole.fr/geoserver/ows?',{layers: 'ref_fonds:pvci_simple_gris'})
-    };
-
-
-// ---- Ajout d'une échelle--------
-L.control.scale({
-    position: 'bottomright',
-    imperial: false
-}).addTo(mapParcours);
 
 // --------------Contrôle de zoom personnalisé---------------
 mapParcours.zoomControl.setPosition('topright');

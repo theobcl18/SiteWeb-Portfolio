@@ -14,16 +14,8 @@
 </head>
 
 <body>
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&amp;display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  -->
-
+<!--------------------------------------------------------HEADER------------------------------------------------------------------->
     <header> 
-        <!-- <nav class="nav-links"> ajouter ce bloc a contact
-            <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank" class="btn">LinkedIn</a>
-            <a href="CV MASTER.pdf" target="_blank" class="btn">À propos (CV)</a>
-            <a href="mailto:gtbe189@gmail.com" target="_blank" class="btn">Me contacter </a>
-        </nav> --> 
         <div class="navbar">
 		    <div class="logo">
                 <a href="#">
@@ -63,6 +55,7 @@
         
 	</header>
 
+    <!-----------------------------------SCRIPT POUR BURGER MENU --------------------------------------->
     <script>
     document.addEventListener("DOMContentLoaded", function () {
     const burgerMenuButton = document.querySelector('.burger-menu-button');
@@ -95,7 +88,7 @@
             <div class="overlay">
                 <h1 class="page-title"> Etudiant</h1>
                 <div class="slogan-box">
-                <p class="slogan">Master Systèmes d’Information Géographique et Analyse des Territoires</p>
+                <p class="slogan">Master 1 Systèmes d’Information Géographique et Analyse des Territoires</p>
                 </div>
                 <p class="localisation"> Rennes </p>
             </div>
@@ -104,6 +97,48 @@
             <span class="banniere-delimitation">
                 <img src="img/dessin-banniere-delimitation.svg" alt="">
             </span>
+        </section>
+
+        <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="section-title">À propos</h2>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="bg-section fade-in visible">
+                        <h4 class="mb-3">Mon parcours</h4>
+                        <p>
+                            Actuellement en Master SIGAT à l'Université de Rennes 2, je me suis spécialisé en géomatique au cours de mes études, et j'aimerais appliquer mes compétences dans des projets comme l'aménagement durable des territoires.
+                        </p>
+                        <p>
+                         <span class="text-primary">Je recherche actuellement un stage de M1, principalement à Rennes, Colmar et le Calvados</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="bg-section fade-in visible">
+                        <h4 class="mb-3">Informations</h4>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-map-marker-alt me-2"></i>Localisation</span><span class="fw-semibold">Rennes, France</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-envelope me-2"></i>Email</span><span class="fw-semibold">gtbe189@gmail.com</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-phone me-2"></i>Téléphone</span><span class="fw-semibold">+33 6 10 29 11 31</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-graduation-cap me-2"></i>Formation</span><span class="fw-semibold">Master 1 SIGAT</span>
+                            </li>
+                        </ul>
+                        <div class="social-links text-center mt-4">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         </section>
 
 

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Théo Bucaille</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #ffffff;
+            --secondary: #488ed4;
+            --dark: #b84a4a;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+            --map-color: #c6a719;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Image de fond fixe avec superposition sombre */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1550684376-efcbd6e3f031?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        /* Couche sombre supplémentaire pour améliorer la lisibilité */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgba(18, 18, 18, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--gray-light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .project-header {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-header h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        .project-header p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 2rem;
+        }
+
+        .bg-section {
+            background-color: rgba(30, 30, 30, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-image {
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+            max-width: 100%;
+            height: auto;
+            width: 100%;
+            object-fit: cover;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+
+        .project-image:hover {
+            transform: scale(1.03);
+        }
+
+        .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Animation pour les sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Galerie d'images */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        /* Section partenaire - CORRIGÉE */
+        .partner-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .partner-logo {
+            max-width: 200px;
+            max-height: 100px;
+            object-fit: contain;
+            margin: 1rem auto;
+            /* SUPPRIMÉ: filter: brightness(0) invert(1); */
+            transition: transform 0.3s ease;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .partner-logo.dark-bg {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .partner-logo.no-bg {
+            background: none;
+            padding: 0;
+        }
+
+        .partner-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .partner-role {
+            color: var(--gray-light);
+            font-size: 1rem;
+        }
+
+        /* Options d'affichage pour différents types de logos */
+        .logo-options {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .logo-option-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .logo-option-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .logo-option-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Modal pour l'affichage en plein écran */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .image-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Améliorations responsive */
+        .container {
+            max-width: 100%;
+            padding-left: clamp(1rem, 3vw, 2rem);
+            padding-right: clamp(1rem, 3vw, 2rem);
+        }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .partner-logo {
+                max-width: 150px;
+            }
+
+            .logo-options {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .project-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+            
+            .partner-logo {
+                max-width: 120px;
+            }
+            
+        }
+    </style>
+</head>
+<body class="bg-dark">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="Portfolio.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- EN-TÊTE DU PROJET -->
+    <header class="project-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold">Diagnostic de territoire STM</h1>
+                    <p class="lead">
+                        Création d'un Atlas départemental d'appropriation territoriale pour les commandants de groupements de Gendarmerie Nationale.
+                    </p>
+                    <div class="d-flex flex-wrap">
+                        <a href="Portfolio.html#projects" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL DU PROJET -->
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Section partenaire CORRIGÉE -->
+                    <div class="partner-section fade-in">
+                        <h3 class="mb-4">Projet réalisé en partenariat avec</h3>
+                        
+                        <!-- Logo avec options d'affichage -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gendarmerie_nationale_logo.svg/500px-Gendarmerie_nationale_logo.svg.png" 
+                             alt="Logo Gendarmerie Nationale" 
+                             class="partner-logo no-bg"
+                             id="partnerLogo">
+                        
+                        <div class="partner-name">Gendarmerie Nationale</div>
+                        <div class="partner-role">Sécurité, protection et maintien de l’ordre en zones rurales et périurbaines</div>
+                        
+                        <!-- Options pour adapter l'affichage du logo -->
+                        <div class="logo-options">
+                                                    </div>
+                    </div>
+
+                    <!-- Image principale du projet -->
+                    
+                        
+                        <h2 class="section-title">Description du Projet</h2>
+                        <p>
+                            Ce projet a été réalisé dans le cadre de la validation du M1 SIGAT. En collaboration avec la Gendarmerie Nationale, l'objectif était de proposer un prototype d'atlas départemental d'appropriation territoriale à destination des commandants de groupements de Gendarmerie.
+                        </p>
+                        
+                        <h3 class="mt-4">Contexte et Enjeux</h3>
+                        <p>
+Les commandants de groupements sont, comme leur nom l'indique, les personnes chargées de commander les groupements de Gendamerie sur un département. Ces gendarmes connaissent des mutations fréquentes, et ne peuvent pas connaître le territoire sur lequel ils arrivent dès leur premier jour. L'enjeu pour la Gendarmerie Nationale est donc de produire un outil leur permettant de s'approprier le territoire du mieux possible, et le plus rapidement possible.                          </p>
+                        
+                        <h3 class="mt-4">Méthodologie</h3>
+                        <p>
+                            Le projet s'est déroulé en plusieurs étapes :
+                        </p>
+                        <ul>
+                            <li>Définition des thématiques pertinentes pour un commandant de groupement</li>
+                            <li>Création d'indicateurs relatifs à ces thématiques et réflexions autour de la représentation (cartes, graphiques, chiffres clés)</li>
+                            <li>Production de prototypes d'atlas "test"</li>
+                            <li>Réalisation du prototype final</li>
+                        </ul>
+                        
+                        <h3 class="mt-4">Résultats Obtenus</h3>
+                        <p>
+                            Le prototype a été un outil utile pour la Gendarmerie Nationale, qui a bénéficié des services d'un stagiaire de M2 SIGAT pour produire et automatiser l'atlas officiel. Notre travail de Master 1 a permis à l'organisation de mieux cerner les besoins des commandants de groupements, et de produire un outil veritablement opérationnel par la suite.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-section fade-in">
+    <h2 class="section-title">Galerie du Projet</h2>
+    <div class="gallery-grid">
+
+        <!-- Image 1 -->
+        <div class="gallery-item">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQGj4KrNRyttgw/feedshare-shrink_2048_1536/B4EZbNflseHwAo-/0/1747204495210?e=1765411200&v=beta&t=unWSQMG1e15HII8LbwAEsF_QTw77wigBbMccs-hNhvA"
+                 alt="No data" data-enlargable>
+            <div class="gallery-caption">
+                <h5>Planche Niveau de vie</h5>
+                <p>Niveau de vie médian, écarts de revenus et CSP</p>
+            </div>
+        </div>
+
+        <!-- Image 2 -->
+        <div class="gallery-item">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQFJJwRfCB-abw/feedshare-shrink_2048_1536/B4EZbNflt.GQAo-/0/1747204538104?e=1765411200&v=beta&t=ijvsw_Dew5NyMxo4L90D1Xe97XRT8Qy5kkRxmXlcCSU"
+                 alt="No data" data-enlargable>
+            <div class="gallery-caption">
+                <h5>Planche Propriétés physiques</h5>
+                <p>Indicateurs relatifs à la nature, à la topographie, aux usages du sol</p>
+            </div>
+        </div>
+
+        <!-- Image 3 -->
+        <div class="gallery-item">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQHZ3dB_ANd9eQ/feedshare-shrink_2048_1536/B4EZbNflr9GQAs-/0/1747204496518?e=1765411200&v=beta&t=500R-J9b5chM4_0gmWH35wfc4u1wKiaBjH-p4VVhq4c"
+                 alt="No data" data-enlargable>
+            <div class="gallery-caption">
+                <h5>Planche Risques naturels</h5>
+                <p>Différents types de risque en fonction du territoire (dans le Var, le risque inondation est le plus présent)</p>
+            </div>
+        </div>
+
+        <!-- Image 4 -->
+        <div class="gallery-item">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQHaH-eBacI8Hw/feedshare-shrink_2048_1536/B4EZbNflsqHwAs-/0/1747204497209?e=1765411200&v=beta&t=yLur1jJK85cNrSjvxb6215rcG02pwoF9v7HFd_AfedE"
+                 alt="No data" data-enlargable>
+            <div class="gallery-caption">
+                <h5>Planche Agriculture</h5>
+                <p>Nombre d'exploitations, surface agricole utile, spécialisation agricole</p>
+            </div>
+        </div>
+
+        <!-- Image 5 -->
+        <div class="gallery-item">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQGae3EO796JKQ/feedshare-shrink_2048_1536/B4EZbNfltUGQAo-/0/1747204523618?e=1765411200&v=beta&t=IaqRLVtkxASPO35aykQ8jrqxAKw7WKtBHkEpB026osg"
+                 alt="No data" data-enlargable>
+            <div class="gallery-caption">
+                <h5>Planche Population</h5>
+                <p>Répartition démographique</p>
+            </div>
+        </div>
+
+         <!-- Image 6 -->
+        <div class="gallery-item">
+            <img src="https://media.licdn.com/dms/image/v2/D4E22AQFZWeAVNO3EiA/feedshare-shrink_2048_1536/B4EZbNfltwHwAo-/0/1747204441989?e=1765411200&v=beta&t=lB4ZeiivDCK2PsUFG4_dwwkSneiFggF49lv2v3OBdSY"
+                 alt="No data" data-enlargable>
+            <div class="gallery-caption">
+                <h5>Planche Tourisme</h5>
+                <p>Nuitées, origine des touristes, emplois</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href=""><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal pour l'affichage en plein écran -->
+    <div class="image-modal">
+        <button class="close-modal">&times;</button>
+        <img class="modal-content" src="" alt="">
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+    <!-- Script principal -->
+    <script>
+        // Année automatique dans le footer
+        document.getElementById("year").textContent = new Date().getFullYear();
+        
+        // Animation au défilement
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            // Vérifier au chargement
+            fadeInOnScroll();
+            
+            // Vérifier au défilement
+            window.addEventListener('scroll', fadeInOnScroll);
+        });
+
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Gestion de la galerie d'images et zoom
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.querySelector('.image-modal');
+            const modalImg = modal.querySelector('.modal-content');
+            const closeModal = modal.querySelector('.close-modal');
+            const images = document.querySelectorAll('[data-enlargable]');
+            
+            // Fonction pour ouvrir l'image en plein écran
+            function openModal(imgSrc, imgAlt) {
+                modalImg.src = imgSrc;
+                modalImg.alt = imgAlt;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Fonction pour fermer le modal
+            function closeModalFunc() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Événements pour toutes les images zoomables
+            images.forEach(img => {
+                img.addEventListener('click', function() {
+                    openModal(this.src, this.alt);
+                });
+            });
+            
+            // Événements pour fermer le modal
+            closeModal.addEventListener('click', closeModalFunc);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModalFunc();
+                }
+            });
+            
+            // Fermer avec la touche Échap
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModalFunc();
+                }
+            });
+        });
+
+        // Gestion des options d'affichage du logo
+        document.addEventListener('DOMContentLoaded', function() {
+            const logo = document.getElementById('partnerLogo');
+            const optionButtons = document.querySelectorAll('.logo-option-btn');
+            
+            optionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const option = this.getAttribute('data-option');
+                    
+                    // Retirer toutes les classes d'options
+                    logo.classList.remove('no-bg', 'white-bg', 'dark-bg');
+                    
+                    // Ajouter la classe sélectionnée
+                    if (option === 'no-bg') {
+                        logo.classList.add('no-bg');
+                    } else if (option === 'white-bg') {
+                        logo.classList.add('white-bg');
+                    } else if (option === 'dark-bg') {
+                        logo.classList.add('dark-bg');
+                    }
+                    
+                    // Mettre à jour les boutons actifs
+                    optionButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

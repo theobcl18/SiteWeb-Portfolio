@@ -471,7 +471,7 @@ ul a{
 }
 
 
-/* ----------------------------------- RESPONSIVE BANNIERE ----------------------------------*/
+/* ------------------------- RESPONSIVE BANNIERE ----------------------------*/
 
 @media (max-width: 768px) {
   .page-title {
@@ -488,7 +488,35 @@ ul a{
 }
 
 
+/* --------------------------------------- A PROPOS ----------------------------------------- */
 
+ section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+
+
+/* ---------------------------------- Footer Styles --------------------------------------- */
 
 .footer {
     color: #fff;
@@ -687,57 +715,6 @@ ul a{
         font-size: 22px;
     }
 }    
-
-
-/* --------------------------------------------------------- CARROUSSEL ------------------------------------------------------------ */
-
-
-.carousel {
-    position: relative;
-    width: 100%;
-    height: auto;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fafafa;
-}
-
-.carousel-image.active {
-    display: block;
-}
-
-.carousel-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-}
-
-.carousel-arrow.left {
-    left: 1px;
-}
-
-.carousel-arrow.right {
-    right: 1px;
-}
-
-
-.carousel-arrow {
-    position: absolute;
-    top: 85%;
-    transform: translateY(-50%);
-    background-color: #696262;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 100%;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    z-index: 10;
-}
-
-
 
 
 /* ------------------------------------------------------- FOOTER --------------------------------------------------- */

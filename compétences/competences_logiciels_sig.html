@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logiciels SIG - Compétences | Théo Bucaille</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Style CSS personnalisé (identique au portfolio) -->
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #ffffff;
+            --secondary: #488ed4;
+            --dark: #b84a4a;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgb(157, 105, 38) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item {
+            color : white;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(205, 92, 0);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgba(205, 92, 0);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .text-primary {
+            color: rgb(253, 104, 13) !important;
+        }
+
+        .card {
+            background-color: rgba(30, 30, 30, 0.85);
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            padding: clamp(1.5rem, 3vw, 2rem);
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light);
+            font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+        }
+
+        .card-text {
+            color: var(--gray-light);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(254, 3, 3);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .software-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            padding: 10px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .skill-detail-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            background: rgba(30, 30, 30, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .back-button {
+            margin-bottom: 2rem;
+        }
+
+        .back-button a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-button a:hover {
+            color: var(--primary);
+        }
+
+        .skill-level {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .skill-level-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+
+        .project-example {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-example:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .software-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <!-- NAVBAR (identique au portfolio) -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="Portfolio.html">Théo Bucaille - Portfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION PRINCIPALE -->
+    <section class="py-5" style="margin-top: 80px;">
+        <div class="container">
+            <!-- Bouton retour -->
+            <div class="back-button">
+                <a href="Portfolio.html#skills">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux compétences
+                </a>
+            </div>
+
+            <!-- Titre principal -->
+            <h1 class="section-title">Logiciels SIG</h1>
+
+            <!-- Introduction -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="mb-3">Expertise en Systèmes d'Information Géographique</h2>
+                        <p class="lead">
+                            Maîtrise approfondie des principaux logiciels SIG utilisés dans le domaine de la géomatique pour la création, l'analyse, la gestion et la visualisation de données géospatiales. Ces compétences ont été développées au cours de mon Master SIGAT et appliquées dans divers projets académiques et professionnels.
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <i class="fas fa-globe-americas fa-5x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QGIS -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/QGIS_logo_new.svg/1200px-QGIS_logo_new.svg.png" 
+                             alt="QGIS" class="software-logo">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="mb-2">QGIS</h3>
+                        <p class="mb-3">Logiciel SIG open-source que j'utilise quotidiennement pour la majorité de mes projets cartographiques et d'analyse spatiale.</p>
+                        
+                        <div class="skill-level">
+                            <div class="skill-level-fill" style="width: 95%;"></div>
+                        </div>
+                        <small>Niveau : Expert</small>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-check-circle text-primary me-2"></i>Compétences spécifiques</h5>
+                    <ul class="mt-3">
+                        <li>Création de cartes thématiques avancées avec mise en page (Layout)</li>
+                        <li>Analyse spatiale (buffer, intersection, union, agrégation)</li>
+                        <li>Traitement de données raster (reclassification, calcul d'indices)</li>
+                        <li>Gestion de données vectorielles et attributaires</li>
+                        <li>Utilisation des extensions (plugins) : QuickOSM, MMQGIS, etc.</li>
+                        <li>Géotraitement avec le modèle graphique</li>
+                    </ul>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec QGIS</h5>
+                    <div class="project-example">
+                        <h6>Diagnostic territorial de l'EPCI Seulles Terre et Mer</h6>
+                        <p>Création d'une cartographie complète pour l'analyse des dynamiques territoriales.</p>
+                        <span class="badge bg-primary">Cartographie</span>
+                        <span class="badge bg-primary">Analyse spatiale</span>
+                    </div>
+                    <div class="project-example">
+                        <h6>Analyse multicritère pour localisation étudiante</h6>
+                        <p>Scoring spatial pour identifier les zones optimales pour l'habitat étudiant à Rennes.</p>
+                        <span class="badge bg-primary">Analyse multicritère</span>
+                        <span class="badge bg-primary">Scoring spatial</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ArcGIS -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Pro.png" 
+                             alt="ArcGIS" class="software-logo">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="mb-2">ArcGIS Pro / ArcGIS Online</h3>
+                        <p class="mb-3">Suite logicielle ESRI utilisée pour des projets spécifiques nécessitant des fonctionnalités avancées et la publication en ligne.</p>
+                        
+                        <div class="skill-level">
+                            <div class="skill-level-fill" style="width: 80%;"></div>
+                        </div>
+                        <small>Niveau : Intermédiaire-Avancé</small>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-check-circle text-primary me-2"></i>Compétences spécifiques</h5>
+                    <ul class="mt-3">
+                        <li>Création de Story Maps et applications cartographiques interactives</li>
+                        <li>Gestion de données dans ArcGIS Online</li>
+                        <li>Analyse spatiale avec l'extension Spatial Analyst</li>
+                        <li>Création de modèles de géotraitement</li>
+                        <li>Publication de services de cartes</li>
+                    </ul>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec ArcGIS</h5>
+                    <div class="project-example">
+                        <h6>Application web de suivi environnemental</h6>
+                        <p>Développement d'une application de visualisation de données environnementales.</p>
+                        <span class="badge bg-primary">ArcGIS Online</span>
+                        <span class="badge bg-primary">Web Mapping</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FME -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <img src="https://www.safe.com/wp-content/uploads/2020/06/FME-2020-Color-Positive.png" 
+                             alt="FME" class="software-logo">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="mb-2">FME (Feature Manipulation Engine)</h3>
+                        <p class="mb-3">Outil d'ETL (Extract, Transform, Load) spécialisé dans la transformation de données géospatiales.</p>
+                        
+                        <div class="skill-level">
+                            <div class="skill-level-fill" style="width: 70%;"></div>
+                        </div>
+                        <small>Niveau : Intermédiaire</small>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-check-circle text-primary me-2"></i>Compétences spécifiques</h5>
+                    <ul class="mt-3">
+                        <li>Création de workflows de transformation de données</li>
+                        <li>Conversion entre différents formats (Shapefile, GeoJSON, KML, etc.)</li>
+                        <li>Automatisation de processus de nettoyage de données</li>
+                        <li>Intégration de données provenant de sources multiples</li>
+                        <li>Validation et contrôle qualité des données</li>
+                    </ul>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec FME</h5>
+                    <div class="project-example">
+                        <h6>Harmonisation de bases de données foncières</h6>
+                        <p>Transformation et unification de données foncières provenant de différentes communes.</p>
+                        <span class="badge bg-primary">ETL</span>
+                        <span class="badge bg-primary">Transformation de données</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Autres logiciels -->
+            <div class="bg-section fade-in">
+                <h3 class="mb-4">Autres outils et technologies SIG</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">GeoServer</h5>
+                                <p class="card-text">Serveur cartographique open source pour partager des données géospatiales.</p>
+                                <div class="skill-level mt-3">
+                                    <div class="skill-level-fill" style="width: 60%;"></div>
+                                </div>
+                                <small>Niveau : Intermédiaire</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">GRASS GIS</h5>
+                                <p class="card-text">Logiciel SIG open source spécialisé dans l'analyse raster et la modélisation.</p>
+                                <div class="skill-level mt-3">
+                                    <div class="skill-level-fill" style="width: 50%;"></div>
+                                </div>
+                                <small>Niveau : Débutant-Intermédiaire</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section certification et formations -->
+            <div class="bg-section fade-in">
+                <h3 class="mb-4">Certifications et formations</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="project-example">
+                            <h6><i class="fas fa-certificate text-primary me-2"></i>Formation QGIS avancé</h6>
+                            <p>Université de Rennes 2 - Master SIGAT</p>
+                            <small class="text-muted">2025</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="project-example">
+                            <h6><i class="fas fa-certificate text-primary me-2"></i>ArcGIS Online Fundamentals</h6>
+                            <p>Cours en ligne ESRI</p>
+                            <small class="text-muted">2024</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section retour -->
+            <div class="text-center mt-5">
+                <a href="Portfolio.html#skills" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux compétences
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (identique au portfolio) -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+    <script>
+        // Animation pour les éléments fade-in
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = () => {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            // Initial check
+            fadeInOnScroll();
+            
+            // Check on scroll
+            window.addEventListener('scroll', fadeInOnScroll);
+            
+            // Mettre à jour l'année dans le footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>

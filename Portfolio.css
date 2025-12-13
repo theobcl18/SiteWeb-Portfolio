@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Colin Charpentier</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin="anonymous"/>
+
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-dark: #5a52d5;
+            --secondary: #ff6584;
+            --dark: #121212;
+            --dark-light: #1e1e1e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+             --map-color: #4CAF50;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Image de fond fixe avec superposition sombre */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1550684376-efcbd6e3f031?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        /* Couche sombre supplémentaire pour améliorer la lisibilité */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgba(18, 18, 18, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--gray-light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .hero {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: min(500px, 80vw);
+            height: min(500px, 80vw);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.1) 0%, rgba(108, 99, 255, 0) 70%);
+        }
+
+        .hero h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 2rem;
+        }
+
+        .hero .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .hero .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .hero .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+        }
+
+        .hero .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .hero .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .profile-img {
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+            max-width: 100%;
+            height: auto;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.03);
+        }
+
+        .bg-section {
+            background-color: rgba(30, 30, 30, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .card {
+            background-color: rgba(30, 30, 30, 0.85);
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            padding: clamp(1.5rem, 3vw, 2rem);
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light);
+            font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+        }
+
+        .card-text {
+            color: var(--gray-light);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem);
+        }
+
+        .list-group-item span:first-child {
+            color: var(--gray-light);
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            color: var(--light);
+            box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+        }
+
+        .form-label {
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Styles pour la carte Leaflet */
+        #map {
+            height: 500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 2rem;
+            z-index: 1;
+        }
+
+        .leaflet-container {
+            background: var(--dark-light) !important;
+        }
+
+        .leaflet-popup-content {
+            color: var(--dark);
+        }
+
+        .custom-marker {
+            background: var(--primary);
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+
+        .map-controls {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Styles pour les logos */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .institution-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: white;
+            padding: 5px;
+        }
+
+        .company-logo {
+            width: 80px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: white;
+            padding: 8px;
+        }
+
+        .location-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .location-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .education-item {
+            border-left-color: var(--primary);
+        }
+
+        .internship-item {
+            border-left-color: var(--secondary);
+        }
+
+        .search-item {
+            border-left-color: #ffc107;
+        }
+
+        /* Animation pour les sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Styles pour la bande de compétences */
+        .skills-scroll-container {
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 0;
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .skills-scroll-track {
+            display: flex;
+            animation: scrollSkills 30s linear infinite;
+            gap: 3rem;
+            padding: 0 2rem;
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            transition: transform 0.3s ease;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .skill-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .skill-name {
+            font-weight: 600;
+            color: var(--light);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @keyframes scrollSkills {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-120px * 9 - 3rem * 9));
+            }
+        }
+
+        /* Styles pour la cartothèque */
+        .cartotheque-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(30, 30, 30, 0.85);
+            padding: 2rem;
+        }
+
+        .cartotheque-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .cartotheque-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cartotheque-image {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .cartotheque-image:hover {
+            transform: scale(1.02);
+        }
+
+        .cartotheque-caption {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .cartotheque-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .cartotheque-description {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .cartotheque-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .cartotheque-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cartotheque-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .cartotheque-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cartotheque-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .cartotheque-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cartotheque-indicator.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Modal pour l'affichage en plein écran */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .image-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Améliorations responsive spécifiques */
+        .container {
+            max-width: 100%;
+            padding-left: clamp(1rem, 3vw, 2rem);
+            padding-right: clamp(1rem, 3vw, 2rem);
+        }
+
+        .row {
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+
+        .col-md-6, .col-md-4, .col-md-8 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        /* Points de rupture personnalisés */
+        @media (max-width: 1200px) {
+            .hero::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                text-align: center;
+            }
+            
+            .hero .btn {
+                display: block;
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+
+            #map {
+                height: 400px;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .skill-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .skill-item {
+                min-width: 100px;
+            }
+
+            .cartotheque-image {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            #map {
+                height: 350px;
+            }
+
+            .cartotheque-image {
+                height: 250px;
+            }
+        }
+
+        /* Pour les très petits écrans */
+        @media (max-width: 400px) {
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            
+            .hero .btn {
+                padding: 0.75rem 1rem;
+            }
+            
+            .badge {
+                padding: 0.4rem 0.8rem;
+            }
+
+            .skill-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .skill-item {
+                min-width: 80px;
+            }
+        }
+
+        /* Style pour les marqueurs de cartes */
+        .map-marker {
+            background: var(--map-color);
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Style pour la nouvelle section dans la carte interactive */
+        .map-cartotheque-item {
+            border-left-color: var(--map-color) !important;
+        }
+    </style>
+</head>
+<body class="bg-dark">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Colin Charpentier</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION HERO -->
+    <header class="hero">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold">Bienvenue dans mon Portfolio ! Je suis <span class="text-primary">Colin Charpentier</span></h1>
+                    <p class="lead mt-3">
+                        Étudiant en Master SIGAT (Systèmes d'Information Géographique et Analyse des Territoires) à l'Université de Rennes 2, je suis actuellement à la recherche d'un stage de fin d'études à partir de mai 2026.
+                    </p>
+                    <div class="d-flex flex-wrap">
+                        <a href="#projects" class="btn btn-primary btn-lg me-2">Voir mes projets</a>
+                        <a href="#contact" class="btn btn-outline-primary btn-lg">Me contacter</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                    <div class="profile-container">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E03AQGbI-QEqpUzrQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1716117745934?e=1765411200&v=beta&t=vcm2mPySCMs-gaKWbAGSeUmhTuJWaPtamrLqYMKgp9k" class="profile-img" alt="Photo de Colin Charpentier">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ALERTE -->
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Site mis à jour régulièrement — revenez bientôt pour découvrir les nouveautés !</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- SECTION À PROPOS -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="section-title">À propos</h2>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3">Mon parcours</h4>
+                        <p>
+                            Actuellement en Master SIGAT à l'Université de Rennes 2, je me suis spécialisé en géomatique au cours de mes études, et j'aimerais appliquer mes compétences dans des projets qui me tiennent à coeur, comme l'aménagement durable des territoires ou le développement des énergies renouvelables.
+                        </p>
+                        <p>
+                            Au cours de mon parcours, j'ai développé une expertise dans l'utilisation d'outils SIG (QGIS, ArcGIS), la programmation (Python, R) et la création de visualisations de données interactives. <span class="text-primary">Je recherche actuellement un stage de fin d'études pour appliquer mes compétences à des projets concrets. Je suis en recherche active à Lyon et Villeurbanne (69) ainsi qu'à Bordeaux et Mérignac (33).</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3">Informations</h4>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-map-marker-alt me-2"></i>Localisation</span><span class="fw-semibold">Rennes, France</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-envelope me-2"></i>Email</span><span class="fw-semibold">charpentier.colin.63@gmail.com</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-phone me-2"></i>Téléphone</span><span class="fw-semibold">+33 6 01 80 24 85</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-graduation-cap me-2"></i>Formation</span><span class="fw-semibold">Master 2 SIGAT</span>
+                            </li>
+                        </ul>
+                        <div class="social-links text-center mt-4">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION PROJETS -->
+<section id="projects" class="py-5">
+    <div class="container">
+        <h2 class="section-title">Projets de Master SIGAT</h2>
+        <div class="row g-4">
+
+
+            <!-- Projet SNCF -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm fade-in">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <i class="fas fa-chart-line fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Cadre de vie 2050 - SNCF</h5>
+                        <p class="card-text flex-grow-1">
+                            Indicateur prospectif du cadre de vie des actifs à l'horizon 2050 en Bretagne et Loire-Atlantique.
+                        </p>
+                        <div class="mt-auto">
+                            <span class="badge bg-primary mb-2">Analyse prospective</span>
+                            <span class="badge bg-primary mb-2">Enquête</span>
+                            <span class="badge bg-primary mb-2">Cartographie</span>
+                            <a href="Projet-SNCF.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projet Gendarmerie -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm fade-in">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <i class="fas fa-map-marked-alt fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Atlas Gendarmerie Nationale</h5>
+                        <p class="card-text flex-grow-1">
+                            Prototype d'atlas départemental d'appropriation territoriale pour les commandants de groupements de Gendarmerie.
+                        </p>
+                        <div class="mt-auto">
+                            <span class="badge bg-primary mb-2">QGIS</span>
+                            <span class="badge bg-primary mb-2">Cartographie</span>
+                            <span class="badge bg-primary mb-2">Analyse territoriale</span>
+                            <a href="Projet-Gendarmerie.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            </div>
+    </div>
+</section>
+
+    <!-- SECTION COMPÉTENCES -->
+    <section id="skills" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Compétences & logiciels</h2>
+            
+            <!-- Bande déroulante des compétences -->
+            <div class="skills-scroll-container fade-in">
+                <div class="skills-scroll-track">
+                    <!-- QGIS -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/QGIS_logo_new.svg/1200px-QGIS_logo_new.svg.png" alt="QGIS" class="skill-logo">
+                        <span class="skill-name">QGIS</span>
+                    </div>
+                    
+                    <!-- ArcGIS -->
+                    <div class="skill-item">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Pro.png" alt="ArcGIS" class="skill-logo">
+                        <span class="skill-name">ArcGIS</span>
+                    </div>
+                    
+                    <!-- SQL -->
+                    <div class="skill-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2772/2772128.png" alt="SQL" class="skill-logo">
+                        <span class="skill-name">SQL</span>
+                    </div>
+                    
+                    <!-- Python -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png" alt="Python" class="skill-logo">
+                        <span class="skill-name">Python</span>
+                    </div>
+                    
+                    <!-- R -->
+                    <div class="skill-item">
+                        <img src="https://www.r-project.org/logo/Rlogo.png" alt="R" class="skill-logo">
+                        <span class="skill-name">R</span>
+                    </div>
+                    
+                    <!-- FME -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/FME_Software_Logo.svg/1200px-FME_Software_Logo.svg.png" alt="FME" class="skill-logo">
+                        <span class="skill-name">FME</span>
+                    </div>
+                    
+                    <!-- HTML -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/1200px-HTML5_logo_and_wordmark.svg.png" alt="HTML" class="skill-logo">
+                        <span class="skill-name">HTML</span>
+                    </div>
+                    
+                    <!-- CSS -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/1200px-CSS3_logo_and_wordmark.svg.png" alt="CSS" class="skill-logo">
+                        <span class="skill-name">CSS</span>
+                    </div>
+
+                    <!-- Illustrator -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Adobe_Illustrator_CC_icon.svg/500px-Adobe_Illustrator_CC_icon.svg.png" alt="Illustrator" class="skill-logo">
+                        <span class="skill-name">Illustrator</span>
+                    </div>
+                    
+                    <!-- JavaScript -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1200px-Unofficial_JavaScript_logo_2.svg.png" alt="JavaScript" class="skill-logo">
+                        <span class="skill-name">JavaScript</span>
+                    </div>
+                    
+                    <!-- Répétition pour l'animation continue -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/QGIS_logo_new.svg/1200px-QGIS_logo_new.svg.png" alt="QGIS" class="skill-logo">
+                        <span class="skill-name">QGIS</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Pro.png" alt="ArcGIS" class="skill-logo">
+                        <span class="skill-name">ArcGIS</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2772/2772128.png" alt="SQL" class="skill-logo">
+                        <span class="skill-name">SQL</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png" alt="Python" class="skill-logo">
+                        <span class="skill-name">Python</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://www.r-project.org/logo/Rlogo.png" alt="R" class="skill-logo">
+                        <span class="skill-name">R</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://www.safe.com/wp-content/uploads/2020/06/FME-2020-Color-Positive.png" alt="FME" class="skill-logo">
+                        <span class="skill-name">FME</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/1200px-HTML5_logo_and_wordmark.svg.png" alt="HTML" class="skill-logo">
+                        <span class="skill-name">HTML</span>
+                    </div>
+
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Adobe_Illustrator_CC_icon.svg/500px-Adobe_Illustrator_CC_icon.svg.png" alt="Illustrator" class="skill-logo">
+                        <span class="skill-name">Illustrator</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/1200px-CSS3_logo_and_wordmark.svg.png" alt="CSS" class="skill-logo">
+                        <span class="skill-name">CSS</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1200px-Unofficial_JavaScript_logo_2.svg.png" alt="JavaScript" class="skill-logo">
+                        <span class="skill-name">JavaScript</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Détails des compétences -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fas fa-desktop me-2"></i>Logiciels SIG</h4>
+                        <p>Maîtrise approfondie des principaux logiciels SIG pour la création, l'analyse et la visualisation de données géospatiales.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary mb-2">QGIS</span>
+                            <span class="badge bg-primary mb-2">ArcGIS Pro</span>
+                            <span class="badge bg-primary mb-2">ArcGIS Online</span>
+                            <span class="badge bg-primary mb-2">FME</span>
+                            <span class ="badge bg-primary mb-2">Illustrator</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fas fa-code me-2"></i>Langages & Développement</h4>
+                        <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-secondary mb-2">Python</span>
+                            <span class="badge bg-secondary mb-2">R</span>
+                            <span class="badge bg-secondary mb-2">SQL</span>
+                            <span class="badge bg-secondary mb-2">HTML/CSS</span>
+                            <span class="badge bg-secondary mb-2">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- SECTION CARTOTHEQUE -->
+    <section id="cartotheque" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Cartothèque</h2>
+            
+            <div class="cartotheque-container fade-in">
+                <div class="cartotheque-slider" id="cartothequeSlider">
+                    <!-- Carte 1 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQFWH8T7rHSWjA/feedshare-shrink_2048_1536/B4EZp3jgi3KYAw-/0/1762942392666?e=1765411200&v=beta&t=w2ELBqRC903P4B57uglBWvFXVoa4n1O25QPwv3VPxDY" alt="Carte topographique" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">GTFS : Montréal</h4>
+                            <p class="cartotheque-description">Analyse de l'offre du métro par distance euclidienne.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte 2 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQH0WVPOhJqhcw/feedshare-shrink_2048_1536/B4EZp3jgjYHUAw-/0/1762942392706?e=1765411200&v=beta&t=HFxkgzKCrHCkK2sMdoLh8qzp-v-aPLUhjzcef06yDO0" alt="Carte d'occupation des sols" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">GTFS : Los Angeles</h4>
+                            <p class="cartotheque-description">Proximité au métro et à un cinéma, scoring par quartier.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte 3 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQEt4EbvBR9b_g/feedshare-shrink_2048_1536/B4EZndkWWBGoAw-/0/1760358924072?e=1765411200&v=beta&t=p_rNdUBEbZ6q878Tm1ZgO-o1acLk03FoXrLMZCZm3bo" alt="Carte de densité de population" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Dataviz : Les Canadiens de Montréal</h4>
+                            <p class="cartotheque-description">Représenter autrement les données qu'avec des cartes.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte 4 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQH63PzAzAmDhg/feedshare-shrink_2048_1536/B4EZm4hCGoKYAw-/0/1759737318796?e=1765411200&v=beta&t=yreWgsKcdqrEg2DaOta5oCa56mebTc8uLgKwy2TBFBU" alt="Carte 3D" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Carte bivariée : Les cadres vivent-ils là où il est cher d'habiter ?</h4>
+                            <p class="cartotheque-description">Croisement de la part de cadres et du prix au m² de l'immobilier par commune en Nouvelle Aquitaine.</p>
+                        </div>
+                    </div>
+
+                    <!-- Carte 5 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQHt46B6jjT3yg/feedshare-shrink_2048_1536/B4EZYu9m9.HkAo-/0/1744544628103?e=1765411200&v=beta&t=4_HzlsYz3a4kDPgUDKluP60y8WZa7SilzPGN_Yt95iw" alt="Carte réseau de transport" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Ventilation spatiale : Quels quartiers sont les plus denses de Clermont-Ferrand ?</h4>
+                            <p class="cartotheque-description">Désagréger la population par IRIS à l'échelle des bâtiments.</p>
+                        </div>
+                    </div>
+
+                    <!-- Carte 6 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQEMXPoa7wJnew/feedshare-shrink_2048_1536/B4EZYu9m_1HcAo-/0/1744544628454?e=1765411200&v=beta&t=8s2pJ6dZ5la8z2VN2VA182oIjlfwyqQ8JA1_k8qxqDI" alt="Carte d'analyse des risques" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Ventilation spatiale : Une répartition sectorisée des Cadres et Ouvriers.</h4>
+                            <p class="cartotheque-description">Après ventilation, croisement supplémentaire avec des données relatives au CSP par IRIS.</p>
+                        </div>
+                    </div>
+
+                    <!-- Carte 7 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQHe3tpaYyGo2w/feedshare-shrink_2048_1536/B4EZYu9m9rHUAo-/0/1744544627623?e=1765411200&v=beta&t=bzwDZHuNfoyI252qZq8pSKWaW6xuaA8L0zoI6r-bAek" alt="Carte d'urbanisme" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Carte de flux : Déplacements domicile-travail en Région Auvergne Rhône Alpes</h4>
+                            <p class="cartotheque-description">Carte en oursins pour visualiser l'influence des métropoles sur les territoires alentours.</p>
+                        </div>
+                    </div>
+
+                    <!-- Carte 8 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQE1a1NgxDem1w/feedshare-shrink_2048_1536/B4EZYu9m..HYAo-/0/1744544629066?e=1765411200&v=beta&t=RoZh-5xmIEp2LKc7EDsH9LaYMAUixHyqxW-hywINm9E" alt="Carte agricole" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Cartes électorales : résultats du premier tour des élections présidentielles 2022</h4>
+                            <p class="cartotheque-description">Les territoires urbains majoritairement macronistes ou de gauche, la campagne à l'avantage du RN.</p>
+                        </div>
+                    </div>
+
+                    <!-- Carte 9 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQEvwIr8zQHw0g/feedshare-shrink_2048_1536/B4EZYu9m_AGgAs-/0/1744544629388?e=1765411200&v=beta&t=5_u6T34R7inZm11WjeicR2daxEyo9wf2Qn6Mmj30Tv0" alt="Carte touristique" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Animaux renversés : Les passages pour la faune sont-ils efficaces ?</h4>
+                            <p class="cartotheque-description">Représentation par tronçon de route dans le Finistère des rongeurs renversés entre 2014 et 2023.</p>
+                        </div>
+                    </div>
+
+                    <!-- Carte 10 -->
+                    <div class="cartotheque-slide">
+                        <img src="https://media.licdn.com/dms/image/v2/D4E22AQGShO6YlPIJMw/feedshare-shrink_2048_1536/B4EZYu9m.4G0Ao-/0/1744544630550?e=1765411200&v=beta&t=eX6SrOPuLXiBWeEWR-oZ5gmRdhwMLe2MBWKY5c5ilPY" alt="Carte environnementale" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <h4 class="cartotheque-title">Sémiologie graphique : Quelles variables en aplat de couleurs et en cercles proportionnels ?</h4>
+                            <p class="cartotheque-description">Croisement des ventes de biens immobiliers et taux de vacances des logements en Bretagne.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cartotheque-nav">
+                    <button class="cartotheque-btn" id="prevBtn" aria-label="Carte précédente">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="cartotheque-indicators" id="cartothequeIndicators">
+                        <!-- Les indicateurs seront générés dynamiquement par JavaScript -->
+                    </div>
+                    
+                    <button class="cartotheque-btn" id="nextBtn" aria-label="Carte suivante">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <!-- SECTION CARTE INTERACTIVE CORRIGÉE -->
+<section id="map-section" class="py-5">
+    <div class="container">
+        <h2 class="section-title">Mon parcours en carte</h2>
+        
+        <div class="bg-section fade-in">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h4 class="mb-4"><i class="fas fa-map-marked-alt me-2 text-primary"></i>Mon Parcours</h4>
+                    
+                    <!-- Liste des lieux -->
+                    <div class="location-list mb-4">
+                        <h6 class="text-primary mb-3">Lieux d'études</h6>
+                        <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                            <h6 class="mb-1">Université Rennes 2</h6>
+                            <small class="text-muted">Master SIGAT - 2023-2026</small>
+                        </div>
+                        <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                            <h6 class="mb-1">IUT de Bourges</h6>
+                            <small class="text-muted">BUT Carrières Sociales - 2021-2024</small>
+                        </div>
+                        
+                        <h6 class="text-primary mb-3 mt-4">Expériences professionnelles</h6>
+                        <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                            <h6 class="mb-1">Bourges Plus</h6>
+                            <small class="text-muted">Dashboard ArcGIS risque inondation - 2025</small>
+                        </div>
+                        <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                            <h6 class="mb-1">H4GEO - Montréal</h6>
+                            <small class="text-muted">Arpentage et modélisation BIM</small>
+                        </div>
+                        
+                        <h6 class="text-warning mb-3 mt-4">Zones de recherche</h6>
+                        <div class="location-item search-item mb-3 p-3 rounded bg-dark">
+                            <h6 class="mb-1">Lyon & Villeurbanne (69)</h6>
+                        </div>
+                        <div class="location-item search-item mb-3 p-3 rounded bg-dark">
+                            <h6 class="mb-1">Bordeaux & Mérignac (33)</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="map-controls mb-3">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Filtrer par type :</label>
+                                <select id="filter-type" class="form-select">
+                                    <option value="all">Tous les lieux</option>
+                                    <option value="education">Études</option>
+                                    <option value="internship">Stages</option>
+                                    <option value="search">Recherche</option>
+                                    <option value="map">Cartes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Rechercher un lieu :</label>
+                                <input type="text" id="search-location" class="form-control" placeholder="Nom du lieu...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- La carte occupe maintenant toute la largeur disponible -->
+                    <div id="map" style="height: 500px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- SECTION CONTACT -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3">Envoyez-moi un message</h4>
+                        <form>
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="name" placeholder="Votre nom">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="nom@exemple.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea class="form-control" id="message" rows="4" placeholder="Votre message"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Envoyer</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="bg-section h-100 fade-in">
+                        <h4 class="mb-3">Coordonnées</h4>
+                        <p>N'hésitez pas à me contacter pour discuter de projets, stages ou opportunités professionnelles.</p>
+                        
+                        <div class="mt-4">
+                            <p><i class="fas fa-envelope me-2 text-primary"></i> charpentier.colin.63@gmail.com</p>
+                            <p><i class="fas fa-phone me-2 text-primary"></i> +33 6 01 80 24 85</p>
+                            <p><i class="fas fa-map-marker-alt me-2 text-primary"></i> Rennes, France</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="mailto:charpentier.colin.63@gmail.com" class="btn btn-outline-primary me-2 mb-2">
+                                <i class="fas fa-envelope me-1"></i> M'écrire un email
+                            </a>
+                            <a href="#" class="btn btn-outline-primary mb-2">
+                                <i class="fab fa-linkedin-in me-1"></i> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Colin Charpentier - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin="anonymous"></script>
+
+        <!-- Script principal -->
+    <script>
+        // Année automatique dans le footer
+        document.getElementById("year").textContent = new Date().getFullYear();
+        
+        // Animation au défilement
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            // Vérifier au chargement
+            fadeInOnScroll();
+            
+            // Vérifier au défilement
+            window.addEventListener('scroll', fadeInOnScroll);
+        });
+        
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // CARTE INTERACTIVE
+        let map;
+        let markers = [];
+        let locations = [
+            {
+                name: "Université Rennes 2",
+                type: "education",
+                lat: 48.12060,
+                lng: -1.70360,
+                description: "Master SIGAT - 2023-2026",
+                icon: "education",
+                logo: "https://upload.wikimedia.org/wikipedia/fr/thumb/2/23/Logo_univ-rennes2-2016.svg/1180px-Logo_univ-rennes2-2016.svg.png"
+            },
+            {
+                name: "IUT de Bourges",
+                type: "education", 
+                lat: 47.09731,
+                lng: 2.41794,
+                description: "BUT Carrières Sociales, Villes & Territoires Durables - 2021-2024",
+                icon: "education",
+                logo: "https://yt3.googleusercontent.com/ytc/AIdro_mEkRms5WMpBcSknExLRfOo_0kO4AOslbbWHmd0zSXIJw=s900-c-k-c0x00ffffff-no-rj"
+            },
+            // NOUVELLE EXPÉRIENCE - Bourges Plus (la plus récente)
+            {
+                name: "Bourges Plus",
+                type: "internship",
+                lat: 47.063068823112786,
+                lng: 2.369027152929191,
+                description: "Réalisation d'un Dashboard ArcGIS sur le risque inondation - 2025",
+                icon: "internship",
+                logo: "https://via.placeholder.com/80x60/6c63ff/ffffff?text=BP"
+            },
+            {
+                name: "H4GEO - Montréal",
+                type: "internship",
+                lat: 45.465125602573956,
+                lng: -73.5758748233299,
+                description: "Arpentage, collecte de données LiDAR pour modélisation BIM",
+                icon: "internship",
+                logo: "https://h4geo.com/wp-content/uploads/2017/06/logo.png"
+            },
+            // ANCIENNE EXPÉRIENCE - Bourges Plus
+            {
+                name: "Bourges Plus",
+                type: "internship",
+                lat: 47.06319108827693,
+                lng: 2.368772743043781,
+                description: "Réalisation d'une Carte 3D Web sur le NPNRU - 2023",
+                icon: "internship",
+                logo: "https://via.placeholder.com/80x60/6c63ff/ffffff?text=BP"
+            },
+            {
+                name: "Lyon",
+                type: "search",
+                lat: 45.7640,
+                lng: 4.8357,
+                description: "Zone de recherche active - Lyon (69)",
+                icon: "search"
+            },
+            {
+                name: "Villeurbanne",
+                type: "search",
+                lat: 45.7719,
+                lng: 4.8901,
+                description: "Zone de recherche active - Villeurbanne (69)",
+                icon: "search"
+            },
+            {
+                name: "Bordeaux",
+                type: "search",
+                lat: 44.8378,
+                lng: -0.5792,
+                description: "Zone de recherche active - Bordeaux (33)",
+                icon: "search"
+            },
+            {
+                name: "Mérignac",
+                type: "search",
+                lat: 44.8412,
+                lng: -0.6471,
+                description: "Zone de recherche active - Mérignac (33)",
+                icon: "search"
+            }
+        ];
+
+        // NOUVELLES DONNÉES POUR LES CARTES DE LA CARTOTHÈQUE
+        const cartothequeLocations = [
+            {
+                name: "GTFS : Montréal",
+                type: "map",
+                lat: 45.5017,
+                lng: -73.5673,
+                description: "Analyse de l'offre du métro par distance euclidienne.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQFWH8T7rHSWjA/feedshare-shrink_2048_1536/B4EZp3jgi3KYAw-/0/1762942392666?e=1765411200&v=beta&t=w2ELBqRC903P4B57uglBWvFXVoa4n1O25QPwv3VPxDY"
+            },
+            {
+                name: "GTFS : Los Angeles",
+                type: "map",
+                lat: 34.0522,
+                lng: -118.2437,
+                description: "Proximité au métro et à un cinéma, scoring par quartier.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQH0WVPOhJqhcw/feedshare-shrink_2048_1536/B4EZp3jgjYHUAw-/0/1762942392706?e=1765411200&v=beta&t=HFxkgzKCrHCkK2sMdoLh8qzp-v-aPLUhjzcef06yDO0"
+            },
+            {
+                name: "Dataviz : Les Canadiens de Montréal",
+                type: "map",
+                lat: 45.5017,
+                lng: -73.5673,
+                description: "Représenter autrement les données qu'avec des cartes.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQEt4EbvBR9b_g/feedshare-shrink_2048_1536/B4EZndkWWBGoAw-/0/1760358924072?e=1765411200&v=beta&t=p_rNdUBEbZ6q878Tm1ZgO-o1acLk03FoXrLMZCZm3bo"
+            },
+            {
+                name: "Carte bivariée : Les cadres vivent-ils là où il est cher d'habiter ?",
+                type: "map",
+                lat: 45.84075196330828,
+                lng: 0.41512056588394686,
+                description: "Croisement de la part de cadres et du prix au m² de l'immobilier par commune en Nouvelle Aquitaine.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQH63PzAzAmDhg/feedshare-shrink_2048_1536/B4EZm4hCGoKYAw-/0/1759737318796?e=1765411200&v=beta&t=yreWgsKcdqrEg2DaOta5oCa56mebTc8uLgKwy2TBFBU"
+            },
+            {
+                name: "Ventilation spatiale : Quels quartiers sont les plus denses de Clermont-Ferrand ?",
+                type: "map",
+                lat: 45.7772,
+                lng: 3.0870,
+                description: "Désagréger la population par IRIS à l'échelle des bâtiments.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQHt46B6jjT3yg/feedshare-shrink_2048_1536/B4EZYu9m9.HkAo-/0/1744544628103?e=1765411200&v=beta&t=4_HzlsYz3a4kDPgUDKluP60y8WZa7SilzPGN_Yt95iw"
+            },
+            {
+                name: "Ventilation spatiale : Une répartition sectorisée des Cadres et Ouvriers",
+                type: "map",
+                lat: 45.7772,
+                lng: 3.0870,
+                description: "Après ventilation, croisement supplémentaire avec des données relatives au CSP par IRIS.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQEMXPoa7wJnew/feedshare-shrink_2048_1536/B4EZYu9m_1HcAo-/0/1744544628454?e=1765411200&v=beta&t=8s2pJ6dZ5la8z2VN2VA182oIjlfwyqQ8JA1_k8qxqDI"
+            },
+            {
+                name: "Carte de flux : Déplacements domicile-travail en Région Auvergne Rhône Alpes",
+                type: "map",
+                lat: 45.7640,
+                lng: 4.8357,
+                description: "Carte en oursins pour visualiser l'influence des métropoles sur les territoires alentours.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQHe3tpaYyGo2w/feedshare-shrink_2048_1536/B4EZYu9m9rHUAo-/0/1744544627623?e=1765411200&v=beta&t=bzwDZHuNfoyI252qZq8pSKWaW6xuaA8L0zoI6r-bAek"
+            },
+            {
+                name: "Cartes électorales : résultats du premier tour des élections présidentielles 2022",
+                type: "map",
+                lat: 45.723137299517376,
+                lng: 4.115908965321574,
+                description: "Les territoires urbains majoritairement macronistes ou de gauche, la campagne à l'avantage du RN.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQE1a1NgxDem1w/feedshare-shrink_2048_1536/B4EZYu9m..HYAo-/0/1744544629066?e=1765411200&v=beta&t=RoZh-5xmIEp2LKc7EDsH9LaYMAUixHyqxW-hywINm9E"
+            },
+            {
+                name: "Animaux renversés : Les passages pour la faune sont-ils efficaces ?",
+                type: "map",
+                lat: 48.2020,
+                lng: -4.1026,
+                description: "Représentation par tronçon de route dans le Finistère des rongeurs renversés entre 2014 et 2023.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQEvwIr8zQHw0g/feedshare-shrink_2048_1536/B4EZYu9m_AGgAs-/0/1744544629388?e=1765411200&v=beta&t=5_u6T34R7inZm11WjeicR2daxEyo9wf2Qn6Mmj30Tv0"
+            },
+            {
+                name: "Sémiologie graphique : Quelles variables en aplat de couleurs et en cercles proportionnels ?",
+                type: "map",
+                lat: 48.2020,
+                lng: -3.8150,
+                description: "Croisement des ventes de biens immobiliers et taux de vacances des logements en Bretagne.",
+                icon: "map",
+                image: "https://media.licdn.com/dms/image/v2/D4E22AQGShO6YlPIJMw/feedshare-shrink_2048_1536/B4EZYu9m.4G0Ao-/0/1744544630550?e=1765411200&v=beta&t=eX6SrOPuLXiBWeEWR-oZ5gmRdhwMLe2MBWKY5c5ilPY"
+            }
+        ];
+
+        // Fusionner les locations existantes avec les nouvelles locations de cartes
+        const allLocations = [...locations, ...cartothequeLocations];
+
+        // Initialisation de la carte
+        function initMap() {
+            // Centrer sur la France avec un zoom adapté
+            map = L.map('map').setView([46.603354, 1.888334], 6);
+            
+            // Ajout du fond de carte
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                className: 'map-tiles'
+            }).addTo(map);
+
+            // Icônes personnalisées
+            const iconColors = {
+                education: '#6c63ff',
+                internship: '#ff6584', 
+                search: '#ffc107',
+                map: '#4CAF50' // Nouvelle couleur pour les cartes
+            };
+
+            // Ajout des marqueurs
+            allLocations.forEach(location => {
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="background-color: ${iconColors[location.icon]}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white;"></div>`,
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13]
+                });
+
+                const popupContent = location.logo ? 
+                    `<div style="color: #333; min-width: 200px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <img src="${location.logo}" style="width: 40px; height: 40px; object-fit: contain; background: white; padding: 5px; border-radius: 5px;">
+                            <div>
+                                <h6 style="margin: 0; color: ${iconColors[location.icon]}">${location.name}</h6>
+                                <p style="margin: 0; font-size: 14px;">${location.description}</p>
+                            </div>
+                        </div>
+                        <small style="color: #666;">${location.type === 'education' ? '📚 Études' : location.type === 'internship' ? '💼 Stage' : location.type === 'map' ? '🗺️ Carte' : '🔍 Recherche'}</small>
+                    </div>` :
+                    `<div style="color: #333;">
+                        <h6 style="margin: 0 0 5px 0; color: ${iconColors[location.icon]}">${location.name}</h6>
+                        <p style="margin: 0; font-size: 14px;">${location.description}</p>
+                        <small style="color: #666;">${location.type === 'education' ? '📚 Études' : location.type === 'internship' ? '💼 Stage' : location.type === 'map' ? '🗺️ Carte' : '🔍 Recherche'}</small>
+                        ${location.image ? `<div style="margin-top: 10px;"><img src="${location.image}" style="max-width: 200px; max-height: 150px; border-radius: 5px;"></div>` : ''}
+                    </div>`;
+
+                const marker = L.marker([location.lat, location.lng], { icon: customIcon })
+                    .addTo(map)
+                    .bindPopup(popupContent);
+
+                markers.push({
+                    marker: marker,
+                    type: location.type,
+                    name: location.name
+                });
+            });
+
+            // Ajuster la carte pour afficher tous les marqueurs
+            const group = new L.featureGroup(markers.map(m => m.marker));
+            map.fitBounds(group.getBounds().pad(0.1));
+
+            // Filtrage des marqueurs
+            document.getElementById('filter-type').addEventListener('change', function(e) {
+                const filterValue = e.target.value;
+                markers.forEach(item => {
+                    if (filterValue === 'all' || item.type === filterValue) {
+                        item.marker.addTo(map);
+                    } else {
+                        map.removeLayer(item.marker);
+                    }
+                });
+            });
+
+            // Recherche de lieux
+            document.getElementById('search-location').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                markers.forEach(item => {
+                    if (item.name.toLowerCase().includes(searchTerm)) {
+                        item.marker.addTo(map);
+                    } else {
+                        map.removeLayer(item.marker);
+                    }
+                });
+            });
+
+            // Ajouter des événements de clic aux éléments de la liste
+            document.querySelectorAll('.location-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const locationName = this.querySelector('h6').textContent;
+                    // Trouver le marqueur correspondant
+                    const marker = markers.find(m => m.name === locationName);
+                    if (marker) {
+                        map.setView(marker.marker.getLatLng(), 10);
+                        marker.marker.openPopup();
+                    }
+                });
+            });
+        }
+
+        // Initialiser la carte une fois le DOM chargé
+        document.addEventListener('DOMContentLoaded', initMap);
+
+        // Gestion de la cartothèque
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('cartothequeSlider');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicatorsContainer = document.getElementById('cartothequeIndicators');
+            const images = document.querySelectorAll('.cartotheque-image');
+            
+            let currentSlide = 0;
+            const totalSlides = document.querySelectorAll('.cartotheque-slide').length;
+            
+            // Créer les indicateurs dynamiquement
+            for (let i = 0; i < totalSlides; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'cartotheque-indicator';
+                indicator.setAttribute('data-index', i);
+                if (i === 0) indicator.classList.add('active');
+                indicatorsContainer.appendChild(indicator);
+            }
+            
+            const indicators = document.querySelectorAll('.cartotheque-indicator');
+            
+            // Créer le modal pour l'affichage en plein écran
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <button class="close-modal">&times;</button>
+                <img class="modal-content" src="" alt="">
+            `;
+            document.body.appendChild(modal);
+            
+            const modalImg = modal.querySelector('.modal-content');
+            const closeModal = modal.querySelector('.close-modal');
+            
+            // Fonction pour ouvrir l'image en plein écran
+            function openModal(imgSrc, imgAlt) {
+                modalImg.src = imgSrc;
+                modalImg.alt = imgAlt;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Fonction pour fermer le modal
+            function closeModalFunc() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Événements pour les images
+            images.forEach(img => {
+                img.addEventListener('click', function() {
+                    openModal(this.src, this.alt);
+                });
+            });
+            
+            // Événements pour fermer le modal
+            closeModal.addEventListener('click', closeModalFunc);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModalFunc();
+                }
+            });
+            
+            // Fermer avec la touche Échap
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModalFunc();
+                }
+            });
+            
+            // Fonction pour mettre à jour l'affichage
+            function updateSlider() {
+                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+                
+                // Mettre à jour les indicateurs
+                indicators.forEach((indicator, index) => {
+                    if (index === currentSlide) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+                
+                // Désactiver les boutons si nécessaire
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === totalSlides - 1;
+            }
+            
+            // Événements pour les boutons de navigation
+            prevBtn.addEventListener('click', function() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateSlider();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateSlider();
+                }
+            });
+            
+            // Événements pour les indicateurs
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', function() {
+                    currentSlide = parseInt(this.getAttribute('data-index'));
+                    updateSlider();
+                });
+            });
+            
+            // Initialisation
+            updateSlider();
+        });
+    </script>
+
+</body>
+</html>
