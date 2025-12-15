@@ -39,7 +39,7 @@
             --dark: #b84a4a;
             --red: #b72a2a;
             --light: #f8f9fa;
-            --gray: #6c757d;
+            --gray: #3A3534;
             --gray-light: #adb5bd;
             --map-color: #c6a719;
         }
@@ -85,7 +85,8 @@
         }
 
         .navbar {
-            background-color: rgb(157, 105, 38) !important;
+            background-color: rgb(164, 97, 20) !important;
+            /* background-color: rgb(157, 105, 38) !important; */
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.459);
             padding: 1rem 0;
@@ -238,10 +239,11 @@
             border-radius: 15px;
             padding: clamp(1.5rem, 4vw, 3rem);
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgb(205, 92, 0);
+            /* box-shadow: 0 10px 30px rgb(205, 92, 0); */
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
             transition: transform 0.3s ease;
             backdrop-filter: blur(10px);
-            border: 0.5px solid rgba(205, 92, 0);
+            border: 0.5px solid rgb(207, 140, 96);
         }
 
         .bg-section:hover {
@@ -252,6 +254,26 @@
         --bs-text-opacity 1;
         color: rgb(253 104 13) !important;
         }
+
+
+        /* Style pour les boutons de filtrage */
+        /* Style pour les boutons actifs */
+        .tag-selection input[type="button"].active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Animation simple pour les projets */
+        .carto, .poster, .diag, .r, .terrain, .photo {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Cache les projets */
+        .hidden {
+            display: none !important;
+        }
+
 
         .card {
             background-color: rgba(30, 30, 30, 0.85);
@@ -518,7 +540,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 15px;
-            background: rgba(61, 61, 61, 0.85);
+            background: rgba(30, 30, 30, 0.85);
             padding: 2rem;
         }
 
@@ -942,7 +964,7 @@
                         </ul>
                         <div class="social-links text-center mt-4">
                             <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>        
-                            <a href="CV_STAGE_Bucaille_Théo.pdf" target="_blank" class="">CV</a>
+                            <a href="img/CV_MASTER_SIGAT_Bucaille Théo.pdf" target="_blank" class="">CV</a>
                         </div>
                     </div>
                 </div>
@@ -1010,11 +1032,10 @@
                 <input type="button" id="afficherTypeR" value="Programmation R 🖥"/>
                 <input type="button" id="afficherTypeTerrain" value="Terrain et techniques d'enquêtes 🕵️"/>
                 <input type="button" id="afficherTypePhoto" value="Dossier photographique 📷"/>
-                
             </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 portfolio-item">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1035,7 +1056,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 portfolio-item diag">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1056,7 +1077,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 portfolio-item">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1077,7 +1098,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 portfolio-item">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1098,7 +1119,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 portfolio-item">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1111,7 +1132,7 @@
                             <div class="mt-auto">
                                 <span class="badge bg-primary mb-2">Cartographie</span>
                                 <span class="badge bg-primary mb-2">enuqêtes par questionnaire</span>
-                                <a href="projects_list\Projet-diagnostic-de-territoire-STM.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                                <a href="alerte-projects_list\Projet-diagnostic-de-territoire-STM.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
                             </div>
                         </div>
                     </div>
