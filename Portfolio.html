@@ -256,6 +256,104 @@
         }
 
 
+        /* Styles pour le filtre de badges */
+        .badge-filter-container {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        /* Badge de filtre */
+        .filter-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-badge:hover {
+            background: rgba(254, 155, 56, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .filter-badge.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(254, 155, 56, 0.3);
+        }
+
+        .filter-badge .badge-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.75rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .filter-badge.active .badge-count {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animation pour les projets */
+        .project-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-card.hidden {
+            opacity: 0.3;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .project-card.visible {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mode AND/OR */
+        .filter-mode-info {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .badge-filter-container {
+                padding: 1rem;
+            }
+            
+            .filter-badge {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+
+
+
+
         /* Style pour les boutons de filtrage */
         /* Style pour les boutons actifs */
         .tag-selection input[type="button"].active {
@@ -938,10 +1036,10 @@
                     <div class="bg-section fade-in">
                         <h2 class="mb-2"> Actualités </h2>
                         <p>
-                            <h4> Actuellement en première année de Master SIGAT à l'Université de Rennes 2, je me suis spécialisé en géomatique au cours de mes études, et j'aimerais appliquer mes compétences dans des projets comme l'aménagement durable des territoires. </h4>
+                            <h4> Actuellement en première année de Master SIGAT à l'Université de Rennes 2, je me suis spécialisé en géomatique au cours de mes études. </h4>
                         </p>
                         <p>
-                            <h4 class="text-primary"> <span class="red"> Je recherche actuellement un stage </span>  de pour appliquer mes compétences à des projets concrets. Je suis en recherche active à Rennes, Colmar ou aux alentours de Deauville.</h4>
+                            <h4 class="text-primary"> <span class="red"> Je recherche activement un stage </span> pour appliquer mes compétences à des projets concrets. Je suis en recherche active à Rennes, Colmar ou aux alentours de Deauville.</h4>
                         </p>
                     </div>
                 </div>
@@ -1024,27 +1122,49 @@
         </div>
     </section>
 
+    <!-------------------------------------------------------------------->
     <!--------------------- SECTION DES PROJETS -------------------------->
+
     <section id="projects" class="py-5">
         <div class="container">
             <h2 class="section-title">Tous les principaux projets de mon cursus</h2>
-            <div class="row g-4">
 
-                <!-------Selection des tags for work categories --------------->
-    +
-            <div class="tag-selection mb-3">
-                <input type="button" id="afficherTypeTout" value="Tous mes travaux 🌍"/>
-                <input type="button" id="afficherTypePhoto" value="Atelier professionnel - Master"/>
-                <input type="button" id="afficherTypeCarto" value="Cartographies 🗺️"/>
-                <input type="button" id="afficherTypePoster" value="Infographies et poster 🖼️"/>
-                <input type="button" id="afficherTypeDiag" value="Diagnostic de territoire 🔎"/>
-                <input type="button" id="afficherTypeR" value="Programmation R 🖥"/>
-                <input type="button" id="afficherTypeTerrain" value="Terrain et techniques d'enquêtes 🕵️"/>
-                <input type="button" id="afficherTypePhoto" value="Dossier photographique 📷"/>
+                <!-- DIV DE FILTRAGE DYNAMIQUE -->
+            <div class="badge-filter-container mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-filter me-2 text-primary"></i>
+                    Filtrer par compétence :
+                </h5>
+                
+                <!-- Conteneur où les badges de filtrage vont apparaître -->
+                <div class="d-flex flex-wrap gap-2" id="badge-filters">
+                    <!-- Les badges seront générés automatiquement par JavaScript -->
+                    <!-- Un message s'affichera en attendant -->
+                    <div class="text-muted">Chargement des filtres...</div>
+                </div>
+                
+                <!-- Contrôles du filtre -->
+                <div class="mt-3 d-flex flex-wrap align-items-center gap-3">
+                    <button id="reset-filters" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-redo me-1"></i> Réinitialiser
+                    </button>
+                    <span id="filter-info" class="text-muted small">
+                        <span id="project-count">0</span> projet(s) trouvé(s)
+                    </span>
+                    <div class="form-check form-switch ms-auto">
+                        <input class="form-check-input" type="checkbox" id="filter-mode">
+                        <label class="form-check-label" for="filter-mode">
+                            <small>Filtre AND (tous les badges)</small>
+                        </label>
+                    </div>
+                </div>
             </div>
 
-                <!-- Projet  -->
-                <div class="col-md-6 col-lg-4 portfolio-item">
+        <!------------------ CONTENEUR DES DIFFERENTS PROJETS ---------------------->
+            <div class="row g-4" id="projects-container">
+
+                <!-- Projet 1 -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis postgresql postgis">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1055,9 +1175,9 @@
                                 Stage de 5 mois au sein de l'EPCI "Entre Bièvre et Rhônes" pour la création d'une base de données foncier.
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">QGIS</span>
-                                <span class="badge bg-primary mb-2">PostgreSQL</span>
-                                <span class="badge bg-primary mb-2">PostGIS</span>
+                                <span class="badge bg-primary mb-2" data-badges="qgis">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badges="PostgreSQL">PostgreSQL</span>
+                                <span class="badge bg-primary mb-2" data-badges="PostGIS">PostGIS</span>
                                 <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet et le mémoire</a>
                             </div>
                         </div>
@@ -1065,7 +1185,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4 portfolio-item diag">
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis diagnostic">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1076,9 +1196,9 @@
                                 Diagnostic de l'éclairage public au sein de la prairie Saint-Martin à Rennes.
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">QGIS</span>
-                                <span class="badge bg-primary mb-2">Diagnostic</span>
-                                <span class="badge bg-primary mb-2">.....</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="diagnostic">Diagnostic</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">.....</span>
                                 <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
                             </div>
                         </div>
@@ -1086,7 +1206,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4 portfolio-item">
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis analyse prospective">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1097,9 +1217,9 @@
                                 Analyse matricielle prospective sur l'installation de parc éolien au large de la Bretagne.
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2"> QGIS</span>
-                                <span class="badge bg-primary mb-2">Analyse prospective</span>
-                                <span class="badge bg-primary mb-2">.....</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis"> QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="analyse">Analyse prospective</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">.....</span>
                                 <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
                             </div>
                         </div>
@@ -1107,7 +1227,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4 portfolio-item">
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis cartographie">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1118,7 +1238,8 @@
                                 Scoring
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="cartographie">Cartographie</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
                                 <!-- <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a> -->
                             </div>
                         </div>
@@ -1126,7 +1247,7 @@
                 </div>
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4 portfolio-item">
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis enquêtes cartographie">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1137,8 +1258,9 @@
                                 Diagnostic territorial de l'EPCI Seulles Terre et Mer (14).                            
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">Cartographie</span>
-                                <span class="badge bg-primary mb-2">enuqêtes par questionnaire</span>
+                                <span class="badge bg-primary mb-2" data-badge="cartographie">Cartographie</span>
+                                <span class="badge bg-primary mb-2" data-badge="enquêtes">enuquêtes par questionnaire</span>
+                                <span class="badge bg-primary mb-2" data-badge="enquêtes">qgis</span>
                                 <a href="alerte-projects_list\Projet-diagnostic-de-territoire-STM.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
                             </div>
                         </div>
@@ -1147,7 +1269,7 @@
 
 
                 <!-- Projet  -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 project-card">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
@@ -1158,18 +1280,28 @@
                                 Détection des écotones à partir de données LIDAR et analyse statistique sous R.
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">R</span>
-                                <span class="badge bg-primary mb-2">QGIS</span>
-                                <span class="badge bg-primary mb-2">LIDAR</span>
+                                <span class="badge bg-primary mb-2" data-badge="R">R</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="LIDAR">LIDAR</span>
                                 <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                
-
+                <!-- Message quand aucun projet ne correspond -->
+                <div id="no-projects-message" class="text-center mt-5 d-none">
+                    <div class="bg-section p-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="mb-3">Aucun projet ne correspond aux filtres</h4>
+                        <p class="text-muted">Essayez avec d'autres badges ou réinitialisez les filtres</p>
+                        <button id="reset-filters-btn" class="btn btn-primary">
+                            <i class="fas fa-redo me-2"></i>Réinitialiser les filtres
+                        </button>
+                    </div>
                 </div>
+                
+            </div>
         </div>
     </section>
 
@@ -1507,26 +1639,6 @@
         <div class="container">
             <h2 class="section-title">Contact</h2>
             <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="bg-section fade-in">
-                        <h4 class="mb-3">Pour me contacter</h4>
-                        <form>
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Nom</label>
-                                <input type="text" class="form-control" id="name" placeholder="Votre nom">
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="nom@exemple.com">
-                            </div>
-                            <div class="mb-3">
-                                <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="4" placeholder="Votre message"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Envoyer</button>
-                        </form>
-                    </div>
-                </div>
                 <div class="col-lg-6">
                     <div class="bg-section h-100 fade-in">
                         <h4 class="mb-3">Coordonnées</h4>

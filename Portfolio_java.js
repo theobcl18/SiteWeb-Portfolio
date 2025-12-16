@@ -430,99 +430,287 @@
         });
 
 
-        //=========================================
-        // FONCTIONS FILTRAGE PROJETS
-        //=========================================
+        // ================================================
+        // SYSTÈME DE FILTRAGE DYNAMIQUE PAR BADGES
+        // ================================================
 
-        const types = [
-            ".carto",
-            ".poster",
-            ".diag",
-            ".r",
-            ".terrain",
-            ".photo",
-        ];
-        var ongletActif = -1;
+        document.addEventListener('DOMContentLoaded', function() {
+            initBadgeFilterSystem();
+        });
 
-        boutonAfficherTout = document.querySelector('#afficherTypeTout');
-        boutonAfficherTout.addEventListener("click", funcAfficherTypeTout);
-        boutonAfficherCarto = document.querySelector('#afficherTypeCarto');
-        boutonAfficherCarto.addEventListener("click", funcAfficherTypeCarto);
-        boutonAfficherPoster = document.querySelector('#afficherTypePoster');
-        boutonAfficherPoster.addEventListener("click", funcAfficherTypePoster);
-        boutonAfficherDiag = document.querySelector('#afficherTypeDiag');
-        boutonAfficherDiag.addEventListener("click", funcAfficherTypeDiag);
-        boutonAfficherR = document.querySelector('#afficherTypeR');
-        boutonAfficherR.addEventListener("click", funcAfficherTypeR);
-        boutonAfficherTerrain = document.querySelector('#afficherTypeTerrain');
-        boutonAfficherTerrain.addEventListener("click", funcAfficherTypeTerrain);
-        boutonAfficherPhoto = document.querySelector('#afficherTypePhoto');
-        boutonAfficherPhoto.addEventListener("click", funcAfficherTypePhoto);
-
-        function funcAfficherTypeTout() {
-            ongletActif = -1;
-            actualiserAffichage();
-        }
-
-        function funcAfficherTypeCarto() {
-            ongletActif = 0;
-            actualiserAffichage();
-        }
-
-        function funcAfficherTypePoster() {
-            ongletActif = 1;
-            actualiserAffichage();
-        }
-
-        function funcAfficherTypeDiag() {
-            ongletActif = 2;
-            actualiserAffichage();
-        }
-
-        function funcAfficherTypeR() {
-            ongletActif = 3;
-            actualiserAffichage();
-        }
-
-        function funcAfficherTypeTerrain() {
-            ongletActif = 4;
-            actualiserAffichage();
-        }
-
-        function funcAfficherTypePhoto() {
-            ongletActif = 5;
-            actualiserAffichage();
-        }
-
-
-        function actualiserAffichage() {
-            types.forEach((t) => {
-                tab = document.querySelectorAll(t);
-                tab.forEach((projet) => {
-                    projet.style.display = "none";
-                    projet.querySelector('.portfolio-item').classList.remove("active"); // Retire l'effet d'agrandissement
+        function initBadgeFilterSystem() {
+            // Éléments DOM
+            const projectsContainer = document.getElementById('projects-container');
+            const badgeFiltersContainer = document.getElementById('badge-filters');
+            const resetButton = document.getElementById('reset-filters');
+            const resetButton2 = document.getElementById('reset-filters-btn');
+            const filterModeToggle = document.getElementById('filter-mode');
+            const projectCountSpan = document.getElementById('project-count');
+            const noProjectsMessage = document.getElementById('no-projects-message');
+            const filterInfo = document.getElementById('filter-info');
+            
+            // État du filtre
+            let activeBadges = new Set(); // Set pour éviter les doublons
+            let filterMode = 'OR'; // 'OR' = au moins un badge, 'AND' = tous les badges
+            
+            // Étape 1: Récupérer tous les badges uniques des projets
+            function extractUniqueBadges() {
+                const badgeSet = new Set();
+                const projectCards = document.querySelectorAll('.project-card');
+                
+                projectCards.forEach(card => {
+                    // Récupère les badges depuis l'attribut data-badges
+                    const badges = card.getAttribute('data-badges');
+                    if (badges) {
+                        badges.split(' ').forEach(badge => {
+                            if (badge.trim()) {
+                                badgeSet.add(badge.trim());
+                            }
+                        });
+                    }
                     
-                });
-            });
-
-            if ( ongletActif === -1 )
-            {
-                types.forEach((t) => {
-                    tab = document.querySelectorAll(t);m
-                    tab.forEach((projet) => {
-                        projet.style.display = "initial";
-                        projet.querySelector('.portfolio-item').classList.remove("active"); // Pas d'agrandissement pour "Tous"
-                        
+                    // Récupère aussi les badges depuis les spans dans le projet
+                    const badgeSpans = card.querySelectorAll('[data-badges]');
+                    badgeSpans.forEach(span => {
+                        const badgeValue = span.getAttribute('data-badges');
+                        if (badgeValue) {
+                            badgeSet.add(badgeValue);
+                        }
                     });
                 });
+                
+                return Array.from(badgeSet).sort(); // Convertir en tableau et trier
             }
-            else
-            {
-                tableau = document.querySelectorAll(types[ongletActif]);
-                tableau.forEach((projet) => {
-                    projet.style.display = "initial";
-                    projet.classList.add("active"); // Ajoute l'effet d'agrandissement
-                    projet.querySelector('.portfolio-item').classList.add("active"); // Ajoute l'effet d'agrandissement
+            
+            // Étape 2: Compter combien de projets ont chaque badge
+            function countProjectsPerBadge(badge) {
+                let count = 0;
+                const projectCards = document.querySelectorAll('.project-card');
+                
+                projectCards.forEach(card => {
+                    const badges = card.getAttribute('data-badges');
+                    if (badges && badges.includes(badge)) {
+                        count++;
+                    }
                 });
+                
+                return count;
+            }
+            
+            // Étape 3: Générer les badges de filtre
+            function generateFilterBadges() {
+                const uniqueBadges = extractUniqueBadges();
+                
+                if (uniqueBadges.length === 0) {
+                    badgeFiltersContainer.innerHTML = 
+                        '<div class="text-muted">Aucun badge trouvé dans les projets</div>';
+                    return;
+                }
+                
+                badgeFiltersContainer.innerHTML = '';
+                
+                uniqueBadges.forEach(badge => {
+                    const projectCount = countProjectsPerBadge(badge);
+                    
+                    // Créer l'élément badge
+                    const badgeElement = document.createElement('div');
+                    badgeElement.className = 'filter-badge';
+                    badgeElement.setAttribute('data-badge', badge);
+                    
+                    // Afficher le badge avec son compteur
+                    badgeElement.innerHTML = `
+                        <span>${badge.toUpperCase()}</span>
+                        <span class="badge-count">${projectCount}</span>
+                    `;
+                    
+                    // Ajouter l'événement de clic
+                    badgeElement.addEventListener('click', function() {
+                        toggleBadgeFilter(badge);
+                    });
+                    
+                    badgeFiltersContainer.appendChild(badgeElement);
+                });
+            }
+            
+            // Étape 4: Basculer un badge dans les filtres actifs
+            function toggleBadgeFilter(badge) {
+                if (activeBadges.has(badge)) {
+                    activeBadges.delete(badge);
+                } else {
+                    activeBadges.add(badge);
+                }
+                
+                updateFilterUI();
+                filterProjects();
+            }
+            
+            // Étape 5: Mettre à jour l'interface des filtres
+            function updateFilterUI() {
+                // Mettre à jour l'apparence des badges de filtre
+                document.querySelectorAll('.filter-badge').forEach(badgeElement => {
+                    const badgeValue = badgeElement.getAttribute('data-badge');
+                    if (activeBadges.has(badgeValue)) {
+                        badgeElement.classList.add('active');
+                    } else {
+                        badgeElement.classList.remove('active');
+                    }
+                });
+                
+                // Mettre à jour les informations du filtre
+                if (activeBadges.size > 0) {
+                    const badgesArray = Array.from(activeBadges);
+                    const badgeNames = badgesArray.map(b => b.toUpperCase()).join(', ');
+                    filterInfo.innerHTML = `
+                        <span id="project-count">0</span> projet(s) avec: ${badgeNames}
+                    `;
+                } else {
+                    filterInfo.innerHTML = `
+                        <span id="project-count">${document.querySelectorAll('.project-card').length}</span> projet(s) au total
+                    `;
+                }
+            }
+            
+            // Étape 6: Filtrer les projets
+            function filterProjects() {
+                const projectCards = document.querySelectorAll('.project-card');
+                let visibleCount = 0;
+                
+                // Si aucun filtre actif, tout afficher
+                if (activeBadges.size === 0) {
+                    projectCards.forEach(card => {
+                        card.classList.remove('hidden');
+                        card.classList.add('visible');
+                        visibleCount++;
+                    });
+                    noProjectsMessage.classList.add('d-none');
+                } else {
+                    // Appliquer le filtre
+                    const activeBadgesArray = Array.from(activeBadges);
+                    
+                    projectCards.forEach(card => {
+                        const cardBadges = card.getAttribute('data-badges');
+                        if (!cardBadges) {
+                            card.classList.add('hidden');
+                            card.classList.remove('visible');
+                            return;
+                        }
+                        
+                        const cardBadgesArray = cardBadges.split(' ');
+                        let shouldShow = false;
+                        
+                        if (filterMode === 'AND') {
+                            // Mode AND: le projet doit avoir TOUS les badges actifs
+                            shouldShow = activeBadgesArray.every(badge => 
+                                cardBadgesArray.includes(badge)
+                            );
+                        } else {
+                            // Mode OR (par défaut): le projet doit avoir AU MOINS UN des badges actifs
+                            shouldShow = activeBadgesArray.some(badge => 
+                                cardBadgesArray.includes(badge)
+                            );
+                        }
+                        
+                        if (shouldShow) {
+                            card.classList.remove('hidden');
+                            card.classList.add('visible');
+                            visibleCount++;
+                        } else {
+                            card.classList.add('hidden');
+                            card.classList.remove('visible');
+                        }
+                    });
+                    
+                    // Afficher/masquer le message "aucun projet"
+                    if (visibleCount === 0) {
+                        noProjectsMessage.classList.remove('d-none');
+                    } else {
+                        noProjectsMessage.classList.add('d-none');
+                    }
+                }
+                
+                // Mettre à jour le compteur
+                projectCountSpan.textContent = visibleCount;
+                
+                // Animation
+                animateProjects();
+            }
+            
+            // Étape 7: Animation des projets
+            function animateProjects() {
+                const visibleProjects = document.querySelectorAll('.project-card:not(.hidden)');
+                
+                visibleProjects.forEach((project, index) => {
+                    project.style.transitionDelay = `${index * 0.05}s`;
+                });
+                
+                projectsContainer.style.opacity = '0.8';
+                setTimeout(() => {
+                    projectsContainer.style.opacity = '1';
+                }, 300);
+            }
+            
+            // Étape 8: Réinitialiser les filtres
+            function resetFilters() {
+                activeBadges.clear();
+                updateFilterUI();
+                filterProjects();
+                
+                // Désactiver le mode AND si nécessaire
+                if (filterModeToggle) {
+                    filterModeToggle.checked = false;
+                    filterMode = 'OR';
+                }
+            }
+            
+            // Étape 9: Changer le mode de filtre
+            function toggleFilterMode() {
+                filterMode = filterModeToggle.checked ? 'AND' : 'OR';
+                filterProjects();
+            }
+            
+            // Étape 10: Initialisation
+            function init() {
+                // Générer les badges de filtre
+                generateFilterBadges();
+                
+                // Événements
+                if (resetButton) {
+                    resetButton.addEventListener('click', resetFilters);
+                }
+                if (resetButton2) {
+                    resetButton2.addEventListener('click', resetFilters);
+                }
+                if (filterModeToggle) {
+                    filterModeToggle.addEventListener('change', toggleFilterMode);
+                }
+                
+                // Mettre à jour l'UI initiale
+                updateFilterUI();
+                
+                // Ajouter un événement pour détecter les nouveaux projets (si ajoutés dynamiquement)
+                const observer = new MutationObserver(function() {
+                    generateFilterBadges();
+                    updateFilterUI();
+                });
+                
+                observer.observe(projectsContainer, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+            
+            // Démarrer le système
+            init();
+        }
+
+        // Fonction utilitaire pour ajouter des données de badge à un projet
+        function addBadgeToProject(projectElement, badge) {
+            // Ajouter le badge à l'attribut data-badges
+            const currentBadges = projectElement.getAttribute('data-badges') || '';
+            const badgesArray = currentBadges ? currentBadges.split(' ') : [];
+            
+            if (!badgesArray.includes(badge)) {
+                badgesArray.push(badge);
+                projectElement.setAttribute('data-badges', badgesArray.join(' '));
             }
         }
