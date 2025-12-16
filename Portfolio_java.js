@@ -57,7 +57,7 @@
 
         // Initialisation de la carte
         var mapParcours = L.map('map-parcours', {
-        center: [47.5, 0.5], // Centre approximatif entre les 3 villes
+        center: [47.5, 0.5], // Permet de centrer approximativement entre les 4 villes
         zoom: 6,
         zoomControl: true
         });
@@ -70,28 +70,28 @@
         }).addTo(mapParcours);
 
         // Définition des icônes personnalisées
-        var LycéeIcon = L.divIcon({
+        let LycéeIcon = L.divIcon({
             html: '<div style="background-color: #3d658fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
             iconAnchor: [18, 18]
         });
 
-        var universiteIcon = L.divIcon({
+        let universiteIcon = L.divIcon({
             html: '<div style="background-color: #667eea; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
             iconAnchor: [18, 18]
         });
 
-        var stageIcon = L.divIcon({
+        let stageIcon = L.divIcon({
             html: '<div style="background-color: #e2d0e4ff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">💼</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
             iconAnchor: [18, 18]
         });
 
-        var masterIcon = L.divIcon({
+        let masterIcon = L.divIcon({
             html: '<div style="background-color: #4facfe; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎯</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
@@ -122,7 +122,7 @@
             }];
 
         // 1. Lycée Andrés Maurois de Deauville
-        var deauvilleMarker = L.marker([49.3570, 0.0737], {icon: LycéeIcon}).addTo(mapParcours);
+        let deauvilleMarker = L.marker([49.3570, 0.0737], {icon: LycéeIcon}).addTo(mapParcours);
         deauvilleMarker.bindPopup(`
             <div class="popup-title">🎓 Lycée Andrès Maurois de Deauville</div>
             <div class="popup-content">
@@ -139,7 +139,7 @@
         });
 
         // 2. Université de Caen
-        var caenMarker = L.marker([49.1829, -0.3707], {icon: universiteIcon}).addTo(mapParcours);
+        let caenMarker = L.marker([49.1829, -0.3707], {icon: universiteIcon}).addTo(mapParcours);
         caenMarker.bindPopup(`
             <div class="popup-title">🎓 Université de Caen Normandie</div>
             <div class="popup-content">
@@ -156,7 +156,7 @@
         });
 
         // 3. Communauté de Communes Entre Bièvre et Rhône (Beaurepaire)
-        var biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(mapParcours);
+        let biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(mapParcours);
         biervreMarker.bindPopup(`
             <div class="popup-title">💼 Communauté de Communes Entre Bièvre et Rhône</div>
             <div class="popup-content">
@@ -180,7 +180,7 @@
         });
 
         // 4. Université Rennes 2
-        var rennesMarker = L.marker([48.119, -1.7013], {icon: masterIcon}).addTo(mapParcours);
+        let rennesMarker = L.marker([48.119, -1.7013], {icon: masterIcon}).addTo(mapParcours);
         rennesMarker.bindPopup(`
             <div class="popup-title">🎯 Université Rennes 2</div>
             <div class="popup-content">
@@ -334,7 +334,9 @@
             
             const indicators = document.querySelectorAll('.cartotheque-indicator');
             
+            // -----------------------------------------------------
             // Créer le modal pour l'affichage en plein écran
+            // -----------------------------------------------------
             const modal = document.createElement('div');
             modal.className = 'image-modal';
             modal.innerHTML = `
@@ -348,22 +350,22 @@
             
             // Fonction pour ouvrir l'image en plein écran
             function openModal(imgSrc, imgAlt) {
-                modalImg.src = imgSrc;
-                modalImg.alt = imgAlt;
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                modalImg.src = imgSrc; // Met à jour la source de l'image dans le modal
+                modalImg.alt = imgAlt; // Met à jour le texte alternatif
+                modal.classList.add('active'); // Affiche le modal
+                document.body.style.overflow = 'hidden'; // Empêche le défilement de la page derrière le modal
             }
             
             // Fonction pour fermer le modal
-            function closeModalFunc() {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
+            function closeModalFunc() { // Renomme la fonction pour éviter le conflit avec la variable
+                modal.classList.remove('active'); // Cache le modal
+                document.body.style.overflow = ''; // Restaure le défilement de la page
             }
             
             // Événements pour les images
-            images.forEach(img => {
-                img.addEventListener('click', function() {
-                    openModal(this.src, this.alt);
+            images.forEach(img => { // Ajoute un écouteur d'événement à chaque image
+                img.addEventListener('click', function() { // Lorsqu'une image est cliquée
+                    openModal(this.src, this.alt); // Ouvre le modal avec la source et le texte alternatif de l'image cliquée
                 });
             });
             
@@ -506,7 +508,7 @@
             if ( ongletActif === -1 )
             {
                 types.forEach((t) => {
-                    tab = document.querySelectorAll(t);
+                    tab = document.querySelectorAll(t);m
                     tab.forEach((projet) => {
                         projet.style.display = "initial";
                         projet.querySelector('.portfolio-item').classList.remove("active"); // Pas d'agrandissement pour "Tous"

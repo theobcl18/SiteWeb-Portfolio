@@ -975,33 +975,42 @@
     <!------------------- SECTION CARTE INTERACTIVE LEAFLET (diapo Boris) --------------->
     <section id="map-section" class="py-5">
         <div class="container">
-            <h2 class="section-title">Mon parcours 🎓 scolaire et 💼 professionnel en carte</h2>
+            <h2 class="section-title">Mon parcours scolaire et professionnel en carte</h2>
             
             <div class="bg-section fade-in">
                 <div class="row">
-                    <div class="col-lg-6">
-                        <h4 class="mb-4"><i class="fas fa-map-marked-alt me-2 text-primary"></i> Mon parcours </h4>
-                        
-                        <!-- Liste des lieux -->
-                        <div class="location-list mb-4">
-                            <h6 class="text-primary mb-3">Lieux d'études</h6>
-                            <div class="location-item education-item mb-3 p-3 rounded bg-dark">
-                                <h6 class="mb-1">Université Rennes 2</h6>
-                                <small class="text-muted">Master SIGAT - 2025-2027</small>
+                    <div class="col-lg-16">
+                        <h4 class="mb-4"><i class="fas fa-map-marked-alt me-2 text-primary"></i> Mon parcours</h4>
+
+                        <!-- Liste des lieux - Mise en côte à côte -->
+                        <div class="row">
+                        <!-- Lieux d'études -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="location-list mb-4">
+                                    <h5 class="text-primary mb-3"> <i class="fa-solid fa-graduation-cap"></i> Lieux d'études</h5>
+                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Université Rennes 2</h6>
+                                        <small class="text">Master SIGAT - 2025-2027</small>
+                                    </div>
+                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Université de Caen Normandie</h6>
+                                        <small class="text">Licence géographie et aménagement du territoire - 2021-2024</small>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="location-item education-item mb-3 p-3 rounded bg-dark">
-                                <h6 class="mb-1">Université de Caen Normandie</h6>
-                                <small class="text-muted">Licence géographie et aménagement du territoire - 2021-2024</small>
-                            </div>
-                            
-                            <h6 class="text-primary mb-3 mt-4">Expériences professionnelles</h6>
-                            <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
-                                <h6 class="mb-1">Entre Bièvre et Rhônes</h6>
-                                <small class="text-muted">Base de données du foncier - 2025</small>
-                            </div>
-                            <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
-                                <h6 class="mb-1">Stage d'observation</h6>
-                                <small class="text-muted">Concept intérieur</small>
+                        <!-- Lieux d'expériences professionnelles -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="location-list mb-4">
+                                    <h5 class="text-primary mb-3"> <i class="fa-solid fa-user-tie"></i> Expériences professionnelles</h5>
+                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Entre Bièvre et Rhônes</h6>
+                                        <small class="text">Base de données du foncier - 2025</small>
+                                    </div>
+                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Stage d'observation</h6>
+                                        <small class="text">Concept intérieur</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1106,13 +1115,11 @@
                             </div>
                             <h5 class="card-title">Analyse multicritère</h5>
                             <p class="card-text flex-grow-1">
-                                Scoring de la localisation idéale pour un logement d'un étudiant à Rennes.
+                                Scoring
                             </p>
                             <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">.......</span>
-                                <span class="badge bg-primary mb-2">.......</span>
-                                <span class="badge bg-primary mb-2"> .......</span>
-                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                                <span class="badge bg-primary mb-2">QGIS</span>
+                                <!-- <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a> -->
                             </div>
                         </div>
                     </div>
@@ -1177,7 +1184,7 @@
 
                     <!-- Carte 1 -->
                     <div class="cartotheque-slide">
-                        <img src="../img/Carte_rendu_boris.png" alt="" class="cartotheque-image">
+                        <img src="../img/Carte_rendu_boris.png" alt="test" class="cartotheque-image">
                         <div class="cartotheque-caption">
                             <a href="../img/Rendu sémiologie graphique 2 Octobre.pdf" target="_blank">
                             <h4 class="cartotheque-title"> Sémiologie graphique</h4>
@@ -1352,7 +1359,7 @@
                 <div class="col-md-6">
                     <div class="bg-section fade-in">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4><i class="fas fa-desktop me-2"></i>Logiciels SIG</h4>
+                            <h4><i class="fas fa-desktop me-2"></i> Logiciels SIG</h4>
                             <a href="compétences/competences_logiciels_sig.html" class="btn btn-sm btn-primary">
                                 <i class="fas fa-external-link-alt me-1"></i> Détails
                             </a>
@@ -1369,7 +1376,7 @@
 
                 <div class="col-md-6">
                     <div class="bg-section fade-in">
-                        <h4 class="mb-3"><i class="fas fa-desktop me-2"></i>Applications web cartographiques</h4>
+                        <h4 class="mb-3"><i class="fas fa-desktop me-2"></i> Applications web cartographiques</h4>
                         <p>....</p>
                         <div class="mt-3">
                             <span class="badge bg-primary mb-2">GEO Générateur </span>
@@ -1380,7 +1387,7 @@
 
                 <div class="col-md-6">
                     <div class="bg-section fade-in">
-                        <h4 class="mb-3"><i class="fas fa-code me-2"></i> Données et analyses</h4>
+                        <h4 class="mb-3"><i class="fa-solid fa-magnifying-glass-chart"></i> Données et analyses</h4>
                         <p>Connaissances en programmation pour l'analyse de données.</p>
                         <div class="mt-3">
                             <span class="badge bg-secondary mb-2">Python : <br> packages : matplotlib</span>
@@ -1392,7 +1399,7 @@
 
                 <div class="col-md-6">
                     <div class="bg-section fade-in">
-                        <h4 class="mb-3"><i class="fas fa-code me-2"></i>Gestionnaire de base de données</h4>
+                        <h4 class="mb-3"> <i class="fa-solid fa-database"></i> Gestionnaire de base de données</h4>
                         <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
                         <div class="mt-3">
                             <span class="badge bg-secondary mb-2">PostgreSQL</span>
@@ -1404,7 +1411,7 @@
 
                 <div class="col-md-6">
                     <div class="bg-section fade-in">
-                        <h4 class="mb-3"><i class="fas fa-code me-2"></i>Logiciels de design graphique</h4>
+                        <h4 class="mb-3"><i class="fa-solid fa-wand-magic-sparkles"></i> Logiciels de design graphique</h4>
                         <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
                         <div class="mt-3">
                             <span class="badge bg-secondary mb-2">Inkscape : logiciel de dessin vectoriel</span>
@@ -1430,7 +1437,7 @@
 
                 <div class="col-md-6">
                     <div class="bg-section fade-in">
-                        <h4 class="mb-3"><i class="fas fa-code me-2"></i>Gestion de projet</h4>
+                        <h4 class="mb-3"><i class="fa-solid fa-list-check"></i> Gestion de projet</h4>
                         <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
                         <div class="mt-3">
                             <span class="badge bg-secondary mb-2">Méthode AGILE </span>
