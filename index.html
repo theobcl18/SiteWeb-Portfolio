@@ -1,201 +1,1704 @@
-
 <!DOCTYPE html>
-<html lang="en"> 
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <title>Portfolio de Théo Bucaille</title>
+    <title>Portfolio - Théo Bucaille</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin="anonymous"/>
+
+
+    <!-- Style CSS personnalisé -->
+     <link rel="stylesheet" href="Portfolio_style.css">
+
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #ffffff;
+            --secondary: #488ed4;
+            --dark: #b84a4a;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #3A3534;
+            --gray-light: #adb5bd;
+            --map-color: #c6a719;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/fond_globe.jpg'); /* Chemin vers l'image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgb(164, 97, 20) !important;
+            /* background-color: rgb(157, 105, 38) !important; */
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item {
+            color : white;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .hero {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position:relative;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: min(500px, 80vw);
+            height: min(500px, 80vw);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.1) 0%, rgba(108, 99, 255, 0) 70%);
+        }
+
+        .hero h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 2rem;
+        }
+
+        .hero .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .hero .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .hero .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgb(192, 191, 207);
+        }
+
+        .hero .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .hero .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .profile-img {
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+            max-width: 100%;
+            height: auto;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.03);
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            /* box-shadow: 0 10px 30px rgb(205, 92, 0); */
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207, 140, 96);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .text-primary {
+        --bs-text-opacity 1;
+        color: rgb(253 104 13) !important;
+        } 
+
+
+        .btn-outline-primary:hover {
+            text-decoration: #adb5bd;
+        }
+
+        /* Styles pour le filtre de badges */
+        .badge-filter-container {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        /* Badge de filtre */
+        .filter-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-badge:hover {
+            background: rgba(254, 155, 56, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .filter-badge.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(254, 155, 56, 0.3);
+        }
+
+        .filter-badge .badge-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.75rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .filter-badge.active .badge-count {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animation pour les projets */
+        .project-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-card.hidden {
+            opacity: 0.3;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .project-card.visible {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mode AND/OR */
+        .filter-mode-info {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .badge-filter-container {
+                padding: 1rem;
+            }
+            
+            .filter-badge {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+
+
+
+
+        /* Style pour les boutons de filtrage */
+        /* Style pour les boutons actifs */
+        .tag-selection input[type="button"].active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Animation simple pour les projets */
+        .carto, .poster, .diag, .r, .terrain, .photo {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Cache les projets */
+        .hidden {
+            display: none !important;
+        }
+
+
+        .card {
+            background-color: rgba(30, 30, 30, 0.85);
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            padding: clamp(1.5rem, 3vw, 2rem);
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light);
+            font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+        }
+
+        .card-text {
+            color: var(--gray-light);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem);
+        }
+
+        .list-group-item span:first-child {
+            color: var(--gray-light);
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            color: var(--light);
+            box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+        }
+
+        .form-label {
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(254, 3, 3);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Styles pour la carte Leaflet */
+        #map {
+            height: 500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 2rem;
+            z-index: 1;
+        }
+
+        .leaflet-container {
+            background: var(--dark-light) !important;
+        }
+
+        .leaflet-popup-content {
+            color: var(--dark);
+        }
+
+        .custom-marker {
+            background: var(--primary);
+            border: 1px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+
+        .map-controls {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Styles pour les logos */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .institution-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: white;
+            padding: 5px;
+        }
+
+        .company-logo {
+            width: 80px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: white;
+            padding: 8px;
+        }
+
+        .location-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .location-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .education-item {
+            border-left-color: var(--primary);
+        }
+
+        .internship-item {
+            border-left-color: var(--secondary);
+        }
+
+        .search-item {
+            border-left-color: #ffc107;
+        }
+
+        /* Animation pour les sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Styles pour la bande de compétences */
+        .skills-scroll-container {
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 0;
+            background: rgba(31, 31, 31, 0.85);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .skills-scroll-track {
+            display: flex;
+            animation: scrollSkills 30s linear infinite;
+            gap: 3rem;
+            padding: 0 2rem;
+        }
+
+        .skill-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            transition: transform 0.3s ease;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .skill-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            border-color: rgb(205, 92, 0);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .skill-name {
+            font-weight: 600;
+            color: var(--light);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @keyframes scrollSkills {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-120px * 9 - 3rem * 9));
+            }
+        }
+
+        /* ----------------- Styles pour la cartothèque ------------------- */
+        .cartotheque-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(30, 30, 30, 0.85);
+            padding: 2rem;
+        }
+
+        .cartotheque-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .cartotheque-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cartotheque-image {
+            width: 100%;
+            max-width: 800px;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .cartotheque-image:hover {
+            transform: scale(1.02);
+        }
+
+        .cartotheque-caption {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .cartotheque-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .cartotheque-description {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .cartotheque-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .cartotheque-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cartotheque-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .cartotheque-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cartotheque-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .cartotheque-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cartotheque-indicator.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Modal pour l'affichage en plein écran */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .image-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Améliorations responsive spécifiques */
+        .container {
+            max-width: 100%;
+            padding-left: clamp(1rem, 3vw, 2rem);
+            padding-right: clamp(1rem, 3vw, 2rem);
+        }
+
+        .row {
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+
+        .col-md-6, .col-md-4, .col-md-8 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        /* Points de rupture personnalisés */
+        @media (max-width: 1200px) {
+            .hero::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                text-align: center;
+            }
+            
+            .hero .btn {
+                display: block;
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+
+            #map {
+                height: 400px;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .skill-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .skill-item {
+                min-width: 100px;
+            }
+
+            .cartotheque-image {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            #map {
+                height: 350px;
+            }
+
+            .cartotheque-image {
+                height: 250px;
+            }
+        }
+
+        /* Pour les très petits écrans */
+        @media (max-width: 400px) {
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            
+            .hero .btn {
+                padding: 0.75rem 1rem;
+            }
+            
+            .badge {
+                padding: 0.4rem 0.8rem;
+            }
+
+            .skill-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .skill-item {
+                min-width: 80px;
+            }
+        }
+
+        /* Style pour les marqueurs de cartes */
+        .map-marker {
+            background: var(--map-color);
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Style pour la nouvelle section dans la carte interactive */
+        .map-cartotheque-item {
+            border-left-color: var(--map-color) !important;
+        }
+
+        /* Styles pour les popups personnalisées */
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: linear-gradient(180deg, #e4953b 0%, #fece90 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .custom-popup .leaflet-popup-content {
+            margin: 15px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .custom-popup .leaflet-popup-tip {
+            background: #ffffff;
+        }
+
+        .popup-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 8px;
+        }
+
+        .popup-content {
+            font-size: 1em;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .popup-link {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .popup-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+
+    </style>
 </head>
 
-<body>
-<!--------------------------------------------------------HEADER------------------------------------------------------------------->
-    <header> 
-        <div class="navbar">
-		    <div class="logo">
-                <a href="#">
-                <img id="scroll-logo" src="img\logo_site_test.png" alt="Logo"/>
-                </a>
+<body class="bg-dark">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Théo Bucaille - Portfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
             </div>
-		    <ul class="links">
-                <li><a href="lien site direct" aria-current="page" class="active"> 🏠︎ Accueil</a></li>
-                <!-- <li><a href="services/services.html">Services</a></li> -->
-                <li><a href="travaux/travaux.html"> Portfolio</a></li>
-                <li><a href="profil/profil.html">Profil</a></li>
-                <li><a href="compétences/competences.html">Compétences</a></li>
-            </ul>					
-		    <div class="buttons">
-                <a target="_blank" href="contact\contactezmoi.html" class="action-button contact"> Contact</a>
-                <a target="_blank" href="compte_clients/client.html" class="action-button connection"> Mon Portail</a>
-            </div>
-		    <div class="burger-menu-button">			
-                <i class="fa-solid fa-bars"></i>
-		    </div>
         </div>
+    </nav>
 
-        <div class="burger-menu">
-        	<ul class="links">
-                <li><a href="lien site direct" aria-current="page">Accueil</a></li>
-                <!-- <li><a href="services/services.html">Services</a></li> -->
-                <li><a href="travaux/travaux.html"> Portfolio</a></li>
-                <li><a href="profil/profil.html">Profil</a></li>
-                <li><a href="compétences/competences.html">Compétences</a></li>
-                <div class="divider"></div>
-                <div class="buttons-burger-menu">
-                    <a target="_blank" href="contact/contactezmoi.html" class="action-button contact"> Contact</a>
-                    <a target="_blank" href="compte_clients/client.html" class="action-button connection"> Mon Portail</a>
+    <!----------------------------------------------------------------------------------->
+    <!------------------------------- SECTION HERO -------------------------------------->
+    <header class="hero">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-12">
+                    <h1 class="display-4 fw-bold">Bienvenue dans mon Portfolio ! Je suis <span class="text-primary"> Théo Bucaille </span></h1>
+                    <p class="lead mt-3">
+                        Étudiant en Master 1 SIGAT (Systèmes d'Information Géographique et Analyse des Territoires) à l'Université de Rennes 2, je suis actuellement à la recherche d'un stage pour une durée minimum de trois mois à partir de mai à mi-août 2026.
+                    </p>
+                    <div class="d-flex flex-wrap">
+                        <a href="#map-section" class="btn btn-primary btn-lg me-2">Voir mon profil</a>
+                        <a href="#contact" class="btn btn-outline-primary btn-lg">Me contacter</a>
+                    </div>
                 </div>
-            </ul>	
-        </div>
-        
-	</header>
-
-    <!-----------------------------------SCRIPT POUR BURGER MENU --------------------------------------->
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const burgerMenuButton = document.querySelector('.burger-menu-button');
-    const burgerMenuButtonIcon = document.querySelector('.burger-menu-button i');
-    const burgerMenu = document.querySelector('.burger-menu');
-    const header = document.querySelector('header');
-
-    burgerMenuButton.onclick = function () {
-        burgerMenu.classList.toggle('open');
-        const isOpen = burgerMenu.classList.contains('open');
-        burgerMenuButtonIcon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
-    };
-
-    window.addEventListener('scroll', function () {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-        });
-    });
-    </script>
-
-<!--------------------------------------------------------MAIN------------------------------------------------------------------->
-    <main>
-
-        <!---------------------------------Bannière d'introduction--------------------------->
-
-        <section class="page-banner"> 
-            <div class="overlay">
-                <h1 class="page-title"> UNE GROSSE EVOLUTION DE MON PORTFOLIO EST EN COURS DE REALISATION </h1>
-                <div class="slogan-box">
-                <p class="slogan">Master 1 Systèmes d’Information Géographique et Analyse des Territoires</p>
-                </div>
-                <p class="localisation"> Rennes </p>
             </div>
+        </div>
+    </header>
 
+    <span class="banniere-delimitation">
+                <img src="../img/dessin-banniere-delimitation.svg" alt="">
+    </span>
 
-            <!-- Délimitation fine décorative -->
-            <span class="banniere-delimitation">
-                <img src="img/dessin-banniere-delimitation.svg" alt="">
-            </span>
-        </section>
-
-        <section id="about" class="py-5">
+    <!-- SECTION À PROPOS -->
+    <section id="about" class="py-5">
         <div class="container">
             <h2 class="section-title">À propos</h2>
             <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="bg-section fade-in visible">
-                        <h4 class="mb-3">Mon parcours</h4>
+                    <div class="bg-section fade-in">
+                        <h2 class="mb-2"> Actualités </h2>
                         <p>
-                            Actuellement en Master SIGAT à l'Université de Rennes 2, je me suis spécialisé en géomatique au cours de mes études, et j'aimerais appliquer mes compétences dans des projets comme l'aménagement durable des territoires.
+                            <h4> Actuellement en première année de Master SIGAT à l'Université de Rennes 2, je me suis spécialisé en géomatique au cours de mes études. </h4>
                         </p>
                         <p>
-                         <span class="text-primary">Je recherche actuellement un stage de M1, principalement à Rennes, Colmar et le Calvados</span>
+                            <h4 class="text-primary"> <span class="red"> Je recherche activement un stage </span> pour appliquer mes compétences à des projets concrets. Je suis en recherche active à Rennes, Colmar ou aux alentours de Deauville.</h4>
                         </p>
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="bg-section fade-in visible">
-                        <h4 class="mb-3">Informations</h4>
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3">Informations personnelles</h4>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between">
-                                <span><i class="fas fa-map-marker-alt me-2"></i>Localisation</span><span class="fw-semibold">Rennes, France</span>
+                                <span><i class="fas fa-map-marker-alt me-2"></i>Localisation</span><span class="fw-semibold"> Rennes, France </span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
-                                <span><i class="fas fa-envelope me-2"></i>Email</span><span class="fw-semibold">gtbe189@gmail.com</span>
+                                <span><i class="fas fa-envelope me-2"></i>Email</span><span class="fw-semibold"> gtbe189@gmail.com </span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
-                                <span><i class="fas fa-phone me-2"></i>Téléphone</span><span class="fw-semibold">+33 6 10 29 11 31</span>
+                                <span><i class="fas fa-phone me-2"></i>Téléphone</span><span class="fw-semibold">+33 6 10 29 11 37</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span><i class="fas fa-graduation-cap me-2"></i>Formation</span><span class="fw-semibold">Master 1 SIGAT</span>
                             </li>
                         </ul>
                         <div class="social-links text-center mt-4">
-                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                            
+                            <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>        
+                            <a href="img/CV_MASTER_SIGAT_Bucaille Théo.pdf" target="_blank" class="">CV</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </section>
+    </section>
 
+    <!------------------- SECTION CARTE INTERACTIVE LEAFLET (diapo Boris) --------------->
+    <section id="map-section" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Mon parcours scolaire et professionnel en carte</h2>
+            
+            <div class="bg-section fade-in">
+                <div class="row">
+                    <div class="col-lg-16">
+                        <h4 class="mb-4"><i class="fas fa-map-marked-alt me-2 text-primary"></i> Mon parcours</h4>
 
-    </main>
+                        <!-- Liste des lieux - Mise en côte à côte -->
+                        <div class="row">
 
-    <script src="script.js"></script>
-    <div class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">×</span>
-          <img id="modal-image" src="" alt="Document Image">
-          <p id="modal-text" class="modal-text"></p>
+                        <!-- Lieux d'études -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="location-list mb-4">
+                                    <h5 class="text-primary mb-3"> <i class="fa-solid fa-graduation-cap"></i> Lieux d'études</h5>
+                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Université Rennes 2</h6>
+                                        <small class="text">Master SIGAT - 2025-2027</small>
+                                    </div>
+                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Université de Caen Normandie</h6>
+                                        <small class="text">Licence géographie et aménagement du territoire - 2021-2024</small>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- Lieux d'expériences professionnelles -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="location-list mb-4">
+                                    <h5 class="text-primary mb-3"> <i class="fa-solid fa-user-tie"></i> Expériences professionnelles</h5>
+                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Entre Bièvre et Rhônes</h6>
+                                        <small class="text">Base de données du foncier - 2025</small>
+                                    </div>
+                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Stage d'observation</h6>
+                                        <small class="text">Concept intérieur</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!----------------  Taille de la carte Leaflet ----------------->
+                    <div class="col-lg-8">
+                        <div id="map-parcours" style="height: 500px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <span class="et_pb_scroll_top et-pb-icon et-visible" style="display: inline;"></span> <!--ajout ??-->
+    <!-------------------------------------------------------------------->
+    <!--------------------- SECTION DES PROJETS -------------------------->
 
+    <section id="projects" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Tous les principaux projets de mon cursus</h2>
 
-
-<!------------------------------------------------FOOTER------------------------------------------------------>
-
-    <footer>
-		<div class="contenu-footer">
-            <div class="bloc footer-logo">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png" alt="Logo" class="footer-logo-img">
+                <!-- DIV DE FILTRAGE DYNAMIQUE -->
+            <div class="badge-filter-container mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-filter me-2 text-primary"></i>
+                    Filtrer par compétence :
+                </h5>
+                
+                <!-- Conteneur où les badges de filtrage vont apparaître -->
+                <div class="d-flex flex-wrap gap-2" id="badge-filters">
+                    <!-- Les badges seront générés automatiquement par JavaScript -->
+                    <!-- Un message s'affichera en attendant -->
+                    <div class="text-muted">Chargement des filtres...</div>
+                </div>
+                
+                <!-- Contrôles du filtre -->
+                <div class="mt-3 d-flex flex-wrap align-items-center gap-3">
+                    <button id="reset-filters" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-redo me-1"></i> Réinitialiser
+                    </button>
+                    <span id="filter-info" class="text-muted small">
+                        <span id="project-count">0</span> projet(s) trouvé(s)
+                    </span>
+                    <div class="form-check form-switch ms-auto">
+                        <input class="form-check-input" type="checkbox" id="filter-mode">
+                        <label class="form-check-label" for="filter-mode">
+                            <small>Filtre AND (tous les badges)</small>
+                        </label>
+                    </div>
+                </div>
             </div>
-			<div class="bloc footer-entreprise">
-                <div class="entreprise-texte">
-                    <h4>Entreprise spécialisée dans les Systèmes d’Information Géographique</h4>
+
+        <!------------------ CONTENEUR DES DIFFERENTS PROJETS ---------------------->
+            <div class="row g-4" id="projects-container">
+
+                <!-- Projet 1 -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis postgresql postgis">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-building-circle-check fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title"> STAGE - Mise en place d'une base de données foncier </h5>
+                            <p class="card-text flex-grow-1">
+                                Stage de 5 mois au sein de l'EPCI "Entre Bièvre et Rhônes" pour la création d'une base de données foncier.
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badges="qgis">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badges="PostgreSQL">PostgreSQL</span>
+                                <span class="badge bg-primary mb-2" data-badges="PostGIS">PostGIS</span>
+                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet et le mémoire</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="lien-social">
-                    <ul class="li-logo-footer">
-                        <li class="social-linkedin"><a target="_blank" href="https://www.linkedin.com/in/th%C3%A9o-bucaille/"><img src="https://cdn-icons-png.flaticon.com/128/3938/3938044.png" title="Suivez sur LinkedIn"></a></li>
-                        <li class="social-github"><a target="_blank" href=""><img src="https://cdn-icons-png.flaticon.com/128/270/270798.png" title="Suivez sur GitHub"></a></li>
-                    </ul>
+
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis diagnostic">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-lightbulb fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title"> Diagnostic de l'éclairage public </h5>
+                            <p class="card-text flex-grow-1">
+                                Diagnostic de l'éclairage public au sein de la prairie Saint-Martin à Rennes.
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="diagnostic">Diagnostic</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">.....</span>
+                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-			</div>
-            <div class="bloc footer-contact">
-                <div class="contact-texte"><h3>CONTACT</h3></div>
-                <div class="mail-tel">
-                    <p> 📧 Mail : <a href="mailto:gtbe189@gmail.com">gtbe189@gmail.com</a></p>
-                    <p>☎ Tel : 06 10 29 11 37</p>
-                    <a href="CV MASTER.pdf" target="_blank"> 📃 À propos (CV)</a>
+
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis analyse prospective">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fas fa-chart-line fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title"> Analyse matricielle </h5>
+                            <p class="card-text flex-grow-1">
+                                Analyse matricielle prospective sur l'installation de parc éolien au large de la Bretagne.
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="qgis"> QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="analyse">Analyse prospective</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">.....</span>
+                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-			</div>
-            <div class="bloc footer-portail">
-                <div class="portail-texte"><h3>CONNEXION</h3></div>
-                    <div class="et_pb_text_inner"><p><a href="" target="_blank" rel="noopener">Accédez à votre compte sur le portail</a></p></div>
-			    </div>
+
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis cartographie">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fas fa-map-marked-alt fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Analyse multicritère</h5>
+                            <p class="card-text flex-grow-1">
+                                Scoring
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="cartographie">Cartographie</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
+                                <!-- <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis enquêtes cartographie">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-person-dots-from-line fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title"> Diagnostic de territoire </h5>
+                            <p class="card-text flex-grow-1">
+                                Diagnostic territorial de l'EPCI Seulles Terre et Mer (14).                            
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="cartographie">Cartographie</span>
+                                <span class="badge bg-primary mb-2" data-badge="enquêtes">enuquêtes par questionnaire</span>
+                                <span class="badge bg-primary mb-2" data-badge="enquêtes">qgis</span>
+                                <a href="alerte-projects_list\Projet-diagnostic-de-territoire-STM.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-tree fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Détection des écotones</h5>
+                            <p class="card-text flex-grow-1">
+                                Détection des écotones à partir de données LIDAR et analyse statistique sous R.
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="R">R</span>
+                                <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
+                                <span class="badge bg-primary mb-2" data-badge="LIDAR">LIDAR</span>
+                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message quand aucun projet ne correspond -->
+                <div id="no-projects-message" class="text-center mt-5 d-none">
+                    <div class="bg-section p-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="mb-3">Aucun projet ne correspond aux filtres</h4>
+                        <p class="text-muted">Essayez avec d'autres badges ou réinitialisez les filtres</p>
+                        <button id="reset-filters-btn" class="btn btn-primary">
+                            <i class="fas fa-redo me-2"></i>Réinitialiser les filtres
+                        </button>
+                    </div>
+                </div>
+                
             </div>
-            <div class="mentions">
-                <p>Tous droits réservés à .... 2025 | <a href="">Mentions légales Données personnelles et Cookies</a> | Site réalisé par Bucaille Théo</p>
-			</div>
-		</div>
-	</footer>
+        </div>
+    </section>
 
-    <!------------------------------------------------FIN DU FOOTER------------------------------------------------------>
+    <!------------------ SECTION DE LA CARTOTHEQUE ---------------------------->
 
+    <section id="cartotheque" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Cartothèque</h2>
+            
+            <div class="cartotheque-container fade-in">
+                <div class="cartotheque-slider" id="cartothequeSlider">
+
+                    <!-- Carte 1 -->
+                    <div class="cartotheque-slide">
+                        <img src="../img/Carte_rendu_boris.png" alt="test" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <a href="../img/Rendu sémiologie graphique 2 Octobre.pdf" target="_blank">
+                            <h4 class="cartotheque-title"> Sémiologie graphique</h4>
+                            <p class="cartotheque-description">Analyse statistique composé de données issues de l'INSEE et de l'IGN 📖 - Master</p>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte 2 -->
+                     <div class="cartotheque-slide">
+                        <img src="../img/rendu_indic_spatia_carte.png" alt="" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <a href="../img/rendu_indic_spatia.pdf" target="_blank">
+                            <h4 class="cartotheque-title"> Indicateurs spatialisés</h4>
+                            <p class="cartotheque-description">Analyse spatiale composé de données issues de l'INSEE et de l'IGN 📖 - Master</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Carte 3 -->
+                    <div class="cartotheque-slide">
+                        <img src="../img/rendu_scoring.png" alt="" class="cartotheque-image">
+                        <div class="cartotheque-caption">
+                            <a href="../img/RENDU SCORING.pdf" target="_blank">
+                            <h4 class="cartotheque-title"> Analyse multicritère  </h4>
+                            <p class="cartotheque-description">Scoring de localisation idéale pour un logement étudiant à Rennes 📖 - Master</p>
+                            </a>
+                        </div>
+                    </div>
+
+
+            
+                </div>
+                
+                <div class="cartotheque-nav">
+                    <button class="cartotheque-btn" id="prevBtn" aria-label="Carte précédente">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="cartotheque-indicators" id="cartothequeIndicators">
+                        <!-- Les indicateurs seront générés dynamiquement par JavaScript -->
+                    </div>
+                    
+                    <button class="cartotheque-btn" id="nextBtn" aria-label="Carte suivante">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--------------------- SECTION COMPÉTENCES ------------------------>
+    <section id="skills" class="py-5">
+        <div class="container">
+            <h2 class="section-title"> Compétences en Géomatique</h2>
+            
+            <!-- Bande déroulante des compétences -->
+            <div class="skills-scroll-container fade-in">
+                <div class="skills-scroll-track">
+                    <!-- QGIS -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/QGIS_logo_new.svg/1200px-QGIS_logo_new.svg.png" alt="QGIS" class="skill-logo">
+                        <span class="skill-name">QGIS</span>
+                    </div>
+                    
+                    <!-- ArcGIS -->
+                    <div class="skill-item">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Pro.png" alt="ArcGIS" class="skill-logo">
+                        <span class="skill-name">ArcGIS</span>
+                    </div>
+                    
+                    <!-- SQL -->
+                    <div class="skill-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2772/2772128.png" alt="SQL" class="skill-logo">
+                        <span class="skill-name">SQL</span>
+                    </div>
+                    
+                    <!-- Python -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png" alt="Python" class="skill-logo">
+                        <span class="skill-name">Python</span>
+                    </div>
+                    
+                    <!-- R -->
+                    <div class="skill-item">
+                        <img src="https://www.r-project.org/logo/Rlogo.png" alt="R" class="skill-logo">
+                        <span class="skill-name">R</span>
+                    </div>
+                    
+                    <!-- FME -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/FME_Software_Logo.svg/1200px-FME_Software_Logo.svg.png" alt="FME" class="skill-logo">
+                        <span class="skill-name">FME</span>
+                    </div>
+                    
+                    <!-- HTML -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/1200px-HTML5_logo_and_wordmark.svg.png" alt="HTML" class="skill-logo">
+                        <span class="skill-name">HTML</span>
+                    </div>
+                    
+                    <!-- CSS -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/1200px-CSS3_logo_and_wordmark.svg.png" alt="CSS" class="skill-logo">
+                        <span class="skill-name">CSS</span>
+                    </div>
+
+                    <!-- Inkscape -->
+                    
+                    <!-- JavaScript -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1200px-Unofficial_JavaScript_logo_2.svg.png" alt="JavaScript" class="skill-logo">
+                        <span class="skill-name">JavaScript</span>
+                    </div>
+                    
+                    <!-- Répétition pour l'animation continue -->
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/QGIS_logo_new.svg/1200px-QGIS_logo_new.svg.png" alt="QGIS" class="skill-logo">
+                        <span class="skill-name">QGIS</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Pro.png" alt="ArcGIS" class="skill-logo">
+                        <span class="skill-name">ArcGIS</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2772/2772128.png" alt="SQL" class="skill-logo">
+                        <span class="skill-name">SQL</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png" alt="Python" class="skill-logo">
+                        <span class="skill-name">Python</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://www.r-project.org/logo/Rlogo.png" alt="R" class="skill-logo">
+                        <span class="skill-name">R</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://www.safe.com/wp-content/uploads/2020/06/FME-2020-Color-Positive.png" alt="FME" class="skill-logo">
+                        <span class="skill-name">FME</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/1200px-HTML5_logo_and_wordmark.svg.png" alt="HTML" class="skill-logo">
+                        <span class="skill-name">HTML</span>
+                    </div>
+
+                    <div class="skill-item">
+                        <img src="" alt="Illustrator" class="skill-logo">
+                        <span class="skill-name">Inkscape</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/1200px-CSS3_logo_and_wordmark.svg.png" alt="CSS" class="skill-logo">
+                        <span class="skill-name">CSS</span>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/1200px-Unofficial_JavaScript_logo_2.svg.png" alt="JavaScript" class="skill-logo">
+                        <span class="skill-name">JavaScript</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Détails des compétences -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4><i class="fas fa-desktop me-2"></i> Logiciels SIG</h4>
+                            <a href="compétences/competences_logiciels_sig.html" class="btn btn-sm btn-primary">
+                                <i class="fas fa-external-link-alt me-1"></i> Détails
+                            </a>
+                        </div>
+                        <p>Maîtrise approfondie des principaux logiciels SIG pour la création, l'analyse et la visualisation de données géospatiales.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary mb-2">QGIS</span>
+                            <span class="badge bg-primary mb-2">ArcGIS Pro</span>
+                            <span class="badge bg-primary mb-2">ArcGIS Online</span>
+                            <span class="badge bg-primary mb-2">FME</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fas fa-desktop me-2"></i> Applications web cartographiques</h4>
+                        <p>Solution Geo Software de Ciril Group & Apprentissage de GeoServer en autodidact</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary mb-2">GEO Générateur </span>
+                            <span class="badge bg-primary mb-2">GeoServer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fa-solid fa-magnifying-glass-chart"></i> Données et analyses</h4>
+                        <p>Connaissances en programmation pour l'analyse de données.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-secondary mb-2">Python : <br> packages : matplotlib</span>
+                            <span class="badge bg-secondary mb-2">R : data analyst dataviz, <br> packages : SF, Terra, ggplot2, leaflet, FactoMineR </span>
+                            <span class="badge bg-secondary mb-2">SQL : gérer, manipuler et interroger les données - BDD relationnelle </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"> <i class="fa-solid fa-database"></i> Gestionnaire de base de données</h4>
+                        <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-secondary mb-2">PostgreSQL</span>
+                            <span class="badge bg-secondary mb-2">PGadmin</span>
+                            <span class="badge bg-secondary mb-2">DBeaver</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fa-solid fa-wand-magic-sparkles"></i> Logiciels de design graphique</h4>
+                        <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-secondary mb-2">Inkscape : logiciel de dessin vectoriel</span>
+                            <span class="badge bg-secondary mb-2">Canva : outil de design graphique en ligne / création de contenu visuel</span>
+                            <span class="badge bg-secondary mb-2">Affinity designer : logiciel de dessin vectoriel et design graphique</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fas fa-code me-2"></i> Outils de développement </h4>
+                        <p> Un peu d'expérience personnelle grâce à la création de ce site web - en cours d'apprentissage </p>
+                        <div class="mt-3">
+                            <span class="badge bg-secondary mb-2">HTML : structuration d'une page web</span>
+                            <span class="badge bg-secondary mb-2">CSS : esthétique d'une page web</span>
+                            <span class="badge bg-secondary mb-2">JavaScript : interactivité d'une page web</span>
+                            <span class="badge bg-secondary mb-2">Git : outil de contrôle de version</span>
+                            <span class="badge bg-secondary mb-2">Github : Dépôt Git en ligne </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <h4 class="mb-3"><i class="fa-solid fa-list-check"></i> Gestion de projet</h4>
+                        <p>Connaissances en programmation pour l'analyse de données, l'automatisation de processus et le développement d'applications web.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-secondary mb-2">Méthode AGILE </span>
+                            <span class="badge bg-secondary mb-2">Méthode V</span>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!------------------------------------------ SECTION SKILLS - SECONDAIRE -------------------------------------------->
+
+    <section id="skills-secondary" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Avant tout des compétences en Géographie...</h2>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4><i class="fas fa-desktop me-2"></i>Documents de planification territoriale</h4>
+                            <a href="" class="btn btn-sm btn-primary">
+                                <i class="fas fa-external-link-alt me-1"></i> Détails
+                            </a>
+                        </div>
+                        <p> Maîtrise des documents de planification structurant et connaissance de leur portée juridique, de leurs articulations et de leur prise en compte dans les politiques publiques d’aménagement, de développement durable et d’égalité des territoires. </p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary mb-2"> SRADDET </span>
+                            <span class="badge bg-primary mb-2"> SCOT </span>
+                            <span class="badge bg-primary mb-2"> PLUi </span>
+                            <span class="badge bg-primary mb-2"> PLU </span>
+                            <span class="badge bg-primary mb-2"> carte communale </span>
+                            <span class="badge bg-primary mb-2"> RNU </span>
+                            <span class="badge bg-primary mb-2"> SUP </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="bg-section fade-in">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4><i class="fas fa-desktop me-2"></i>Techniques d'enquêtes </h4>
+                            <a href="" class="btn btn-sm btn-primary">
+                                <i class="fas fa-external-link-alt me-1"></i> Détails
+                            </a>
+                        </div>
+                        <p>Maîtrise approfondie des techniques d'enquêtes par entretiens et par questionnaires. </p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary mb-2">Entretiens</span>
+                            <span class="badge bg-primary mb-2">Questionnaires</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+            
+
+    <!--------------------- SECTION CONTACT -------------------------->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="bg-section h-100 fade-in">
+                        <h4 class="mb-3">Coordonnées</h4>
+                        <p>N'hésitez pas à me contacter pour discuter de projets, stages ou opportunités professionnelles.</p>
+                        
+                        <div class="mt-4">
+                            <p><i class="fas fa-envelope me-2 text-primary"></i> gtbe189@gmail.com</p>
+                            <p><i class="fas fa-phone me-2 text-primary"></i> +33 6 10 29 11 37</p>
+                            <p><i class="fas fa-map-marker-alt me-2 text-primary"></i> Rennes, France</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="mailto:gtbe189@gmail.com" class="btn btn-outline-primary me-2 mb-2">
+                                <i class="fas fa-envelope me-1"></i> M'écrire un email
+                            </a>
+                            <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank" class="btn btn-outline-primary mb-2">
+                                <i class="fab fa-linkedin-in me-1"></i> LinkedIn
+                            </a>
+                            <a href="img/CV_MASTER_SIGAT_Bucaille Théo.pdf" target="_blank" class="btn btn-outline-primary mb-2">
+                                <i class=""></i> Lire mon CV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!------------------------------------ SCRIPT JAVASCRIPT ---------------------------------------->
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin="anonymous"></script>
+
+    <script src="Portfolio_java.js"></script>
 </body>
 </html>
