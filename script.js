@@ -150,10 +150,16 @@
             <a href="#item4" class="popup-link" onclick="document.querySelector('.item4').scrollIntoView({behavior: 'smooth'});">
                 📖 Voir les détails
             </a>
+            <a href="https://uniform.unicaen.fr/catalogue/formation/licences/5422-licence-geographie-et-amenagement?s=SEGGAT" target="_blank" class="popup-link">
+                🌐 Site de la formation de licence géographie et aménagement du territoire
+            </a>
+            <a href="https://uniform.unicaen.fr/catalogue/formation/licences-pro/7184-licence-pro-cartographie--topographie-et-systemes-d-info.-geographique-p.-sig--diagnostic-et-amenagement-des-territoires?s=SEGGAT" target="_blank" class="popup-link">
+                🌐 Site de la formation de licence professionnelle SIGDAT
+            </a>
         `, {
             className: 'custom-popup',
             maxWidth: 300
-        });
+        });Ò
 
         // 3. Communauté de Communes Entre Bièvre et Rhône (Beaurepaire)
         let biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(mapParcours);
@@ -166,12 +172,12 @@
                 <strong>Mission2 :</strong> Réalisation d'un Atlas cartographique des Servitudes d'Utilités Publiques (SUP) pour le PLUi
             </div>
             <a href="#item2" class="popup-link" onclick="document.querySelector('.item2').scrollIntoView({behavior: 'smooth'});">
-                🔍 Voir l'expérience
+                🔍 Voir le projet
             </a>
             <a href="https://www.entre-bievreetrhone.fr/" target="_blank" class="popup-link">
                 🔍 Voir le site de la Communauté de Communes
             </a>
-            <a href="chemin/vers/votre/rapport-stage.pdf" target="_blank" class="popup-link" style="margin-left: 8px;">
+            <a href="img/memoire_stage_cceber.pdf" target="_blank" class="popup-link" style="margin-left: 8px;">
                     📄 Rapport PDF
             </a>
         `, {
