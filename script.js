@@ -159,7 +159,7 @@
         `, {
             className: 'custom-popup',
             maxWidth: 300
-        });Ò
+        });
 
         // 3. Communauté de Communes Entre Bièvre et Rhône (Beaurepaire)
         let biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(mapParcours);
@@ -207,11 +207,6 @@
 
 
 
-
-
-
-
-
         let map;
         let markers = [];
         let locations = [
@@ -243,7 +238,7 @@
         const allLocations = [...locations, ...cartothequeLocations];
 
         // Initialisation de la carte
-        function initMap() {
+        /* function initMap() {
             // Centrer sur la France avec un zoom adapté
             map = L.map('map').setView([46.603354, 1.888334], 6);
             
@@ -316,7 +311,7 @@
         // Initialiser la carte une fois le DOM chargé
         // ---------------------------------------------
 
-        document.addEventListener('DOMContentLoaded', initMap);
+        document.addEventListener('DOMContentLoaded', initMap);*/
 
         // Gestion de la cartothèque
         document.addEventListener('DOMContentLoaded', function() {
