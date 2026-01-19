@@ -1,17 +1,19 @@
-# Hi, I'm Théo 👋
+# Bonjour, Je suis Théo 👋
 
-I'm a GIS student.
+Je suis étudiant en Master SIGAT
 
-- 🔭 I’m currently working on my portfolio
-- 🌱 I’m learning: dataviz, 
-- 📫 How to reach me: gtbe189@gmail.com
+- 🔭 Ce portfolio est en constante évolution
+- 🌱 Je travaille sur tout le cycle de données, et j'utilise notamment les données dans différents projets
+- 📫 Pour me contacter: gtbe189@gmail.com
 - ⚡ Fun fact: J'ai gagné le concours du poster SIGAT 
 
 ## Skills
 - GIS: QGIS, ARCGIS, R
-- Tools: Git
+- Outils: Git
 
 ## Projects
-- ....
+- Mise en place d'une base de données du foncier d'une EPCI
+- Détection des écotones par des données LIDAR
+- Analyse prospective sur l'installation de parc éolien en mer
 
 Thanks for stopping by! ✨
