@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents de planification territoriale - Compétences | Théo Bucaille</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Style CSS personnalisé -->
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #ffffff;
+            --secondary: #488ed4;
+            --dark: #000000;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgb(157, 105, 38) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(205, 92, 0, 0.3);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgba(205, 92, 0, 0.5);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .text-primary {
+            color: rgb(253, 104, 13) !important;
+        }
+
+        /* Styles pour les cartes et documents */
+        .document-card {
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .document-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(254, 155, 56, 0.2);
+        }
+
+        .document-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pdf-icon {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .back-button {
+            margin-bottom: 2rem;
+        }
+
+        .back-button a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-button a:hover {
+            color: var(--primary);
+        }
+
+        .skill-detail-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            background: rgba(30, 30, 30, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        /* Styles pour les cartes de cours */
+        .course-card {
+            border: 2px solid transparent;
+            background: linear-gradient(rgba(30, 30, 30, 0.9), rgba(30, 30, 30, 0.9)) padding-box,
+                        linear-gradient(135deg, var(--primary), var(--secondary)) border-box;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(254, 155, 56, 0.3);
+        }
+
+        /* Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+            
+            .document-preview {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille - Portfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION PRINCIPALE -->
+    <section class="py-5" style="margin-top: 80px;">
+        <div class="container">
+            <!-- Bouton retour -->
+            <div class="back-button">
+                <a href="../index.html">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux compétences
+                </a>
+            </div>
+
+            <!-- Titre principal -->
+            <h1 class="section-title">Documents de planification territoriale</h1>
+
+            <!-- Introduction -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="mb-3">Maîtrise des documents de planification territoriale</h2>
+                        <p class="lead">
+                            À travers mon parcours académique et mon expérience professionnelle, j'ai développé une expertise solide dans la compréhension, l'analyse et la production de documents de planification territoriale. De la théorie universitaire à la pratique professionnelle, j'ai appris à manier ces outils essentiels de l'aménagement du territoire.
+                        </p>
+                        <div class="mt-4">
+                            <span class="badge bg-primary">SRADDET</span>
+                            <span class="badge bg-primary">SCOT</span>
+                            <span class="badge bg-primary">PLUi</span>
+                            <span class="badge bg-primary">PLU</span>
+                            <span class="badge bg-primary">Carte communale</span>
+                            <span class="badge bg-primary">RNU</span>
+                            <span class="badge bg-primary">SUP</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <i class="fas fa-map-marked-alt fa-5x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1 : Formation académique -->
+            <div class="bg-section fade-in">
+                <h2 class="mb-4"><i class="fas fa-graduation-cap text-primary me-2"></i>Formation académique</h2>
+                <p>Au cours de ma licence et mon master, j'ai étudié en profondeur les différents documents de planification territoriale :</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="course-card mb-3">
+                            <h5><i class="fas fa-book text-primary me-2"></i>Analyse des documents d'urbanisme</h5>
+                            <p class="mb-2">Étude comparative des SCOT, PLU et cartes communales</p>
+                            <small class="text-mute">Licence Géographie - 2022</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="course-card mb-3">
+                            <h5><i class="fas fa-landmark text-primary me-2"></i>Droit de l'urbanisme</h5>
+                            <p class="mb-2">Approfondissement du cadre juridique des documents de planification</p>
+                            <small class="text-mute">Master SIGAT - 2025</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="course-card mb-3">
+                            <h5><i class="fas fa-project-diagram text-primary me-2"></i>Atelier professionnel</h5>
+                            <p class="mb-2">Réalisation de diagnostics territoriaux</p>
+                            <small class="text-mute">Licence pro SIGDAT - 2024</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="course-card mb-3">
+                            <h5><i class="fas fa-chart-line text-primary me-2"></i>Méthodologie de diagnostic</h5>
+                            <p class="mb-2">Élaboration de diagnostics territoriaux</p>
+                            <small class="text-mute">Licence et Master</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2 : Expérience professionnelle - Atlas des SUP -->
+            <div class="bg-section fade-in">
+                <h2 class="mb-4"><i class="fas fa-briefcase text-primary me-2"></i>Expérience professionnelle - Atlas des SUP</h2>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h4>Stage - Communauté de Communes Entre Bièvre et Rhône</h4>
+                        <p>Dans le cadre de mon stage de 5 mois, j'ai réalisé un atlas des servitudes d'utilités publiques (SUP) :</p>
+                        <ul>
+                            <li>Recherche et collecte des données de servitudes</li>
+                            <li>Mise à jour des servitudes</li>
+                            <li>Création de cartographies conformes aux standards CNIG</li>
+                            <li>Rédaction de notices explicatives</li>
+                            <li>Organisation des documents par commune</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <i class="fas fa-layer-group fa-4x text-primary"></i>
+                    </div>
+                </div>
+
+                <!-- Galerie de cartes de l'Atlas SUP -->
+                <h4 class="mt-5 mb-4"><i class="fas fa-map text-primary me-2"></i>Cartographies réalisées</h4>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="document-card">
+                            <img src="../img/BEAUREPAIRE_SUP_page-0001.jpg" alt="Carte SUP commune 1" class="document-preview">
+                            <h5>Carte des servitudes - Beaurepaire</h5>
+                            <a href="../img/BEAUREPAIRE_SUP_page-0001.jpg" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-eye me-1"></i>Voir la carte
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="document-card">
+                            <img src="../img/SAINT-CLAIR-DU-RHONE_SUP_page-0001.jpg" alt="Carte SUP commune 2" class="document-preview">
+                            <h5>Carte des servitudes - Saint-Clair-du-Rhône</h5>
+                            <a href="../img/SAINT-CLAIR-DU-RHONE_SUP_page-0001.jpg" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-eye me-1"></i>Voir la carte
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="document-card">
+                            <img src="../img/SAINT-PRIM_SUP_page-0001.jpg" alt="Carte SUP commune 3" class="document-preview">
+                            <h5>Carte des servitudes - Saint-Prim</h5>
+                            <a href="../img/SAINT-PRIM_SUP_page-0001.jpg" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-eye me-1"></i>Voir la carte
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3 : Réalisations académiques -->
+            <div class="bg-section fade-in">
+                <h2 class="mb-4"><i class="fas fa-file-alt text-primary me-2"></i>Réalisations académiques</h2>
+                <p>Documents de planification et diagnostics réalisés dans le cadre de ma formation :</p>
+                
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="document-card">
+                            <div class="pdf-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h5>Diagnostic territorial Seulles Terre et Mer - Licence professionnelle SIGDAT</h5>
+                            <a href="../img/Diag compressé.pdf" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-download me-1"></i>Télécharger PDF
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="document-card">
+                            <div class="pdf-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h5>Analyse consommation de l'espace et documents d'urbanisme</h5>
+                            <a href="../img/rendu_BUCAILLE_DANIELO_HERVE.pdf" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-download me-1"></i>Télécharger PDF
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="document-card">
+                            <div class="pdf-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h5>Atlas des servitudes d'utilité publique (format portrait)</h5>                            
+                            <a href="../img" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-download me-1"></i>Télécharger PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4 : Compétences spécifiques -->
+            <div class="bg-section fade-in">
+                <h2 class="mb-4"><i class="fas fa-cogs text-primary me-2"></i>Compétences spécifiques</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="skill-detail-item">
+                            <h5><i class="fas fa-check-circle text-primary me-2"></i>Analyse et compréhension</h5>
+                            <ul class="mt-3">
+                                <li>Interprétation des documents d'urbanisme (PLU, SCOT, SUP)</li>
+                                <li>Analyse des contraintes réglementaires</li>
+                                <li>Compréhension des enjeux territoriaux</li>
+                                <li>Lecture et interprétation des cartes réglementaires</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="skill-detail-item">
+                            <h5><i class="fas fa-check-circle text-primary me-2"></i>Production et rédaction</h5>
+                            <ul class="mt-3">
+                                <li>Rédaction de documents techniques</li>
+                                <li>Création de cartographies conformes CNIG</li>
+                                <li>Rédaction de notices explicatives</li>
+                                <li>Organisation des documents par thématique</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section retour -->
+            <div class="text-center mt-5">
+                <a href="../index.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux compétences
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+    <script>
+        // Animation pour les éléments fade-in
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = () => {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            // Initial check
+            fadeInOnScroll();
+            
+            // Check on scroll
+            window.addEventListener('scroll', fadeInOnScroll);
+            
+            // Mettre à jour l'année dans le footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
