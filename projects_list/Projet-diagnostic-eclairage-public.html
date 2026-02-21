@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic mise en lumière - Prairies Saint-Martin</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #f31212;
+            --secondary: #488ed4;
+            --dark: #000000;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #3A3534;
+            --gray-light: #adb5bd;
+            --map-color: #c6a719;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/fond_globe.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(105, 102, 102, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgb(164, 97, 20) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item {
+            color : white;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .stage-header {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stage-header h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        .stage-header p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 2rem;
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207, 140, 96);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .text-primary {
+        --bs-text-opacity 1;
+        color: rgb(253 104 13) !important;
+        } 
+
+        .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(254, 155, 56, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(254, 155, 56, 0.4);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(254, 3, 3);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Animation pour les sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Section entreprise */
+        .company-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Infos stage */
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .info-card h5 {
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .info-card p {
+            color: var(--gray-light);
+            margin: 0;
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        /* Style pour les tableaux */
+        .table-custom {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            color: var(--light);
+        }
+
+        .table-custom th {
+            background-color: var(--primary);
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .table-custom td, .table-custom th {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        .container {
+            max-width: 100%;
+            padding-left: clamp(1rem, 3vw, 2rem);
+            padding-right: clamp(1rem, 3vw, 2rem);
+        }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+            
+            .stage-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .stage-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Styles pour la galerie d'images */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-caption {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-dark">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- EN-TÊTE DU PROJET -->
+    <header class="stage-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold">Diagnostic de la mise en lumière des Prairies Saint-Martin</h1>
+                    <p class="lead">
+                        Analyse des usages, besoins et enjeux d'éclairage du Parc Naturel Urbain rennais
+                    </p>
+                    <div class="d-flex flex-wrap">
+                        <a href="../index.html#projects" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL DU PROJET -->
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    
+                    <!-- Section présentation -->
+                    <div class="company-section fade-in">
+                        <h3 class="mb-4">Présentation de la zone étudiée</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-8 mx-auto">
+                                <p class="lead mb-4">
+                                    <strong>28 hectares</strong> • Labellisé ENS en 2024 • Zoné en trame noire
+                                </p>
+                                <p>
+                                    Ancien site industriel reconverti en Parc Naturel Urbain, les Prairies Saint-Martin doivent concilier usages sociaux et récréatifs avec les enjeux environnementaux. Le parc s'organise en gradient Ouest/Est :
+                                </p>
+                                <ul class="text-start">
+                                    <li><strong>Ouest</strong> → plus artificialisé et sec, site inondable avec parcours moins aisés</li>
+                                    <li><strong>Est</strong> → plus préservé et humide, pensé comme un parc public avec accès facilité</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Objectifs -->
+                        <div class="row mt-5">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-leaf fa-3x text-primary mb-3"></i>
+                                    <h5>Réduire la pollution lumineuse</h5>
+                                    <p>Préserver la biodiversité</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                                    <h5>Harmoniser les horaires</h5>
+                                    <p>Éclairage public sur le territoire</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-euro-sign fa-3x text-primary mb-3"></i>
+                                    <h5>Limiter les coûts</h5>
+                                    <p>Forte hausse des prix de l'énergie</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-4 fst-italic text-center">
+                            L'aménagement lumineux du parc est-il cohérent avec les objectifs affichés par la commune ?
+                        </p>
+                    </div>
+
+                    <!-- Informations du projet -->
+                    <div class="bg-section fade-in">
+                        <div class="stage-info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h5>Période</h5>
+                                <p>Octobre - Décembre 2024</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h5>Formation</h5>
+                                <p>Master 1 SIGAT</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-users"></i>
+                                <h5>Équipe</h5>
+                                <p>Travail à 4</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chronologie du projet -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Gestion de projet</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">14/10</span>
+                                    <p>Lancement atelier lumière</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">24/10</span>
+                                    <p>Découpage du parc</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">13/11</span>
+                                    <p>Initiation capteurs</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">09/12</span>
+                                    <p>Relevés de terrain</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="mt-4">
+                            <strong>Méthodologie retenue :</strong> Échantillonnage par continuité de cheminements avec qualification par zones.
+                            Utilisation de QFIELD avec dictionnaires d'attributs et montage de capteurs Edulab.
+                        </p>
+                    </div>
+
+                    <!-- Données et méthodologie -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Données et méthodologie</h2>
+                        
+                        <h5 class="mb-3">Données en entrée mobilisées :</h5>
+                        <div class="table-responsive">
+                            <table class="table table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Jeux de données</th>
+                                        <th>Source</th>
+                                        <th>Géométrie</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Luminosité par continuités</td>
+                                        <td>Capteurs Edulab</td>
+                                        <td>Points</td>
+                                        <td>Mesures ponctuelles de luminosité géoréférencées</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Réseaux de cheminements</td>
+                                        <td>OpenStreetMap</td>
+                                        <td>Lignes</td>
+                                        <td>Catégorisation des chemins piétons, cyclables</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Espaces naturels</td>
+                                        <td>OpenStreetMap</td>
+                                        <td>Polygones</td>
+                                        <td>Zones végétalisées et naturelles</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Occupation du sol</td>
+                                        <td>BD TOPO IGN</td>
+                                        <td>Polygones</td>
+                                        <td>Forêts, prairies</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mobilier urbain</td>
+                                        <td>OpenStreetMap</td>
+                                        <td>Points</td>
+                                        <td>Parkings, bancs, bars</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">Formes des résultats :</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="bg-dark p-3 rounded">
+                                    <h6><i class="fas fa-map text-primary me-2"></i>Cartographie</h6>
+                                    <ul>
+                                        <li>Usages de mobilités</li>
+                                        <li>Zones naturelles</li>
+                                        <li>Luminosité</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-dark p-3 rounded">
+                                    <h6><i class="fas fa-chart-bar text-primary me-2"></i>Graphiques</h6>
+                                    <ul>
+                                        <li>Boxplot luminosité / visibilité</li>
+                                        <li>Histogramme luminosité / usages</li>
+                                        <li>Histogramme luminosité / type d'éclairage</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Résultats -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Résultats du diagnostic</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stat-card mb-3">
+                                    <h5>Forte disparité d'éclairage</h5>
+                                    <p>Liée aux types de cheminements observés</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card mb-3">
+                                    <h5>Visibilité et diffusion</h5>
+                                    <p>Une forte visibilité entraîne une forte diffusion de la lumière → faible valeur de lux</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <span class="stat-number">Piétons</span>
+                                    <p>Usage diurne principal</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <span class="stat-number">Vélos</span>
+                                    <p>Zone de transit en soirée</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <span class="stat-number">Éclairage</span>
+                                    <p>Plus important sur voies cyclables</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5 class="mb-3">Moyennes de luminosité par type d'éclairage :</h5>
+                            <ul>
+                                <li>Lampadaire avec néon : valeur plus élevée</li>
+                                <li>Bornes basses : valeur très faible</li>
+                                <li>Lampadaires à LED : réduction consommation énergétique</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Diagnostic -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Diagnostic</h2>
+                        
+                        <h5>Cohérence avec les objectifs de Rennes Métropole</h5>
+                        <ul>
+                            <li>
+                                <strong>Réduction pollution lumineuse :</strong>
+                                <p>La plupart des chemins en zone naturelle ne sont pas éclairés → cohérent</p>
+                            </li>
+                            <li>
+                                <strong>Limiter les coûts de l'énergie :</strong>
+                                <p>Utilisation de néons moins énergivores → cohérent</p>
+                            </li>
+                        </ul>
+
+                        <h5 class="mt-4">Cohérence avec les usages identifiés</h5>
+                        <p>
+                            Les chemins cyclables sont mieux éclairés que les chemins pédestres. Le parc se transformant en zone de transit 
+                            (principalement cycliste) à la tombée de la nuit, la mise en lumière est cohérente avec cet usage.
+                        </p>
+                    </div>
+
+                    <!-- Limites et perspectives -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Limites et perspectives</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-danger">Limites</h5>
+                                <ul>
+                                    <li>Manque de précision pour certains relevés</li>
+                                    <li>Données en entrée limitées (énergie, biodiversité)</li>
+                                    <li>Objectifs de mise en lumière difficiles à appréhender</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Perspectives</h5>
+                                <ul>
+                                    <li>Effectuer les relevés à plus grande échelle</li>
+                                    <li>Étudier l'impact de l'éclairage sur la biodiversité</li>
+                                    <li>Croiser avec des données d'enquêtes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bibliographie -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Bibliographie</h2>
+                        
+                        <ul>
+                            <li>Chawuthai, R. (2018). Monitoring roadway lights and pavement defects for nighttime street safety assessment by sensor data analysis and visualization. Sensors and Materials, 30, 2267.</li>
+                            <li>Tagliabue, L. C., Re Cecconi, F., Moretti, N., Rinaldi, S., Bellagente, P., & Ciribini, A. L. C. (2020). Security Assessment of Urban Areas through a GIS-Based Analysis of Lighting Data Generated by IoT Sensors. Applied Sciences, 10(6), 2174.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Compétences développées -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences développées</h2>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Compétences techniques</h5>
+                                <span class="badge bg-primary mb-2">QGIS</span>
+                                <span class="badge bg-primary mb-2">QFIELD</span>
+                                <span class="badge bg-primary mb-2">Capteurs Edulab</span>
+                                <span class="badge bg-primary mb-2">Cartographie</span>
+                                <span class="badge bg-primary mb-2">Analyse statistique</span>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Compétences transversales</h5>
+                                <span class="badge bg-secondary mb-2">Gestion de projet</span>
+                                <span class="badge bg-secondary mb-2">Travail d'équipe</span>
+                                <span class="badge bg-secondary mb-2">Relevés terrain</span>
+                                <span class="badge bg-secondary mb-2">Diagnostic territorial</span>
+                                <span class="badge bg-secondary mb-2">Analyse de données</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+    <!-- Script principal -->
+    <script>
+        // Année automatique dans le footer
+        document.getElementById("year").textContent = new Date().getFullYear();
+        
+        // Animation au défilement
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            fadeInOnScroll();
+            window.addEventListener('scroll', fadeInOnScroll);
+        });
+
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

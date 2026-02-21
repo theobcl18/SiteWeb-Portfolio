@@ -210,6 +210,43 @@
             background-color: var(--secondary) !important;
         }
 
+
+        /*===============================*/
+        /* Bouton de projet */
+        /*===============================*/
+
+        .btn-project {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .btn-project:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 155, 56, 0.3);
+        }
+
+        .btn-project i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-project:hover i {
+            transform: translateX(5px);
+        }
+
+
+
         footer {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2rem 0;
@@ -406,24 +443,54 @@
                         <li>Traitement de données raster (reclassification, calcul d'indices)</li>
                         <li>Gestion de données vectorielles et attributaires</li>
                         <li>Utilisation des extensions (plugins) : QuickOSM, MMQGIS, etc.</li>
-                        <li>Géotraitement avec le modèle graphique</li>
+                        <li>Géotraitement avec le modeleur graphique</li>
                     </ul>
                 </div>
 
                 <div class="skill-detail-item">
                     <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec QGIS</h5>
+
                     <div class="project-example">
-                        <h6>Diagnostic territorial de l'EPCI Seulles Terre et Mer</h6>
-                        <p>Création d'une cartographie complète pour l'analyse des dynamiques territoriales.</p>
-                        <span class="badge bg-primary">Cartographie</span>
-                        <span class="badge bg-primary">Analyse spatiale</span>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Diagnostic territorial de l'EPCI Seulles Terre et Mer</h6>
+                                <p>Création d'une cartographie complète pour l'analyse des dynamiques territoriales.</p>
+                                <span class="badge bg-primary">Cartographie</span>
+                                <span class="badge bg-primary">Analyse spatiale</span>
+                            </div>
+                            <a href="../projects_list/Projet-diagnostic-de-territoire-STM.html" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
                     </div>
+
                     <div class="project-example">
-                        <h6>Analyse multicritère pour localisation étudiante</h6>
-                        <p>Scoring spatial pour identifier les zones optimales pour l'habitat étudiant à Rennes.</p>
-                        <span class="badge bg-primary">Analyse multicritère</span>
-                        <span class="badge bg-primary">Scoring spatial</span>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Analyse multicritère pour localisation étudiante</h6>
+                                <p>Scoring spatial pour identifier les zones optimales pour l'habitat étudiant à Rennes.</p>
+                                <span class="badge bg-primary">Analyse multicritère</span>
+                                <span class="badge bg-primary">Scoring spatial</span>
+                            </div>
+                            <a href="../projects_list/" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
                     </div>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Automatisation d'une analyse spatiale par département</h6>
+                                <p>Scoring spatial pour identifier les zones optimales pour l'habitat étudiant à Rennes.</p>
+                                <span class="badge bg-primary">Analyse multicritère</span>
+                            </div>
+                            <a href="../projects_list/" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -458,11 +525,18 @@
                 <div class="skill-detail-item">
                     <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec ArcGIS</h5>
                     <div class="project-example">
-                        <h6>Pas encore de réel projet réalisé</h6>
-                        <span class="badge bg-primary">...</span>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Pas encore de réel projet réalisé</h6>
+                                <p>...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
+                
 
             <!-- FME -->
             <div class="bg-section fade-in">
