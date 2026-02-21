@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Théo Bucaille</title>
+    <title>Atelier professionnel - Diagnostic de territoire </title>
 
     <!-- Bootstrap CSS -->
     <link 
@@ -25,12 +25,12 @@
     <style>
         :root {
             --primary: #fe9b38;
-            --primary-dark: #ffffff;
+            --primary-dark: #f31212;
             --secondary: #488ed4;
-            --dark: #b84a4a;
+            --dark: #000000;
             --red: #b72a2a;
             --light: #f8f9fa;
-            --gray: #6c757d;
+            --gray: #3A3534;
             --gray-light: #adb5bd;
             --map-color: #c6a719;
         }
@@ -48,7 +48,6 @@
             position: relative;
         }
 
-        /* Image de fond fixe avec superposition sombre */
         body::before {
             content: '';
             position: fixed;
@@ -56,7 +55,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1550684376-efcbd6e3f031?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-image: url('img/fond_globe.jpg'); /* Chemin vers l'image */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -65,7 +64,6 @@
             opacity: 0.15;
         }
 
-        /* Couche sombre supplémentaire pour améliorer la lisibilité */
         body::after {
             content: '';
             position: fixed;
@@ -73,16 +71,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(105, 102, 102, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
             z-index: -1;
         }
 
         .navbar {
-            background-color: rgba(18, 18, 18, 0.95) !important;
+            background-color: rgb(164, 97, 20) !important;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
             padding: 1rem 0;
             transition: all 0.3s ease;
+        }
+
+        .nav-item {
+            color : white;
         }
 
         .navbar-brand {
@@ -92,7 +94,7 @@
         }
 
         .navbar-nav .nav-link {
-            color: var(--gray-light) !important;
+            color: var(--light) !important;
             font-weight: 500;
             margin: 0 0.5rem;
             transition: color 0.3s ease;
@@ -110,7 +112,7 @@
             bottom: -5px;
             left: 0;
             width: 0;
-            height: 2px;
+            height: 3px;
             background-color: var(--primary);
             transition: width 0.3s ease;
         }
@@ -143,55 +145,44 @@
             border-radius: 2px;
         }
 
-        .project-header {
+        .stage-header {
             padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
             position: relative;
             overflow: hidden;
         }
 
-        .project-header h1 {
+        .stage-header h1 {
             font-weight: 700;
             line-height: 1.2;
             margin-bottom: 1.5rem;
             font-size: clamp(2rem, 5vw, 3.5rem);
         }
 
-        .project-header p {
+        .stage-header p {
             font-size: clamp(1rem, 2.5vw, 1.2rem);
             color: var(--gray-light);
             margin-bottom: 2rem;
         }
 
         .bg-section {
-            background-color: rgba(30, 30, 30, 0.85);
+            background-color: rgba(50, 49, 49, 0.85);
             border-radius: 15px;
             padding: clamp(1.5rem, 4vw, 3rem);
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
             transition: transform 0.3s ease;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 0.5px solid rgb(207, 140, 96);
         }
 
         .bg-section:hover {
             transform: translateY(-5px);
         }
 
-        .project-image {
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            transition: transform 0.5s ease;
-            max-width: 100%;
-            height: auto;
-            width: 100%;
-            object-fit: cover;
-            margin-bottom: 2rem;
-            cursor: pointer;
-        }
-
-        .project-image:hover {
-            transform: scale(1.03);
-        }
+        .text-primary {
+        --bs-text-opacity 1;
+        color: rgb(253 104 13) !important;
+        } 
 
         .btn {
             border-radius: 30px;
@@ -206,14 +197,14 @@
         .btn-primary {
             background-color: var(--primary);
             border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(254, 155, 56, 0.3);
         }
 
         .btn-primary:hover {
             background-color: var(--primary-dark);
             border-color: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(254, 155, 56, 0.4);
         }
 
         .btn-outline-primary {
@@ -243,7 +234,7 @@
             justify-content: center;
             width: 40px;
             height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgb(254, 3, 3);
             border-radius: 50%;
             margin: 0 0.5rem;
             color: var(--light);
@@ -267,51 +258,8 @@
             transform: translateY(0);
         }
 
-        /* Galerie d'images */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .gallery-item {
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.05);
-        }
-
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 1rem;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-caption {
-            transform: translateY(0);
-        }
-
-        /* Section partenaire - CORRIGÉE */
-        .partner-section {
+        /* Section entreprise */
+        .company-section {
             text-align: center;
             padding: 2rem;
             background: rgba(30, 30, 30, 0.9);
@@ -320,127 +268,78 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .partner-logo {
+        .company-logo {
             max-width: 200px;
             max-height: 100px;
             object-fit: contain;
             margin: 1rem auto;
-            /* SUPPRIMÉ: filter: brightness(0) invert(1); */
-            transition: transform 0.3s ease;
             background: white;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
         }
 
-        .partner-logo.dark-bg {
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        .partner-logo.no-bg {
-            background: none;
-            padding: 0;
-        }
-
-        .partner-name {
+        .company-name {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--light);
         }
 
-        .partner-role {
+        .company-sector {
             color: var(--gray-light);
             font-size: 1rem;
         }
 
-        /* Options d'affichage pour différents types de logos */
-        .logo-options {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
+        /* Infos stage */
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .logo-option-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--light);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-        }
-
-        .logo-option-btn:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .logo-option-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Modal pour l'affichage en plein écran */
-        .image-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .image-modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--primary);
         }
 
-        .image-modal.active .modal-content {
-            transform: scale(1);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
+        .info-card i {
             font-size: 2rem;
-            cursor: pointer;
-            background: none;
-            border: none;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
-        .close-modal:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+        .info-card h5 {
+            margin-bottom: 0.5rem;
+            color: var(--light);
         }
 
-        /* Améliorations responsive */
+        .info-card p {
+            color: var(--gray-light);
+            margin: 0;
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        /* Responsive */
         .container {
             max-width: 100%;
             padding-left: clamp(1rem, 3vw, 2rem);
@@ -455,18 +354,13 @@
                 margin-top: 1rem;
                 backdrop-filter: blur(10px);
             }
-
-            .gallery-grid {
+            
+            .stage-info-grid {
                 grid-template-columns: 1fr;
             }
             
-            .partner-logo {
+            .company-logo {
                 max-width: 150px;
-            }
-
-            .logo-options {
-                flex-direction: column;
-                align-items: center;
             }
         }
 
@@ -475,7 +369,7 @@
                 padding: 1.5rem;
             }
             
-            .project-header h1 {
+            .stage-header h1 {
                 font-size: 2rem;
             }
             
@@ -483,10 +377,266 @@
                 font-size: 1.75rem;
             }
             
-            .partner-logo {
+            .company-logo {
                 max-width: 120px;
             }
+        }
+
+        /* =========================================== */
+        /* GALERIE D'IMAGES AVEC OVERLAY ET LIGHTBOX  */
+        /* =========================================== */
+
+        /* Conteneur pour l'effet overlay */
+        .image-hover-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            height: 250px; /* Hauteur fixe pour uniformiser */
+            margin-bottom: 1.5rem;
+        }
+
+        /* Image dans le conteneur */
+        .image-hover-container .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            cursor: zoom-in;
+        }
+
+        /* Overlay qui apparaît en bas */
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0; /* Caché par défaut */
+            background: linear-gradient(to top, 
+                rgba(18, 18, 18, 0.95) 0%, 
+                rgba(18, 18, 18, 0.8) 50%,
+                rgba(254, 155, 56, 0.1) 100%);
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+            transition: height 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        /* Contenu de l'overlay */
+        .overlay-content {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease 0.1s; /* Délai pour l'apparition du texte */
+            width: 100%;
+        }
+
+        .overlay-content h5 {
+            color: var(--light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .overlay-content p {
+            color: var(--gray-light);
+            font-size: 0.85rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Effet au survol */
+        .image-hover-container:hover .image-overlay {
+            height: 60%; /* L'overlay couvre les 60% inférieurs */
+        }
+
+        .image-hover-container:hover .overlay-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .image-hover-container:hover .project-image {
+            transform: scale(1.05); /* Léger zoom */
+        }
+
+        /* Lightbox pour images en grand */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox.show {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+            animation: lightboxFadeIn 0.3s ease;
+        }
+
+        @keyframes lightboxFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            margin: auto;
+            animation: lightboxContentFadeIn 0.3s ease 0.1s both;
+        }
+
+        @keyframes lightboxContentFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 70vh;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.show .lightbox-image {
+            opacity: 1;
+        }
+
+        .lightbox-caption {
+            background: rgba(30, 30, 30, 0.95);
+            color: var(--light);
+            padding: 1.5rem;
+            border-radius: 0 0 10px 10px;
+            margin-top: -5px;
+            border-top: 2px solid var(--primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-caption h4 {
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .lightbox-caption p {
+            color: var(--gray-light);
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -60px;
+            right: 0;
+            color: white;
+            font-size: 40px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            z-index: 10000;
+        }
+
+        .lightbox-close:hover {
+            color: var(--primary);
+            background: rgba(0, 0, 0, 0.8);
+            transform: rotate(90deg);
+        }
+
+        /* Responsive pour la galerie */
+        @media (max-width: 768px) {
+            .image-hover-container {
+                height: 200px;
+            }
             
+            .image-hover-container:hover .image-overlay {
+                height: 70%; /* Plus grand sur mobile */
+            }
+            
+            .overlay-content {
+                padding-bottom: 0.5rem;
+            }
+            
+            .overlay-content h5 {
+                font-size: 1rem;
+            }
+            
+            .overlay-content p {
+                font-size: 0.8rem;
+            }
+            
+            .lightbox-content {
+                max-width: 95%;
+                max-height: 85vh;
+            }
+            
+            .lightbox-image {
+                max-height: 60vh;
+            }
+            
+            .lightbox-caption {
+                padding: 1rem;
+            }
+            
+            .lightbox-caption h4 {
+                font-size: 1.1rem;
+            }
+            
+            .lightbox-caption p {
+                font-size: 0.9rem;
+            }
+            
+            .lightbox-close {
+                top: -50px;
+                width: 40px;
+                height: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .image-hover-container {
+                height: 180px;
+            }
+            
+            .image-overlay {
+                padding: 0 1rem 1rem;
+            }
         }
     </style>
 </head>
@@ -495,7 +645,7 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="Portfolio.html">Théo Bucaille</a>
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
                     aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
                 <span class="navbar-toggler-icon"></span>
@@ -503,29 +653,31 @@
 
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#about">À propos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#projects">Projets</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#skills">Compétences</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#cartotheque">Cartothèque</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#map-section">Parcours</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Portfolio.html#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- EN-TÊTE DU PROJET -->
-    <header class="project-header">
+    <!-- EN-TÊTE DU STAGE -->
+    <header class="stage-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold">Diagnostic de territoire STM</h1>
+                    <h1 class="display-4 fw-bold">Atelier professionnel - Diagnostic de territoire</h1>
                     <p class="lead">
-                        Création d'un Atlas départemental d'appropriation territoriale pour les commandants de groupements de Gendarmerie Nationale.
-                    </p>
+                        Réalisation d'un diagnostic de territoire de la Communauté de Communes Seulles Terre et Mer
                     <div class="d-flex flex-wrap">
-                        <a href="Portfolio.html#projects" class="btn btn-outline-primary btn-lg">
+                        <a href="../index.html#projects" class="btn btn-outline-primary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                        </a>
+                        <a href="#rendu" class="btn btn-primary btn-lg ms-2">
+                            <i class="fas fa-file-pdf me-2"></i>Consulter le rendu
                         </a>
                     </div>
                 </div>
@@ -533,144 +685,358 @@
         </div>
     </header>
 
-    <!-- CONTENU PRINCIPAL DU PROJET -->
-    <section id="project-content" class="py-5">
+    <!-- CONTENU PRINCIPAL DU STAGE -->
+    <section id="stage-content" class="py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
-                    <!-- Section partenaire CORRIGÉE -->
-                    <div class="partner-section fade-in">
-                        <h3 class="mb-4">Projet réalisé en partenariat avec</h3>
-                        
+                    
+                    <!-- Section entreprise -->
+                    <div class="company-section fade-in">
+                        <h3 class="mb-4">Atelier professionnel</h3>
+
                         <!-- Logo avec options d'affichage -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gendarmerie_nationale_logo.svg/500px-Gendarmerie_nationale_logo.svg.png" 
-                             alt="Logo Gendarmerie Nationale" 
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Communauté_de_communes_Seulles_Terre_et_Mer.png" 
+                             alt="Logo EPCI Seulles Terre et Mer" 
                              class="partner-logo no-bg"
                              id="partnerLogo">
                         
-                        <div class="partner-name">Gendarmerie Nationale</div>
-                        <div class="partner-role">Sécurité, protection et maintien de l’ordre en zones rurales et périurbaines</div>
+                        <div class="company-name">Communauté de Communes Seulles Terre et Mer </div>
+                        <div class="company-sector">Établissement Public de Coopération Intercommunale • Seulles Terre et Mer</div>
                         
-                        <!-- Options pour adapter l'affichage du logo -->
-                        <div class="logo-options">
-                                                    </div>
+                        <div class="mt-4">
+                            <p><i class="fas fa-users me-2"></i> 28 communes membres • 17 500 habitants</p>
+                            <p><i class="fas fa-map me-2"></i> Territoire de 195 km² située dans le nord du département du Calvados</p>
+                        </div>
                     </div>
 
-                    <!-- Image principale du projet -->
-                    
-                        
-                        <h2 class="section-title">Description du Projet</h2>
-                        <p>
-                            Ce projet a été réalisé dans le cadre de la validation du M1 SIGAT. En collaboration avec la Gendarmerie Nationale, l'objectif était de proposer un prototype d'atlas départemental d'appropriation territoriale à destination des commandants de groupements de Gendarmerie.
-                        </p>
-                        
-                        <h3 class="mt-4">Contexte et Enjeux</h3>
-                        <p>
-Les commandants de groupements sont, comme leur nom l'indique, les personnes chargées de commander les groupements de Gendamerie sur un département. Ces gendarmes connaissent des mutations fréquentes, et ne peuvent pas connaître le territoire sur lequel ils arrivent dès leur premier jour. L'enjeu pour la Gendarmerie Nationale est donc de produire un outil leur permettant de s'approprier le territoire du mieux possible, et le plus rapidement possible.                          </p>
-                        
-                        <h3 class="mt-4">Méthodologie</h3>
-                        <p>
-                            Le projet s'est déroulé en plusieurs étapes :
-                        </p>
-                        <ul>
-                            <li>Définition des thématiques pertinentes pour un commandant de groupement</li>
-                            <li>Création d'indicateurs relatifs à ces thématiques et réflexions autour de la représentation (cartes, graphiques, chiffres clés)</li>
-                            <li>Production de prototypes d'atlas "test"</li>
-                            <li>Réalisation du prototype final</li>
-                        </ul>
-                        
-                        <h3 class="mt-4">Résultats Obtenus</h3>
-                        <p>
-                            Le prototype a été un outil utile pour la Gendarmerie Nationale, qui a bénéficié des services d'un stagiaire de M2 SIGAT pour produire et automatiser l'atlas officiel. Notre travail de Master 1 a permis à l'organisation de mieux cerner les besoins des commandants de groupements, et de produire un outil veritablement opérationnel par la suite.
-                        </p>
-                    </div>
-                    
+                    <!-- Informations du stage -->
                     <div class="bg-section fade-in">
-    <h2 class="section-title">Galerie du Projet</h2>
-    <div class="gallery-grid">
+                        <div class="stage-info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h5>Durée</h5>
+                                <p>6 mois</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h5>Niveau</h5>
+                                <p>Licence Pro SIG-DAT</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-clock"></i>
+                                <h5>Période</h5>
+                                <p>Septembre - Février 2025</p>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Image 1 -->
-        <div class="gallery-item">
-            <img src="https://media.licdn.com/dms/image/v2/D4E22AQGj4KrNRyttgw/feedshare-shrink_2048_1536/B4EZbNflseHwAo-/0/1747204495210?e=1765411200&v=beta&t=unWSQMG1e15HII8LbwAEsF_QTw77wigBbMccs-hNhvA"
-                 alt="No data" data-enlargable>
-            <div class="gallery-caption">
-                <h5>Planche Niveau de vie</h5>
-                <p>Niveau de vie médian, écarts de revenus et CSP</p>
-            </div>
-        </div>
+                    <!-- Description détaillée -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Description du projet</h2>
+                        
+                        <h3 class="mt-4">Contexte</h3>
+                        <p>
+                            Chaque année, les étudiant·e·s de la licence professionnelle Système d'information Géographique, Diagnostic et Aménagement des Territoires étudient un établissement public de coopération intercommunale (EPCI) dans le cadre d'un diagnostic de territoire. Ce travail fait partie de l'UE 13 de la formation. Il s'agit d'un travail de groupe devant aboutir au rendu d'un document et à une présentation orale d'environ 20 minutes, au cours de laquelle les 12 étudiant·e·s de la formation exposent l'étude réalisée. Cette année, l'EPCI sélectionné est la communauté de communes de Seulles Terre et Mer, situé dans le département du Calvados, entre Caen et Bayeux dans la région de Normandie.
+                        </p>
+                        
+                        <h3 class="mt-4">Problématique centrale</h3>
+                        <p class="fst-italic">
+                            Dans quelle mesure le territoire et les pratiques sociales des habitants de STM sont-ils polarisés ?
+                        </p>
+                    </div>
 
-        <!-- Image 2 -->
-        <div class="gallery-item">
-            <img src="https://media.licdn.com/dms/image/v2/D4E22AQFJJwRfCB-abw/feedshare-shrink_2048_1536/B4EZbNflt.GQAo-/0/1747204538104?e=1765411200&v=beta&t=ijvsw_Dew5NyMxo4L90D1Xe97XRT8Qy5kkRxmXlcCSU"
-                 alt="No data" data-enlargable>
-            <div class="gallery-caption">
-                <h5>Planche Propriétés physiques</h5>
-                <p>Indicateurs relatifs à la nature, à la topographie, aux usages du sol</p>
-            </div>
-        </div>
+                    <!-- Missions principales -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Missions principales</h2>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-users fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Recueil des besoins</h5>
+                                        <p>
+                                            Animation de réunions avec les services techniques (bâtiment, maintenance, juridique, eau) 
+                                            pour identifier les besoins spécifiques et définir les fonctionnalités attendues.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-database fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Modélisation des données</h5>
+                                        <p >
+                                            Conception d'un modèle conceptuel de données (MCD) structuré autour de 4 tables principales : 
+                                            parcelles, bâtiments, équipements et compteurs.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-sync-alt fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Nettoyage et intégration</h5>
+                                        <p>
+                                            Collecte, nettoyage et harmonisation des données provenant de sources multiples : 
+                                            fichiers MAJIC (cadastre), tableaux Excel, inventaires papier, PDF d'actes juridiques.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-map-marked-alt fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Paramétrage WebSIG</h5>
+                                        <p>
+                                            Configuration du WebSIG GEO Software pour la diffusion des données : fiches d'information, 
+                                            outils de recherche, filtres, formulaires de saisie contrôlée.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-chalkboard-teacher fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Formation utilisateurs</h5>
+                                        <p>
+                                            Création de tutoriels vidéo et organisation de sessions de formation pour accompagner 
+                                            les agents dans la prise en main de l'outil.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-project-diagram fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Gestion de projet</h5>
+                                        <p>
+                                            Suivi de l'avancement, rédaction de comptes-rendus, coordination avec les différents 
+                                            services et proposition de solutions innovantes.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Image 3 -->
-        <div class="gallery-item">
-            <img src="https://media.licdn.com/dms/image/v2/D4E22AQHZ3dB_ANd9eQ/feedshare-shrink_2048_1536/B4EZbNflr9GQAs-/0/1747204496518?e=1765411200&v=beta&t=500R-J9b5chM4_0gmWH35wfc4u1wKiaBjH-p4VVhq4c"
-                 alt="No data" data-enlargable>
-            <div class="gallery-caption">
-                <h5>Planche Risques naturels</h5>
-                <p>Différents types de risque en fonction du territoire (dans le Var, le risque inondation est le plus présent)</p>
-            </div>
-        </div>
 
-        <!-- Image 4 -->
-        <div class="gallery-item">
-            <img src="https://media.licdn.com/dms/image/v2/D4E22AQHaH-eBacI8Hw/feedshare-shrink_2048_1536/B4EZbNflsqHwAs-/0/1747204497209?e=1765411200&v=beta&t=yLur1jJK85cNrSjvxb6215rcG02pwoF9v7HFd_AfedE"
-                 alt="No data" data-enlargable>
-            <div class="gallery-caption">
-                <h5>Planche Agriculture</h5>
-                <p>Nombre d'exploitations, surface agricole utile, spécialisation agricole</p>
-            </div>
-        </div>
+                    <!-- Galerie d'images -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Galerie du projet</h2>
+                        
+                        <!-- Conteneur pour les images en grille -->
+                        <div class="row g-4">
+                            <!-- Image 1 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="image-hover-container">
+                                    <img src="img/stage/modele_donnees.jpg"
+                                         alt="Modèle conceptuel de données" 
+                                         class="project-image"
+                                         data-fullsize="img/stage/modele_donnees.jpg"
+                                         data-title="Modèle conceptuel de données"
+                                         data-description="Structure relationnelle de la base de données avec les 4 tables principales">
+                                    <div class="image-overlay">
+                                        <div class="overlay-content">
+                                            <h5>Modèle conceptuel</h5>
+                                            <p>Structure relationnelle de la base de données avec les 4 tables principales</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <p class="text-muted">Modèle conceptuel de données (MCD)</p>
+                                </div>
+                            </div>
 
-        <!-- Image 5 -->
-        <div class="gallery-item">
-            <img src="https://media.licdn.com/dms/image/v2/D4E22AQGae3EO796JKQ/feedshare-shrink_2048_1536/B4EZbNfltUGQAo-/0/1747204523618?e=1765411200&v=beta&t=IaqRLVtkxASPO35aykQ8jrqxAKw7WKtBHkEpB026osg"
-                 alt="No data" data-enlargable>
-            <div class="gallery-caption">
-                <h5>Planche Population</h5>
-                <p>Répartition démographique</p>
-            </div>
-        </div>
+                            <!-- Image 2 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="image-hover-container">
+                                    <img src="img/stage/websig_interface.jpg"
+                                         alt="Interface WebSIG GEO" 
+                                         class="project-image"
+                                         data-fullsize="img/stage/websig_interface.jpg"
+                                         data-title="Interface WebSIG GEO"
+                                         data-description="Application cartographique accessible à tous les agents de la collectivité">
+                                    <div class="image-overlay">
+                                        <div class="overlay-content">
+                                            <h5>WebSIG GEO</h5>
+                                            <p>Application cartographique accessible à tous les agents de la collectivité</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <p class="text-muted">Interface WebSIG GEO Software</p>
+                                </div>
+                            </div>
 
-         <!-- Image 6 -->
-        <div class="gallery-item">
-            <img src="https://media.licdn.com/dms/image/v2/D4E22AQFZWeAVNO3EiA/feedshare-shrink_2048_1536/B4EZbNfltwHwAo-/0/1747204441989?e=1765411200&v=beta&t=lB4ZeiivDCK2PsUFG4_dwwkSneiFggF49lv2v3OBdSY"
-                 alt="No data" data-enlargable>
-            <div class="gallery-caption">
-                <h5>Planche Tourisme</h5>
-                <p>Nuitées, origine des touristes, emplois</p>
-            </div>
-        </div>
+                            <!-- Image 3 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="image-hover-container">
+                                    <img src="img/stage/fiche_batiment.jpg"
+                                         alt="Fiche d'information bâtiment" 
+                                         class="project-image"
+                                         data-fullsize="img/stage/fiche_batiment.jpg"
+                                         data-title="Fiche d'information bâtiment"
+                                         data-description="Fiche détaillée avec onglets pour les informations techniques, juridiques et de maintenance">
+                                    <div class="image-overlay">
+                                        <div class="overlay-content">
+                                            <h5>Fiche bâtiment</h5>
+                                            <p>Fiche détaillée avec onglets pour les informations techniques, juridiques et de maintenance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <p class="text-muted">Fiche d'information d'un bâtiment</p>
+                                </div>
+                            </div>
 
-    </div>
-</div>
+                            <!-- Image 4 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="image-hover-container">
+                                    <img src="img/stage/recherche_filtres.jpg"
+                                         alt="Outils de recherche" 
+                                         class="project-image"
+                                         data-fullsize="img/stage/recherche_filtres.jpg"
+                                         data-title="Outils de recherche"
+                                         data-description="Interface de recherche multicritères avec filtres par service, commune, type de bâtiment">
+                                    <div class="image-overlay">
+                                        <div class="overlay-content">
+                                            <h5>Recherche multicritères</h5>
+                                            <p>Interface de recherche avec filtres par service, commune, type de bâtiment</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <p class="text-muted">Outils de recherche et filtres</p>
+                                </div>
+                            </div>
 
+                            <!-- Image 5 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="image-hover-container">
+                                    <img src="img/stage/qgis_projet.jpg"
+                                         alt="Projet QGIS" 
+                                         class="project-image"
+                                         data-fullsize="img/stage/qgis_projet.jpg"
+                                         data-title="Projet QGIS"
+                                         data-description="Visualisation des données dans QGIS avec les relations entre parcelles, bâtiments et équipements">
+                                    <div class="image-overlay">
+                                        <div class="overlay-content">
+                                            <h5>Projet QGIS</h5>
+                                            <p>Visualisation des données avec les relations entre parcelles, bâtiments et équipements</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <p class="text-muted">Visualisation dans QGIS</p>
+                                </div>
+                            </div>
+
+                            <!-- Image 6 -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="image-hover-container">
+                                    <img src="img/stage/dictionnaires.jpg"
+                                         alt="Dictionnaires de valeurs" 
+                                         class="project-image"
+                                         data-fullsize="img/stage/dictionnaires.jpg"
+                                         data-title="Dictionnaires de valeurs"
+                                         data-description="Système de dictionnaires pour la saisie contrôlée et l'harmonisation des données">
+                                    <div class="image-overlay">
+                                        <div class="overlay-content">
+                                            <h5>Dictionnaires</h5>
+                                            <p>Système de dictionnaires pour la saisie contrôlée et l'harmonisation des données</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <p class="text-muted">Dictionnaires de valeurs pour la saisie contrôlée</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lien vers le mémoire -->
+                    <div class="bg-section fade-in" id="rendu">
+                        <h2 class="section-title">Rendu du diagnostic</h2>
+                        <div class="text-center py-5">
+                            <embed src="../img/Diag compressé.pdf" type="application/pdf" width="100%" height="740px">
+                            </embed> 
+                        </div>
+                    </div>
+
+                    <!-- Compétences développées -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences développées</h2>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Compétences techniques</h4>
+                                <span class="badge bg-primary mb-2">QGIS</span>
+                                <span class="badge bg-primary mb-2">Cartographie</span>
+                                <span class="badge bg-primary mb-2">Nettoyage de données</span>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Compétences transversales</h4>
+                                <span class="badge bg-secondary mb-2">Gestion de projet</span>
+                                <span class="badge bg-secondary mb-2">Travail d'équipe</span>
+                                <span class="badge bg-secondary mb-2">Communication</span>
+                                <span class="badge bg-secondary mb-2">Terrain et techniques d'enquêtes</span>
+                                <span class="badge bg-secondary mb-2">Analyse territoriale</span>
+                                <span class="badge bg-secondary mb-2">Adaptation aux interlocuteurs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- Lightbox pour afficher les images en grand -->
+    <div id="imageLightbox" class="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close">&times;</span>
+            <img class="lightbox-image" src="" alt="">
+            <div class="lightbox-caption">
+                <h4 id="lightbox-title"></h4>
+                <p id="lightbox-description"></p>
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="py-4">
         <div class="container text-center">
             <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
             <div class="social-links">
-                <a href=""><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
     </footer>
-
-    <!-- Modal pour l'affichage en plein écran -->
-    <div class="image-modal">
-        <button class="close-modal">&times;</button>
-        <img class="modal-content" src="" alt="">
-    </div>
 
     <!-- Bootstrap JS -->
     <script 
@@ -724,75 +1090,85 @@ Les commandants de groupements sont, comme leur nom l'indique, les personnes cha
             });
         });
 
-        // Gestion de la galerie d'images et zoom
+        // ============================================
+        // LIGHTBOX POUR VOIR LES IMAGES EN GRAND
+        // ============================================
+
+        // Attendre que le DOM soit chargé
         document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.querySelector('.image-modal');
-            const modalImg = modal.querySelector('.modal-content');
-            const closeModal = modal.querySelector('.close-modal');
-            const images = document.querySelectorAll('[data-enlargable]');
+            // Récupérer les éléments
+            const lightbox = document.getElementById('imageLightbox');
+            const lightboxImg = lightbox.querySelector('.lightbox-image');
+            const lightboxTitle = document.getElementById('lightbox-title');
+            const lightboxDescription = document.getElementById('lightbox-description');
+            const lightboxClose = lightbox.querySelector('.lightbox-close');
             
-            // Fonction pour ouvrir l'image en plein écran
-            function openModal(imgSrc, imgAlt) {
-                modalImg.src = imgSrc;
-                modalImg.alt = imgAlt;
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            // Récupérer toutes les images de la galerie
+            const galleryImages = document.querySelectorAll('.project-image');
+            
+            // Fonction pour ouvrir la lightbox
+            function openLightbox(imageElement) {
+                // Récupérer les données de l'image cliquée
+                const fullsizeUrl = imageElement.getAttribute('data-fullsize') || imageElement.src;
+                const title = imageElement.getAttribute('data-title') || imageElement.alt;
+                const description = imageElement.getAttribute('data-description') || '';
+                
+                // Mettre à jour la lightbox
+                lightboxImg.src = fullsizeUrl;
+                lightboxImg.alt = title;
+                lightboxTitle.textContent = title;
+                lightboxDescription.textContent = description;
+                
+                // Afficher la lightbox
+                lightbox.classList.add('show');
+                document.body.style.overflow = 'hidden'; // Bloquer le défilement
             }
             
-            // Fonction pour fermer le modal
-            function closeModalFunc() {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
+            // Fonction pour fermer la lightbox
+            function closeLightbox() {
+                lightbox.classList.remove('show');
+                document.body.style.overflow = 'auto'; // Rétablir le défilement
             }
             
-            // Événements pour toutes les images zoomables
-            images.forEach(img => {
-                img.addEventListener('click', function() {
-                    openModal(this.src, this.alt);
+            // Ajouter l'événement click à chaque image
+            galleryImages.forEach(image => {
+                image.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    openLightbox(this);
                 });
+                
+                // Optionnel: Ajouter un effet de curseur
+                image.style.cursor = 'zoom-in';
             });
             
-            // Événements pour fermer le modal
-            closeModal.addEventListener('click', closeModalFunc);
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModalFunc();
+            // Fermer au clic sur la croix
+            lightboxClose.addEventListener('click', function(event) {
+                event.stopPropagation();
+                closeLightbox();
+            });
+            
+            // Fermer au clic en dehors de l'image
+            lightbox.addEventListener('click', function(event) {
+                if (event.target === lightbox || event.target.classList.contains('lightbox')) {
+                    closeLightbox();
                 }
             });
             
             // Fermer avec la touche Échap
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.classList.contains('active')) {
-                    closeModalFunc();
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && lightbox.classList.contains('show')) {
+                    closeLightbox();
                 }
             });
-        });
-
-        // Gestion des options d'affichage du logo
-        document.addEventListener('DOMContentLoaded', function() {
-            const logo = document.getElementById('partnerLogo');
-            const optionButtons = document.querySelectorAll('.logo-option-btn');
             
-            optionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const option = this.getAttribute('data-option');
-                    
-                    // Retirer toutes les classes d'options
-                    logo.classList.remove('no-bg', 'white-bg', 'dark-bg');
-                    
-                    // Ajouter la classe sélectionnée
-                    if (option === 'no-bg') {
-                        logo.classList.add('no-bg');
-                    } else if (option === 'white-bg') {
-                        logo.classList.add('white-bg');
-                    } else if (option === 'dark-bg') {
-                        logo.classList.add('dark-bg');
-                    }
-                    
-                    // Mettre à jour les boutons actifs
-                    optionButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                });
+            // Gestion du chargement des images
+            lightboxImg.addEventListener('load', function() {
+                this.style.opacity = '1';
+            });
+            
+            // En cas d'erreur de chargement
+            lightboxImg.addEventListener('error', function() {
+                console.error('Erreur de chargement de l\'image:', this.src);
             });
         });
     </script>
