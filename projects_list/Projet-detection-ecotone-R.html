@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyse matricielle - Éolien offshore Bretagne</title>
+    <title>Détection des écotones par données LIDAR</title>
 
     <!-- Bootstrap CSS -->
     <link 
@@ -241,9 +241,25 @@
 
         .stage-info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-top: 2rem;
+        }
+
+        .info-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .info-card h5 {
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .info-card p {
+            color: var(--gray-light);
+            margin: 0;
         }
 
         .badge {
@@ -251,6 +267,7 @@
             padding: 0.5rem 1rem;
             margin: 0.25rem;
             border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
         }
 
         .bg-primary {
@@ -287,38 +304,14 @@
             color: var(--primary) !important;
         }
 
-        /* Infos stage */
-        .stage-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .info-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 1.5rem;
+        .company-section {
             text-align: center;
-            border-left: 4px solid var(--primary);
+            padding: 2rem;
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .info-card i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .info-card h5 {
-            margin-bottom: 0.5rem;
-            color: var(--light);
-        }
-
-        .info-card p {
-            color: var(--gray-light);
-            margin: 0;
-        }
-        
 
         @media (max-width: 768px) {
             .navbar-collapse {
@@ -327,6 +320,24 @@
                 border-radius: 10px;
                 margin-top: 1rem;
                 backdrop-filter: blur(10px);
+            }
+            
+            .stage-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .project-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
             }
         }
     </style>
@@ -359,8 +370,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-10">
-                    <h1>Traitement et analyse de données matricielles</h1>
-                    <p class="lead">Perspectives en matière d'éolien au large de la Bretagne</p>
+                    <h1>Détection des écotones par les données LIDAR</h1>
+                    <p class="lead">Analyse des écotones sur le parc régional des Pyrénées Ariégeoises à l'aide du package lidR sous R</p>
                     <a href="../index.html#projects" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Retour aux projets
                     </a>
@@ -379,156 +390,190 @@
                     <div class="bg-section fade-in">
                         <div class="stage-info-grid">
                             <div class="info-card">
-                                <i class="fas fa-calendar-alt text-primary"></i>
+                                <i class="fas fa-calendar-alt fa-3x text-primary"></i>
                                 <h5>Période</h5>
-                                <p>Octobre 2025</p>
+                                <p>2024-2025</p>
                             </div>
                             <div class="info-card">
-                                <i class="fas fa-graduation-cap text-primary"></i>
+                                <i class="fas fa-graduation-cap fa-3x text-primary"></i>
                                 <h5>Formation</h5>
-                                <p>Master 1 SIGAT</p>
+                                <p>Licence Pro SIG-DAT</p>
                             </div>
                             <div class="info-card">
-                                <i class="fas fa-users text-primary"></i>
-                                <h5>Binôme</h5>
-                                <p>LILIAN DANIELO</p>
+                                <i class="fas fa-users fa-3x text-primary"></i>
+                                <h5>Équipe</h5>
+                                <p>Projet individuel</p>
                             </div>
                         </div>
                         <!-- Crédits -->
                         <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
                             <strong>
-                                <i class="fas fa-users me-1"></i> Projet réalisé avec : 
-                                <a href="https://www.linkedin.com/in/lilian-danielo-28b853223/" target="_blank" class="text-decoration-none">Lilian Danielo</a> • 
+                                <i class="fas fa-user me-1"></i> Projet réalisé par : 
+                                <a href="https://www.linkedin.com/in/théo-bucaille/" target="_blank" class="text-decoration-none text-light">Théo Bucaille</a>
+                            </strong>
                         </div>
                     </div>
 
-                    <!-- CONTEXTE -->
+                    <!-- CONTEXTE & OBJECTIFS -->
                     <div class="bg-section fade-in">
-                        <h2 class="section-title">Contexte</h2>
-                        <p>Ce projet a été réalisé dans le cadre du cours de Traitements géomatiques avancés 1 du Master 1 SIGAT. L'objectif était de mobiliser des techniques d'analyse de données raster pour identifier des zones potentielles d'implantation de parcs éoliens offshore au large de la Bretagne, en intégrant des contraintes techniques, environnementales et économiques.</p>
-                    </div>
-
-                    <!-- PARTIE 1 - ANALYSE MULTICRITÈRE -->
-                    <div class="bg-section fade-in">
-                        <h2 class="section-title">1. Analyse multicritère</h2>
+                        <h2 class="section-title">Contexte & Objectifs</h2>
+                        <p>Ce projet visait à analyser les écotones (zones de transition entre deux écosystèmes) et à en distinguer différents types en utilisant les données LIDAR, principalement sur le parc régional des Pyrénées Ariégeoises. Les données ont été téléchargées sur Géoservices pour ensuite être analysées via QGIS et RStudio avec le package <strong>lidR</strong>, qui s'est révélé plus pertinent pour ce type d'analyse.</p>
                         
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Scénarios étudiés</h5>
-                            <ul>
-                                <li><strong>Scénario 1 :</strong> Vent moyen à 150m (1991-2020) - Cordex_EUR_11_vent_moy_1991-2020.tif</li>
-                                <li><strong>Scénario 2 :</strong> Hypothèse réchauffement +2°C - Cordex_EUR_11_hypo+2degres.tif</li>
-                            </ul>
-                        </div>
-
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Contraintes appliquées</h5>
-                            <ul>
-                                <li>Vitesse de vent minimale : 8 m/s</li>
-                                <li>Distance minimale de la côte : 15 km</li>
-                                <li>Distance des zones à fort trafic maritime : 18 km</li>
-                                <li>Restrictions techniques et environnementales</li>
-                            </ul>
-                        </div>
-
-                        <p class="mt-3"><strong>Conclusion :</strong> Le scénario 2 (hypothèse réchauffement) n'a pas été retenu pour la suite de l'étude car trop hypothétique. Les traitements de dimensionnement se sont basés uniquement sur les données de vent moyen.</p>
-                    </div>
-
-                    <!-- PARTIE 2 - DIMENSIONNEMENT -->
-                    <div class="bg-section fade-in">
-                        <h2 class="section-title">2. Dimensionnement et localisation</h2>
-                        
-                        <p>Méthodologie adoptée :</p>
-                        <ul>
-                            <li>Reclassement des valeurs de vent en valeurs de production (28 à 47 MWh par pixel)</li>
-                            <li>Reclassement du scoring de la partie 1 pour conserver les zones à fort potentiel (75 et 80)</li>
-                            <li>Combinaison par multiplication raster</li>
-                        </ul>
-
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <div class="stat-card">
-                                    <span class="stat-number">4 312 MWh</span>
-                                    <p>Production du cluster retenu</p>
+                                    <i class="fas fa-database fa-2x text-primary mb-2"></i>
+                                    <h5>Données LIDAR</h5>
+                                    <p>Téléchargement sur Géoservices</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="stat-card">
-                                    <span class="stat-number">8,6 GWh</span>
-                                    <p>Production totale (parcs existants + projet)</p>
+                                    <i class="fas fa-tools fa-2x text-primary mb-2"></i>
+                                    <h5>Package lidR</h5>
+                                    <p>Boîte à outils dédiée à l'analyse de nuages de points 3D</p>
                                 </div>
                             </div>
                         </div>
-
-                        <p class="mt-3">Objectif État : 6 à 9,5 GWh à échéance 10 ans → objectif atteint</p>
                     </div>
 
-                    <!-- PARTIE 3 - RACCORDEMENT RTE -->
+                    <!-- PREMIÈRE APPROCHE : QGIS -->
                     <div class="bg-section fade-in">
-                        <h2 class="section-title">3. Raccordement au réseau RTE</h2>
+                        <h2 class="section-title">1. Première approche : QGIS</h2>
                         
-                        <h5 class="mb-3">Création du raster coût</h5>
-                        <ul>
-                            <li>Terre : coût = 10</li>
-                            <li>Mer : coût = 1</li>
-                        </ul>
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Modèle numérique de terrain normalisé</h5>
+                            <p>Une première analyse a été réalisée sur QGIS en calculant un MNT normalisé (différence d'altitude entre le sol et la hauteur des végétaux) pour tenter de visualiser l'écotone.</p>
+                            <p class="mt-2"><strong>Résultat :</strong> De nombreux artéfacts empêchaient une bonne lecture, même si l'écotone restait partiellement distinguable.</p>
+                        </div>
+                    </div>
 
-                        <h5 class="mt-4 mb-3">Traitements effectués</h5>
-                        <ul>
-                            <li><strong>r.cost (GRASS GIS) :</strong> calcul du coût cumulé à partir des lignes RTE 400 kV</li>
-                            <li><strong>Least Cost Path (SAGA GIS) :</strong> calcul du chemin optimal de raccordement</li>
-                        </ul>
+                    <!-- APPROCHE PRINCIPALE : RSTUDIO & lidR -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">2. Approche principale : RStudio & lidR</h2>
+                        
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Installation et découverte du package</h5>
+                            <p>Le package <strong>lidR</strong> pour R est une puissante boîte à outils dédiée à la manipulation et à l'analyse des données LIDAR, traitant des nuages de points 3D. Il permet de lire, visualiser, filtrer, segmenter et classifier ces données géospatiales.</p>
+                        </div>
 
-                        <p class="mt-3">Le chemin obtenu minimise le passage sur la Terre (coût élevé) en privilégiant le tracé maritime le plus court.</p>
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Import et visualisation des données</h5>
+                            <p>Chargement des tuiles LIDAR, vérification de leur intégrité et première visualisation des nuages de points bruts.</p>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Représentation de la hauteur végétale</h5>
+                            <p>Différenciation du végétal et du non-végétal pour visualiser la couverture du sol végétalisé et la hauteur des végétaux.</p>
+                            <p class="mt-2"><strong>Limite :</strong> L'affichage de la hauteur par couleur n'était pas optimal en raison du fort dénivelé du versant (près de 300 m).</p>
+                        </div>
+                    </div>
+
+                    <!-- DÉTECTION ET SEGMENTATION DES ARBRES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">3. Détection et segmentation des arbres</h2>
+                        
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Localisation des arbres par hauteur</h5>
+                            <p>Détection des arbres individuels en fonction de leur hauteur (3 m, 11 m) pour analyser la structure de la végétation.</p>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Représentation 3D et détection des cimes</h5>
+                            <p>Détection des cimes d'arbres avec filtre maximum local (LMF) permettant d'identifier précisément la localisation des arbres. Les cimes peuvent également être visualisées en 3D.</p>
+                        </div>
+                    </div>
+
+                    <!-- AUTOMATISATION PAR BOUCLE -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">4. Automatisation par boucle R</h2>
+                        
+                        <p>L'utilisation d'une boucle a permis d'automatiser le traitement d'un grand volume de fichiers LAZ et de générer systématiquement des coupes transversales 2D.</p>
+                        
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Principe de la boucle</h5>
+                            <ul>
+                                <li>Liste de tous les fichiers .laz dans un dossier</li>
+                                <li>Chargement et vérification de chaque fichier</li>
+                                <li>Extraction de la bounding box et définition des points de coupe</li>
+                                <li>Réalisation d'une coupe transversale</li>
+                                <li>Génération d'un graphique 2D avec visualisation de la structure verticale</li>
+                                <li>Sauvegarde automatique des résultats en format image</li>
+                            </ul>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Intérêt de l'automatisation</h5>
+                            <p>Cette approche a permis de traiter efficacement un grand volume de données, d'assurer la reproductibilité des analyses et de centraliser les résultats sous forme d'images pour faciliter l'interprétation des écotones sur l'ensemble de la zone d'étude.</p>
+                        </div>
                     </div>
 
                     <!-- CONCLUSION -->
                     <div class="bg-section fade-in">
                         <h2 class="section-title">Conclusion</h2>
-                        <p>Ce projet a permis de mobiliser plusieurs types d'opérations géomatiques :</p>
-                        <ul>
-                            <li><strong>Opérations locales :</strong> reclassement, calculs raster</li>
-                            <li><strong>Opérations zonales :</strong> statistiques par zone</li>
-                            <li><strong>Opérations incrémentales :</strong> calcul de distance-coût, least cost path</li>
-                        </ul>
-                        <p class="mt-3">L'approche multicritère a abouti à l'identification de zones favorables répondant aux objectifs de production de l'État, avec une proposition de raccordement optimisé au réseau existant.</p>
-                    </div>
-
-                    <!-- Diaporama du projet -->
-                    <div class="bg-section fade-in" id="diaporama">
-                        <h2 class="section-title">Rendu du projet</h2>
-                        <div class="text-center py-3">
-                            <embed src="../img/Rendu Matricielle.pdf" type="application/pdf" width="100%" height="1350px">
-                            <p class="mt-3">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Dossier de rendu du projet - Analyse matricielle - Éolien offshore Bretagne
-                            </p>
+                        <p>Ce projet a démontré la puissance du package <strong>lidR</strong> sous R pour l'analyse de données LIDAR, bien supérieure à une approche uniquement basée sur QGIS pour ce type d'étude. L'automatisation par boucle a permis de traiter efficacement un grand volume de données et de générer des visualisations systématiques des coupes transversales, facilitant ainsi l'analyse des écotones sur l'ensemble du parc régional des Pyrénées Ariégeoises.</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Points clés</h5>
+                                <ul>
+                                    <li>Supériorité de R/lidR pour l'analyse LIDAR</li>
+                                    <li>Détection et segmentation des arbres</li>
+                                    <li>Visualisation 2D et 3D des nuages de points</li>
+                                    <li>Automatisation des traitements</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Limites rencontrées</h5>
+                                <ul>
+                                    <li>Artéfacts sur QGIS</li>
+                                    <li>Problème de représentation 3D sur certains fichiers</li>
+                                    <li>Gestion de la mémoire pour les gros fichiers</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- BIBLIOGRAPHIE -->
-                    <div class="bg-section fade-in">
-                        <h2 class="section-title">Bibliographie</h2>
-                        <ul>
-                            <li><a href="https://trac.osgeo.org/postgis/wiki/PostGIS_Raster_SoC_Idea_2012/Distance_Analysis_Tool" target="_blank" class="text-light">PostGIS Raster - Distance Analysis Tool</a></li>
-                            <li><a href="https://grass.osgeo.org/grass-stable/manuals/r.cost.html" target="_blank" class="text-light">GRASS GIS - r.cost</a></li>
-                            <li><a href="https://saga-gis.sourceforge.io/saga_tool_doc/2.2.2/grid_analysis_5.html" target="_blank" class="text-light">SAGA GIS - Least Cost Path</a></li>
-                        </ul>
+                    <!-- Site web du projet -->
+                    <div class="bg-section fade-in" id="site-projet">
+                        <h2 class="section-title">Site du projet</h2>
+                        <div class="text-center py-3">
+                            <!-- Version avec iframe (mieux supportée) -->
+                            <iframe src="https://vincenttillard.github.io/Detection_Ecotone_LIDAR/" 
+                                    width="100%" 
+                                    height="700px" 
+                                    style="border: 1px solid var(--primary); border-radius: 10px; background: white;"
+                                    allowfullscreen>
+                            </iframe>
+                            
+                            <p class="mt-3">
+                                <i class="fas fa-info-circle me-2 text-primary"></i>
+                                Site web du projet - Détection des écotones par données LIDAR
+                            </p>
+                            
+                            <!-- Lien de secours -->
+                            <a href="https://vincenttillard.github.io/Detection_Ecotone_LIDAR/" 
+                            target="_blank" 
+                            class="btn btn-outline-primary mt-2">
+                                <i class="fas fa-external-link-alt me-2"></i>Ouvrir dans un nouvel onglet
+                            </a>
+                        </div>
                     </div>
 
-                    <!-- COMPÉTENCES -->
+                    <!-- COMPÉTENCES MOBILISÉES -->
                     <div class="bg-section fade-in">
                         <h2 class="section-title">Compétences mobilisées</h2>
                         <div>
-                            <span class="badge bg-primary">QGIS</span>
-                            <span class="badge bg-primary">GRASS GIS</span>
-                            <span class="badge bg-primary">SAGA GIS</span>
-                            <span class="badge bg-primary">Analyse raster</span>
-                            <span class="badge bg-primary">Reclassement</span>
-                            <span class="badge bg-primary">Least Cost Path</span>
-                            <span class="badge bg-primary">Analyse multicritère</span>
-                            <span class="badge bg-primary">Statistique zonale</span>
+                            <span class="badge bg-primary mb-2">R</span>
+                            <span class="badge bg-primary mb-2">lidR</span>
+                            <span class="badge bg-primary mb-2">QGIS</span>
+                            <span class="badge bg-primary mb-2">Données LIDAR</span>
+                            <span class="badge bg-primary mb-2">Analyse de nuages de points 3D</span>
+                            <span class="badge bg-primary mb-2">Automatisation de traitements</span>
+                            <span class="badge bg-primary mb-2">ggplot2</span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -549,6 +594,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Année automatique dans le footer
+            document.getElementById("year").textContent = new Date().getFullYear();
+            
+            // Animation au défilement
             const fadeElements = document.querySelectorAll('.fade-in');
             
             const fadeInOnScroll = function() {
