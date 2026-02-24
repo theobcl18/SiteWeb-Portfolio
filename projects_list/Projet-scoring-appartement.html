@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détection des écotones par données LIDAR</title>
+    <title>Scoring multicritère - Rennes</title>
 
     <!-- Bootstrap CSS -->
     <link 
@@ -313,6 +313,21 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .criteria-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+
         @media (max-width: 768px) {
             .navbar-collapse {
                 background-color: rgba(18, 18, 18, 0.95);
@@ -370,8 +385,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-10">
-                    <h1>Détection des écotones par les données LIDAR</h1>
-                    <p class="lead">Analyse des écotones sur le parc régional des Pyrénées Ariégeoises à l'aide du package lidR sous R</p>
+                    <h1>Scoring multicritère sur Rennes</h1>
+                    <p class="lead">Identification des secteurs adaptés à un étudiant parent en quête de logement</p>
                     <a href="../index.html#projects" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Retour aux projets
                     </a>
@@ -402,161 +417,94 @@
                             <div class="info-card">
                                 <i class="fas fa-users fa-3x text-primary"></i>
                                 <h5>Équipe</h5>
-                                <p>Binôme</p>
+                                <p>Projet individuel</p>
                             </div>
-                        </div>
-                        <!-- Crédits -->
-                        <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
-                            <strong>
-                                <i class="fas fa-user me-1"></i> Projet réalisé avec: 
-                                <a href="" target="_blank" class="text-decoration-none text-light">Vincent Tillard</a>
-                            </strong>
                         </div>
                     </div>
 
-                    <!-- CONTEXTE & OBJECTIFS -->
+                    <!-- PRÉSENTATION GLOBALE -->
                     <div class="bg-section fade-in">
-                        <h2 class="section-title">Contexte & Objectifs</h2>
-                        <p>Ce projet visait à analyser les écotones (zones de transition entre deux écosystèmes) et à en distinguer différents types en utilisant les données LIDAR, principalement sur le parc régional des Pyrénées Ariégeoises. Les données ont été téléchargées sur Géoservices pour ensuite être analysées via QGIS et RStudio avec le package <strong>lidR</strong>, qui s'est révélé plus pertinent pour ce type d'analyse.</p>
+                        <h2 class="section-title">Présentation</h2>
+                        <p>Ce projet repose sur les <strong>données carroyées de l'INSEE</strong> (mailles de 200m x 200m), un découpage statistique indépendant des limites administratives classiques permettant d'étudier finement la répartition de la population et des caractéristiques socio-démographiques à une échelle très précise.</p>
                         
                         <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <i class="fas fa-th fa-2x text-primary mb-2"></i>
+                                    <h5>200m x 200m</h5>
+                                    <p>Maillage statistique INSEE</p>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="stat-card">
                                     <i class="fas fa-database fa-2x text-primary mb-2"></i>
-                                    <h5>Données LIDAR</h5>
-                                    <p>Téléchargement sur Géoservices</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="stat-card">
-                                    <i class="fas fa-tools fa-2x text-primary mb-2"></i>
-                                    <h5>Package lidR</h5>
-                                    <p>Boîte à outils dédiée à l'analyse de nuages de points 3D</p>
+                                    <h5>Open Data</h5>
+                                    <p>Rennes Métropole</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- PREMIÈRE APPROCHE : QGIS -->
+                    <!-- OBJECTIF -->
                     <div class="bg-section fade-in">
-                        <h2 class="section-title">1. Première approche : QGIS</h2>
-                        
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Modèle numérique de terrain normalisé</h5>
-                            <p>Une première analyse a été réalisée sur QGIS en calculant un MNT normalisé (différence d'altitude entre le sol et la hauteur des végétaux) pour tenter de visualiser l'écotone.</p>
-                            <p class="mt-2"><strong>Résultat :</strong> De nombreux artéfacts empêchaient une bonne lecture, même si l'écotone restait partiellement distinguable.</p>
-                        </div>
+                        <h2 class="section-title">Objectif</h2>
+                        <p>Construire un <strong>scoring multicritère</strong> visant à repérer les secteurs de Rennes les plus adaptés à un <strong>étudiant parent</strong> en quête de logement, en combinant des données socio-démographiques et des données d'accessibilité aux services.</p>
                     </div>
 
-                    <!-- APPROCHE PRINCIPALE : RSTUDIO & lidR -->
+                    <!-- CRITÈRES -->
                     <div class="bg-section fade-in">
-                        <h2 class="section-title">2. Approche principale : RStudio & lidR</h2>
+                        <h2 class="section-title">Critères retenus</h2>
                         
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Installation et découverte du package</h5>
-                            <p>Le package <strong>lidR</strong> pour R est une puissante boîte à outils dédiée à la manipulation et à l'analyse des données LIDAR, traitant des nuages de points 3D. Il permet de lire, visualiser, filtrer, segmenter et classifier ces données géospatiales.</p>
-                        </div>
-
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Import et visualisation des données</h5>
-                            <p>Chargement des tuiles LIDAR, vérification de leur intégrité et première visualisation des nuages de points bruts.</p>
-                        </div>
-
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Représentation de la hauteur végétale</h5>
-                            <p>Différenciation du végétal et du non-végétal pour visualiser la couverture du sol végétalisé et la hauteur des végétaux.</p>
-                            <p class="mt-2"><strong>Limite :</strong> L'affichage de la hauteur par couleur n'était pas optimal en raison du fort dénivelé du versant (près de 300 m).</p>
-                        </div>
-                    </div>
-
-                    <!-- DÉTECTION ET SEGMENTATION DES ARBRES -->
-                    <div class="bg-section fade-in">
-                        <h2 class="section-title">3. Détection et segmentation des arbres</h2>
-                        
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Localisation des arbres par hauteur</h5>
-                            <p>Détection des arbres individuels en fonction de leur hauteur (3 m, 11 m) pour analyser la structure de la végétation.</p>
-                        </div>
-
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Représentation 3D et détection des cimes</h5>
-                            <p>Détection des cimes d'arbres avec filtre maximum local (LMF) permettant d'identifier précisément la localisation des arbres. Les cimes peuvent également être visualisées en 3D.</p>
-                        </div>
-                    </div>
-
-                    <!-- AUTOMATISATION PAR BOUCLE -->
-                    <div class="bg-section fade-in">
-                        <h2 class="section-title">4. Automatisation par boucle R</h2>
-                        
-                        <p>L'utilisation d'une boucle a permis d'automatiser le traitement d'un grand volume de fichiers LAZ et de générer systématiquement des coupes transversales 2D.</p>
-                        
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Principe de la boucle</h5>
-                            <ul>
-                                <li>Liste de tous les fichiers .laz dans un dossier</li>
-                                <li>Chargement et vérification de chaque fichier</li>
-                                <li>Extraction de la bounding box et définition des points de coupe</li>
-                                <li>Réalisation d'une coupe transversale</li>
-                                <li>Génération d'un graphique 2D avec visualisation de la structure verticale</li>
-                                <li>Sauvegarde automatique des résultats en format image</li>
-                            </ul>
-                        </div>
-
-                        <div class="methodology-item">
-                            <h5 class="text-primary">Intérêt de l'automatisation</h5>
-                            <p>Cette approche a permis de traiter efficacement un grand volume de données, d'assurer la reproductibilité des analyses et de centraliser les résultats sous forme d'images pour faciliter l'interprétation des écotones sur l'ensemble de la zone d'étude.</p>
-                        </div>
-                    </div>
-
-                    <!-- CONCLUSION -->
-                    <div class="bg-section fade-in">
-                        <h2 class="section-title">Conclusion</h2>
-                        <p>Ce projet a démontré la puissance du package <strong>lidR</strong> sous R pour l'analyse de données LIDAR, bien supérieure à une approche uniquement basée sur QGIS pour ce type d'étude. L'automatisation par boucle a permis de traiter efficacement un grand volume de données et de générer des visualisations systématiques des coupes transversales, facilitant ainsi l'analyse des écotones sur l'ensemble du parc régional des Pyrénées Ariégeoises.</p>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <h5 class="text-primary">Points clés</h5>
-                                <ul>
-                                    <li>Supériorité de R/lidR pour l'analyse LIDAR</li>
-                                    <li>Détection et segmentation des arbres</li>
-                                    <li>Visualisation 2D et 3D des nuages de points</li>
-                                    <li>Automatisation des traitements</li>
-                                </ul>
+                        <div class="criteria-grid">
+                            <div class="criteria-item">
+                                <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                                <h5>Proportion 18-39 ans</h5>
+                                <p class="small">Environnement dynamique</p>
                             </div>
-                            <div class="col-md-6">
-                                <h5 class="text-primary">Limites rencontrées</h5>
-                                <ul>
-                                    <li>Artéfacts sur QGIS</li>
-                                    <li>Problème de représentation 3D sur certains fichiers</li>
-                                    <li>Gestion de la mémoire pour les gros fichiers</li>
-                                </ul>
+                            <div class="criteria-item">
+                                <i class="fas fa-building fa-2x text-primary mb-2"></i>
+                                <h5>Logements collectifs</h5>
+                                <p class="small">Offre locative</p>
+                            </div>
+                            <div class="criteria-item">
+                                <i class="fas fa-store fa-2x text-primary mb-2"></i>
+                                <h5>Densité de commerces</h5>
+                                <p class="small">Services de proximité</p>
+                            </div>
+                            <div class="criteria-item">
+                                <i class="fas fa-school fa-2x text-primary mb-2"></i>
+                                <h5>Proximité écoles maternelles</h5>
+                                <p class="small">Vie familiale</p>
+                            </div>
+                            <div class="criteria-item">
+                                <i class="fas fa-subway fa-2x text-primary mb-2"></i>
+                                <h5>Accessibilité métro</h5>
+                                <p class="small">Déplacements quotidiens</p>
+                            </div>
+                            <div class="criteria-item">
+                                <i class="fas fa-water fa-2x text-primary mb-2"></i>
+                                <h5>Proximité Vilaine</h5>
+                                <p class="small">Cadre de vie</p>
+                            </div>
+                            <div class="criteria-item">
+                                <i class="fas fa-leaf fa-2x text-primary mb-2"></i>
+                                <h5>Espaces verts</h5>
+                                <p class="small">Cadre de vie agréable</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Site web du projet -->
-                    <div class="bg-section fade-in" id="site-projet">
-                        <h2 class="section-title">Site du projet</h2>
+                    <!-- RENDU -->
+                    <div class="bg-section fade-in" id="rendu">
+                        <h2 class="section-title">Rendu du projet</h2>
                         <div class="text-center py-3">
-                            <!-- Version avec iframe (mieux supportée) -->
-                            <iframe src="https://vincenttillard.github.io/Detection_Ecotone_LIDAR/" 
-                                    width="100%" 
-                                    height="700px" 
-                                    style="border: 1px solid var(--primary); border-radius: 10px; background: white;"
-                                    allowfullscreen>
-                            </iframe>
-                            
+                            <p class="mb-4">Le rendu comprend une cartographie des secteurs scoring et la chaîne de traitements associée.</p>
+                            <embed src="../img/RENDU SCORING.pdf" type="application/pdf" width="100%" height="700px">
+                            </embed>
                             <p class="mt-3">
                                 <i class="fas fa-info-circle me-2 text-primary"></i>
-                                Site web du projet - Détection des écotones par données LIDAR
+                                Rendu complet - Scoring multicritère sur Rennes
                             </p>
-                            
-                            <!-- Lien de secours -->
-                            <a href="https://vincenttillard.github.io/Detection_Ecotone_LIDAR/" 
-                            target="_blank" 
-                            class="btn btn-outline-primary mt-2">
-                                <i class="fas fa-external-link-alt me-2"></i>Ouvrir dans un nouvel onglet
-                            </a>
                         </div>
                     </div>
 
@@ -564,13 +512,10 @@
                     <div class="bg-section fade-in">
                         <h2 class="section-title">Compétences mobilisées</h2>
                         <div>
-                            <span class="badge bg-primary mb-2">R</span>
-                            <span class="badge bg-primary mb-2">lidR</span>
                             <span class="badge bg-primary mb-2">QGIS</span>
-                            <span class="badge bg-primary mb-2">Données LIDAR</span>
-                            <span class="badge bg-primary mb-2">Analyse de nuages de points 3D</span>
-                            <span class="badge bg-primary mb-2">Automatisation de traitements</span>
-                            <span class="badge bg-primary mb-2">ggplot2</span>
+                            <span class="badge bg-primary mb-2">Données carroyées INSEE</span>
+                            <span class="badge bg-primary mb-2">Scoring multicritère</span>
+                            <span class="badge bg-primary mb-2">Analyse spatiale</span>
                         </div>
                     </div>
 
@@ -594,10 +539,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Année automatique dans le footer
             document.getElementById("year").textContent = new Date().getFullYear();
             
-            // Animation au défilement
             const fadeElements = document.querySelectorAll('.fade-in');
             
             const fadeInOnScroll = function() {
