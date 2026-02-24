@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Données et analyses - Compétences | Théo Bucaille</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Style CSS personnalisé -->
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #ffffff;
+            --secondary: #488ed4;
+            --dark: #b84a4a;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgb(157, 105, 38) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item {
+            color : white;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(205, 92, 0);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgba(205, 92, 0);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .text-primary {
+            color: rgb(253, 104, 13) !important;
+        }
+
+        .card {
+            background-color: rgba(30, 30, 30, 0.85);
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            padding: clamp(1.5rem, 3vw, 2rem);
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light);
+            font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+        }
+
+        .card-text {
+            color: var(--gray-light);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            display: inline-block;
+            white-space: normal;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        /*===============================*/
+        /* Bouton de projet */
+        /*===============================*/
+
+        .btn-project {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .btn-project:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 155, 56, 0.3);
+        }
+
+        .btn-project i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-project:hover i {
+            transform: translateX(5px);
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(254, 3, 3);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .software-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            padding: 10px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .skill-detail-item {
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 10px;
+        }
+
+        .back-button {
+            margin-bottom: 2rem;
+        }
+
+        .back-button a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-button a:hover {
+            color: var(--primary);
+        }
+
+        .skill-level {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .skill-level-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+
+        .project-example {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-example:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .package-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .package-badge {
+            background: rgba(72, 142, 212, 0.2);
+            border: 1px solid var(--secondary);
+            color: var(--light);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .software-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Théo Bucaille - Portfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION PRINCIPALE -->
+    <section class="py-5" style="margin-top: 80px;">
+        <div class="container">
+            <!-- Bouton retour -->
+            <div class="back-button">
+                <a href="../index.html">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux compétences
+                </a>
+            </div>
+
+            <!-- Titre principal -->
+            <h1 class="section-title">Données et analyses</h1>
+
+            <!-- Introduction -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="mb-3">Analyse de données et programmation statistique</h2>
+                        <p class="lead">
+                            Compétences en programmation et traitement de données pour l'analyse statistique, la visualisation et l'exploration de données spatiales et non-spatiales. Maîtrise des principaux langages et outils d'analyse de données appliqués à la géomatique et aux sciences sociales.
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <i class="fas fa-magnifying-glass-chart fa-5x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PYTHON -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png" 
+                             alt="Python" class="software-logo">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="mb-2">Python</h3>
+                        <p class="mb-3">Langage de programmation polyvalent utilisé pour l'analyse de données, l'automatisation de traitements et la visualisation.</p>
+                        
+                        <div class="skill-level">
+                            <div class="skill-level-fill" style="width: 30%;"></div>
+                        </div>
+                        <small>Niveau : Débutant</small>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-check-circle text-primary me-2"></i>Compétences spécifiques</h5>
+                    <ul class="mt-3">
+                        <li>Manipulation et analyse de données avec Pandas</li>
+                        <li>Visualisation de données avec Matplotlib</li>
+                        <li>Calcul scientifique avec NumPy</li>
+                        <li>Traitement de données géospatiales</li>
+                    </ul>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-cube text-primary me-2"></i>Packages maîtrisés</h5>
+                    <div class="package-list">
+                        <span class="package-badge">matplotlib</span>
+                        <span class="package-badge">pandas</span>
+                        <span class="package-badge">NumPy</span>
+                        <span class="package-badge">geopandas</span>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec Python</h5>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Analyse exploratoire de données socio-démographiques</h6>
+                                <p>Traitement et visualisation de données INSEE avec Pandas et Matplotlib.</p>
+                                <span class="badge bg-primary">Pandas</span>
+                                <span class="badge bg-primary">Matplotlib</span>
+                                <span class="badge bg-primary">DataViz</span>
+                            </div>
+                            <a href="../projects_list/" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- R -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <img src="https://www.r-project.org/logo/Rlogo.png" 
+                             alt="R" class="software-logo">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="mb-2">R</h3>
+                        <p class="mb-3">Langage dédié à la statistique et à l'analyse de données, largement utilisé pour la dataviz, l'analyse spatiale et les traitements statistiques avancés.</p>
+                        
+                        <div class="skill-level">
+                            <div class="skill-level-fill" style="width: 70%;"></div>
+                        </div>
+                        <small>Niveau : Intermédiaire-Avancé</small>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-check-circle text-primary me-2"></i>Compétences spécifiques</h5>
+                    <ul class="mt-3">
+                        <li><strong>Statistiques descriptives et analyses univariées :</strong> indicateurs de position et de dispersion, représentations graphiques (histogrammes, boxplots, barplots, etc)</li>
+                        <li><strong>Analyses bivariées :</strong> tests statistiques, corrélations, tableaux croisés</li>
+                        <li><strong>Analyses multivariées :</strong> ACP (Analyse en Composantes Principales), AFCM (Analyse Factorielle des Correspondances Multiples), CAH (Classification Ascendante Hiérarchique)</li>
+                        <li>Visualisation avancée avec ggplot2</li>
+                        <li>Cartographie interactive avec leaflet</li>
+                        <li>Manipulation de données spatiales (sf, terra)</li>
+                        <li>Traitement de données LIDAR avec lidR</li>
+                        <li>Géostatistiques et analyses spatiales (variogrammes, krigeage, lissage par noyaux)</li>
+                    </ul>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-cube text-primary me-2"></i>Packages maîtrisés</h5>
+                    <div class="package-list">
+                        <span class="package-badge">stats</span>
+                        <span class="package-badge">FactoMineR</span>
+                        <span class="package-badge">factoextra</span>
+                        <span class="package-badge">corrplot</span>
+                        <span class="package-badge">ggplot2</span>
+                        <span class="package-badge">dplyr</span>
+                        <span class="package-badge">tidyr</span>
+                        <span class="package-badge">sf</span>
+                        <span class="package-badge">terra</span>
+                        <span class="package-badge">leaflet</span>
+                        <span class="package-badge">lidR</span>
+                        <span class="package-badge">spatstat</span>
+                        <span class="package-badge">gstat</span>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec R</h5>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Lissage spatial par la méthode des noyaux</h6>
+                                <p>Analyse de la ségrégation socio-résidentielle à Bogota avec les packages sf et spatstat. Calcul de variogrammes et analyse de l'autocorrélation spatiale.</p>
+                                <span class="badge bg-primary">Géostatistiques</span>
+                                <span class="badge bg-primary">spatstat</span>
+                                <span class="badge bg-primary">Variogramme</span>
+                                <span class="badge bg-primary">sf</span>
+                            </div>
+                            <a href="../projects_list/Projet-lissage-spatial-bogota.html" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Détection des écotones par données LIDAR</h6>
+                                <p>Traitement de nuages de points LIDAR avec le package lidR, analyses de hauteurs de végétation et automatisation par boucles.</p>
+                                <span class="badge bg-primary">lidR</span>
+                                <span class="badge bg-primary">LIDAR</span>
+                                <span class="badge bg-primary">ggplot2</span>
+                            </div>
+                            <a href="../projects_list/Projet-detection-ecotone-R.html" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Analyse de données d'enquête</h6>
+                                <p>Traitement statistique et visualisation des résultats d'un questionnaire sur les conditions de vie étudiantes : analyses univariées, bivariées et classification (CAH).</p>
+                                <span class="badge bg-primary">Statistiques</span>
+                                <span class="badge bg-primary">CAH</span>
+                                <span class="badge bg-primary">Analyse bivariée</span>
+                                <span class="badge bg-primary">ggplot2</span>
+                            </div>
+                            <a href="../projects_list/Projet-questionnaire-rennes2.html" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Analyse multivariée de données socio-démographiques</h6>
+                                <p>Réalisation d'ACP et de CAH sur des données donnés lors de cours pour identifier des profils et des typologies spatiales.</p>
+                                <span class="badge bg-primary">ACP</span>
+                                <span class="badge bg-primary">FactoMineR</span>
+                                <span class="badge bg-primary">CAH</span>
+                                <span class="badge bg-primary">factoextra</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SQL -->
+            <div class="bg-section fade-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Sql_data_base_with_logo.svg/1200px-Sql_data_base_with_logo.svg.png" 
+                             alt="SQL" class="software-logo">
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="mb-2">SQL</h3>
+                        <p class="mb-3">Langage de requête pour la gestion, la manipulation et l'interrogation de bases de données relationnelles.</p>
+                        
+                        <div class="skill-level">
+                            <div class="skill-level-fill" style="width: 60%;"></div>
+                        </div>
+                        <small>Niveau : Intermédiaire</small>
+                    </div>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-check-circle text-primary me-2"></i>Compétences spécifiques</h5>
+                    <ul class="mt-3">
+                        <li>Gestion de bases de données relationnelles</li>
+                        <li>Manipulation et interrogation de données (SELECT, WHERE, JOIN)</li>
+                        <li>Création et modification de tables</li>
+                        <li>Requêtes complexes et agrégations</li>
+                    </ul>
+                </div>
+
+                <div class="skill-detail-item">
+                    <h5><i class="fas fa-project-diagram text-primary me-2"></i>Projets réalisés avec SQL</h5>
+
+                    <div class="project-example">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h6>Base de données foncière pour EPCI</h6>
+                                <p>Conception et gestion d'une base de données relationnelle pour le suivi du foncier et des bâtiments.</p>
+                                <span class="badge bg-primary">BDD</span>
+                                <span class="badge bg-primary">Modélisation</span>
+                                <span class="badge bg-primary">Requêtes</span>
+                            </div>
+                            <a href="../projects_list/Projet-stage-base-de-données-foncières.html" class="btn-project">
+                                <i class="fas fa-external-link-alt"></i>Voir le projet
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Autres outils -->
+            <div class="bg-section fade-in">
+                <h3 class="mb-4">Autres outils d'analyse de données</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Excel / Calc</h5>
+                                <p class="card-text">Traitement de données, tableaux croisés dynamiques, statistiques descriptives et visualisations.</p>
+                                <div class="skill-level mt-3">
+                                    <div class="skill-level-fill" style="width: 70%;"></div>
+                                </div>
+                                <small>Niveau : Avancé</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Sphinx</h5>
+                                <p class="card-text">Logiciel d'enquête et d'analyse de données : conception de questionnaires, traitement et analyse des résultats.</p>
+                                <div class="skill-level mt-3">
+                                    <div class="skill-level-fill" style="width: 75%;"></div>
+                                </div>
+                                <small>Niveau : Avancé</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">QGIS (analyse attributaire)</h5>
+                                <p class="card-text">Traitement et analyse de données attributaires, statistiques zonales, jointures et requêtes.</p>
+                                <div class="skill-level mt-3">
+                                    <div class="skill-level-fill" style="width: 95%;"></div>
+                                </div>
+                                <small>Niveau : Avancé</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section retour -->
+            <div class="text-center mt-5">
+                <a href="../index.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux compétences
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> 2026 Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/th%C3%A9o-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous">
+    </script>
+
+    <script>
+        // Animation pour les éléments fade-in
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = () => {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            // Initial check
+            fadeInOnScroll();
+            
+            // Check on scroll
+            window.addEventListener('scroll', fadeInOnScroll);
+            
+            // Mettre à jour l'année dans le footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>

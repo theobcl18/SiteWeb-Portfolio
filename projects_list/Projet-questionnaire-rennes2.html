@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enquête questionnaire - Conditions de vie étudiantes</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #f31212;
+            --secondary: #488ed4;
+            --dark: #000000;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #3A3534;
+            --gray-light: #adb5bd;
+            --map-color: #c6a719;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/fond_globe.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(105, 102, 102, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: rgb(164, 97, 20) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--light) !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        section {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(2rem, 5vw, 3rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .project-header {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+        }
+
+        .project-header h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        .project-header p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 2rem;
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207, 140, 96);
+        }
+
+        .bg-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgb(254, 3, 3);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .info-card h5 {
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .info-card p {
+            color: var(--gray-light);
+            margin: 0;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .methodology-item {
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 10px;
+        }
+
+        .text-primary {
+            color: var(--primary) !important;
+        }
+
+        .company-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hypothesis-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1px solid var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .hypothesis-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+        }
+
+        .hypothesis-card .badge {
+            background-color: var(--primary);
+            color: var(--dark);
+            font-size: 1rem;
+            padding: 0.3rem 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18, 18, 18, 0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+            
+            .stage-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .bg-section {
+                padding: 1.5rem;
+            }
+            
+            .project-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- EN-TÊTE -->
+    <header class="project-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10">
+                    <h1>Enquête par questionnaire</h1>
+                    <p class="lead">Conditions de vie des étudiants de l'Université Rennes 2 et influence de la situation familiale</p>
+                    <a href="../index.html#projects" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL DU PROJET -->
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+
+                    <!-- INFORMATIONS PROJET -->
+                    <div class="bg-section fade-in">
+                        <div class="stage-info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-calendar-alt fa-3x text-primary"></i>
+                                <h5>Période</h5>
+                                <p>Octobre - Décembre 2025</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                                <h5>Formation</h5>
+                                <p>Master 1 SIGAT</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-users fa-3x text-primary"></i>
+                                <h5>Équipe</h5>
+                                <p>Travail à 4</p>
+                            </div>
+                        </div>
+                        <!-- Crédits -->
+                        <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
+                            <strong>
+                                <i class="fas fa-users me-1"></i> Projet réalisé avec : 
+                                <a href="https://www.linkedin.com/in/lilian-danielo-28b853223/" target="_blank" class="text-decoration-none">Lilian Danielo</a> • 
+                                <a href="https://www.linkedin.com/in/marion-hervé-501445204/" target="_blank" class="text-decoration-none"> Marion Hervé</a> • 
+                                <a href="" target="_blank" class="text-decoration-none">Pierre Cohu</a>                            </strong>
+                        </div>
+                    </div>
+
+                    <!-- PRÉSENTATION -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Présentation</h2>
+                        <p>Cette enquête s'intéresse aux conditions de vie des étudiants de l'Université Rennes 2, et plus particulièrement à l'influence de la situation familiale sur leur vie quotidienne. L'objectif est de comprendre comment la composition familiale et le soutien financier des parents peuvent avoir un impact sur la façon de vivre et d'étudier à l'université.</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <span class="stat-number">137</span>
+                                    <p>Étudiants interrogés</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <span class="stat-number">5</span>
+                                    <p>UFR représentées</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="methodology-item mt-4">
+                            <h5 class="text-primary">Problématique</h5>
+                            <p class="fst-italic">"En quoi la situation familiale joue-t-elle un rôle sur les conditions de vie des étudiant·es à l'université Rennes 2 ?"</p>
+                        </div>
+                    </div>
+
+                    <!-- HYPOTHÈSES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Hypothèses de recherche</h2>
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="hypothesis-card">
+                                    <span class="badge mb-2">A</span>
+                                    <h5>Aide financière parentale</h5>
+                                    <p class="small">Les étudiants qui bénéficient d'une aide financière parentale ont une meilleure qualité de vie</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="hypothesis-card">
+                                    <span class="badge mb-2">B</span>
+                                    <h5>Activité professionnelle</h5>
+                                    <p class="small">Les étudiants ayant une activité professionnelle à côté de l'aide financière des parents sont minoritaires</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="hypothesis-card">
+                                    <span class="badge mb-2">C</span>
+                                    <h5>Domaine d'étude</h5>
+                                    <p class="small">La situation familiale a une influence sur le domaine d'étude</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="hypothesis-card">
+                                    <span class="badge mb-2">D</span>
+                                    <h5>Impact du travail</h5>
+                                    <p class="small">L'activité professionnelle impacte les conditions de vie des étudiants</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MÉTHODOLOGIE -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Méthodologie</h2>
+                        
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Échantillonnage</h5>
+                            <p>Méthode des quotas par UFR et niveau d'étude (L1 à Doctorat). Objectif initial de 150 questionnaires, 137 obtenus.</p>
+                            <ul class="mt-2">
+                                <li>Administration en face-à-face sur les campus</li>
+                                <li>Répartition par binômes avec suivi via WhatsApp</li>
+                                <li>Questionnaire oral avec saisie des réponses</li>
+                            </ul>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">Biais rencontrés</h5>
+                            <ul>
+                                <li><strong>Désirabilité sociale :</strong> gêne sur les questions de revenus et CSP</li>
+                                <li><strong>Connaissance :</strong> difficulté de compréhension des catégories INSEE</li>
+                                <li><strong>Effet de halo :</strong> réponses similaires dans les groupes, corrigé en interrogeant individuellement</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- PRINCIPAUX RÉSULTATS -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Principaux résultats</h2>
+                        
+                        <div class="methodology-item">
+                            <h5 class="text-primary">✓ Hypothèse A validée</h5>
+                            <p>Le soutien financier d'un proche est bénéfique et impacte positivement la qualité de vie. Les étudiants aidés ont plus facilement accès à un logement individuel et disposent de plus de temps pour étudier ou s'engager dans des activités associatives.</p>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">∼ Hypothèse B nuancée</h5>
+                            <p>Parmi les étudiants bénéficiant d'une aide parentale, une part significative travaille également. Le montant de l'aide n'influence pas vraiment la décision de travailler.</p>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">≈ Hypothèse C partiellement validée</h5>
+                            <p>Des tendances apparaissent selon la CSP des parents (ex: surreprésentation des enfants d'ouvriers en ALC), mais l'impact direct sur l'orientation reste limité. Les choix individuels prédominent aujourd'hui.</p>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5 class="text-primary">✓ Hypothèse D validée</h5>
+                            <p>Les étudiants qui travaillent ont globalement moins de temps pour étudier et pour leurs loisirs. Ils sont cependant plus satisfaits de leur logement, probablement grâce à des moyens financiers accrus.</p>
+                        </div>
+                    </div>
+
+                    <!-- CONCLUSION -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Conclusion</h2>
+                        <p>La situation familiale joue bien un rôle dans les conditions de vie des étudiants à Rennes 2, notamment à travers le soutien financier qui influence le logement, le temps disponible et la nécessité d'exercer une activité professionnelle. L'impact sur le domaine d'étude apparaît plus nuancé et relève davantage de logiques sociales différenciées que d'un déterminisme strict.</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Apports de l'exercice</h5>
+                                <ul>
+                                    <li>Compréhension du processus d'enquête par la pratique</li>
+                                    <li>Identification des biais et difficultés terrain</li>
+                                    <li>Cohésion et communication d'équipe</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-primary">Ouvertures</h5>
+                                <ul>
+                                    <li>Comparaison avec d'autres universités</li>
+                                    <li>Étude dans des villes aux coûts de vie différents</li>
+                                    <li>Échantillon plus large pour analyses approfondies</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RENDU PDF -->
+                    <div class="bg-section fade-in" id="rendu">
+                        <h2 class="section-title">Rendu complet</h2>
+                        <div class="text-center py-3">
+                            <embed src="../img/RENDU_questionnaire_M1sigat.pdf" type="application/pdf" width="100%" height="1350px">
+                            </embed>
+                            <p class="mt-3">
+                                <i class="fas fa-info-circle me-2 text-primary"></i>
+                                Rapport d'enquête - Conditions de vie des étudiants de Rennes 2
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- COMPÉTENCES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences mobilisées</h2>
+                        <div>
+                            <span class="badge bg-primary mb-2">Méthodologie d'enquête</span>
+                            <span class="badge bg-primary mb-2">Questionnaire</span>
+                            <span class="badge bg-primary mb-2">Sphinx</span>
+                            <span class="badge bg-primary mb-2">Analyse statistique</span>
+                            <span class="badge bg-primary mb-2">Traitement de données</span>
+                            <span class="badge bg-primary mb-2">Sociologie</span>
+                            <span class="badge bg-primary mb-2">Représentativité</span>
+                            <span class="badge bg-primary mb-2">Biais d'enquête</span>
+                            <span class="badge bg-primary mb-2">Rédaction de rapport</span>
+                        </div>
+                    </div>
+
+                    <!-- BIBLIOGRAPHIE -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Bibliographie</h2>
+                        <ul class="small">
+                            <li>Albouy, V., Godefroy, P., & Lollivier, S. - Une mesure de la qualité de la vie (INSEE)</li>
+                            <li>Bedo, Y. (2023) - Compter sur la famille ? (OVE)</li>
+                            <li>Bugeja-Bloch, F. et Frouillou, L. (2023) - Logement et études</li>
+                            <li>Dietrich-Ragon, P. (2021) - Les étudiants des catégories populaires face à la décohabitation familiale</li>
+                            <li>Enquêtes sur les conditions de vie et de santé des étudiants rennais (Université Rennes)</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille - Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/théo-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("year").textContent = new Date().getFullYear();
+            
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInOnScroll = function() {
+                fadeElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    if (elementTop < window.innerHeight - 150) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            fadeInOnScroll();
+            window.addEventListener('scroll', fadeInOnScroll);
+        });
+    </script>
+
+</body>
+</html>
