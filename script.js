@@ -35,13 +35,12 @@
         // Navigation fluide
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
                 const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
+                if (targetId === '#' || !targetId.startsWith('#')) return;
+
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
+                    e.preventDefault();
                     window.scrollTo({
                         top: targetElement.offsetTop - 80,
                         behavior: 'smooth'
@@ -205,235 +204,88 @@
             maxWidth: 300
         });
 
+// ===================================================================================
+// ==================== CARTOTHEQUE ==================================================
 
+        (function () {
+            const filterBtns = document.querySelectorAll('[data-carto-filter]');
+            const items      = document.querySelectorAll('.carto-item');
+            let activeFilter = 'all';
 
-        let map;
-        let markers = [];
-        let locations = [
-            {
-                name: "Université Rennes 2",
-                type: "education",
-                lat: 48.12060,
-                lng: -1.70360,
-                description: "Master SIGAT -> 2025-2027",
-                icon: "education",
-                logo: "https://upload.wikimedia.org/wikipedia/fr/thumb/2/23/Logo_univ-rennes2-2016.svg/1180px-Logo_univ-rennes2-2016.svg.png"
-            },
-        ];
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeFilter = btn.dataset.cartoFilter;
+                    items.forEach(item => {
+                        const tags = (item.dataset.tags || '').split(' ');
+                        const show = activeFilter === 'all' || tags.includes(activeFilter);
+                        item.classList.toggle('hidden', !show);
+                    });
+                });
+            });
 
-        // NOUVELLES DONNÉES POUR LES CARTES DE LA CARTOTHÈQUE
-        const cartothequeLocations = [
-            {
-                name: "Entre Bièvre et Rhônes",
-                type: "map",
-                lat: 46.603354,
-                lng: 1.888334,
-                description: "Mise en place d'une base de données du foncier.",
-                icon: "map",
-                image: ""
+            // Lightbox
+            const lightbox  = document.getElementById('cartoLightbox');
+            const lbImg     = document.getElementById('lbImg');
+            const lbTitle   = document.getElementById('lbTitle');
+            const lbDesc    = document.getElementById('lbDesc');
+            const lbLink    = document.getElementById('lbLink');
+            const lbClose   = document.getElementById('lbClose');
+            const lbPrev    = document.getElementById('lbPrev');
+            const lbNext    = document.getElementById('lbNext');
+            const lbCounter = document.getElementById('lbCounter');
+            let currentIdx  = 0;
+
+            function visibleItems() {
+                return [...items].filter(i => !i.classList.contains('hidden'));
             }
-        ];
 
-        // Fusionner les locations existantes avec les nouvelles locations de cartes
-        const allLocations = [...locations, ...cartothequeLocations];
-
-        // Initialisation de la carte
-        /* function initMap() {
-            // Centrer sur la France avec un zoom adapté
-            map = L.map('map').setView([46.603354, 1.888334], 6);
-            
-            // Ajout du fond de carte
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                className: 'map-tiles'
-            }).addTo(map);
-
-        
-
-            // Ajout des marqueurs
-            allLocations.forEach(location => {
-                const customIcon = L.divIcon({
-                    className: 'custom-marker',
-                    html: `<div style="background-color: ${iconColors[location.icon]}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white;"></div>`,
-                    iconSize: [26, 26],
-                    iconAnchor: [13, 13]
-                });
-
-                const popupContent = location.logo ? 
-                    `<div style="color: #333; min-width: 200px;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <img src="${location.logo}" style="width: 40px; height: 40px; object-fit: contain; background: white; padding: 5px; border-radius: 5px;">
-                            <div>
-                                <h6 style="margin: 0; color: ${iconColors[location.icon]}">${location.name}</h6>
-                                <p style="margin: 0; font-size: 14px;">${location.description}</p>
-                            </div>
-                        </div>
-                        <small style="color: #666;">${location.type === 'education' ? '📚 Études' : location.type === 'internship' ? '💼 Stage' : location.type === 'map' ? '🗺️ Carte' : '🔍 Recherche'}</small>
-                    </div>` :
-                    `<div style="color: #333;">
-                        <h6 style="margin: 0 0 5px 0; color: ${iconColors[location.icon]}">${location.name}</h6>
-                        <p style="margin: 0; font-size: 14px;">${location.description}</p>
-                        <small style="color: #666;">${location.type === 'education' ? '📚 Études' : location.type === 'internship' ? '💼 Stage' : location.type === 'map' ? '🗺️ Carte' : '🔍 Recherche'}</small>
-                        ${location.image ? `<div style="margin-top: 10px;"><img src="${location.image}" style="max-width: 200px; max-height: 150px; border-radius: 5px;"></div>` : ''}
-                    </div>`;
-
-                const marker = L.marker([location.lat, location.lng], { icon: customIcon })
-                    .addTo(map)
-                    .bindPopup(popupContent);
-
-                markers.push({
-                    marker: marker,
-                    type: location.type,
-                    name: location.name
-                });
-            });
-
-            // Ajuster la carte pour afficher tous les marqueurs
-            const group = new L.featureGroup(markers.map(m => m.marker));
-            map.fitBounds(group.getBounds().pad(0.1));
-
-
-            // Ajouter des événements de clic aux éléments de la liste
-            document.querySelectorAll('.location-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const locationName = this.querySelector('h6').textContent;
-                    // Trouver le marqueur correspondant
-                    const marker = markers.find(m => m.name === locationName);
-                    if (marker) {
-                        map.setView(marker.marker.getLatLng(), 10);
-                        marker.marker.openPopup();
-                    }
-                });
-            });
-        }
-
-        // ---------------------------------------------
-        // Initialiser la carte une fois le DOM chargé
-        // ---------------------------------------------
-
-        document.addEventListener('DOMContentLoaded', initMap);*/
-
-        // Gestion de la cartothèque
-        document.addEventListener('DOMContentLoaded', function() {
-            const slider = document.getElementById('cartothequeSlider');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const indicatorsContainer = document.getElementById('cartothequeIndicators');
-            const images = document.querySelectorAll('.cartotheque-image');
-            
-            let currentSlide = 0;
-            const totalSlides = document.querySelectorAll('.cartotheque-slide').length;
-            
-            // Créer les indicateurs dynamiquement
-            for (let i = 0; i < totalSlides; i++) {
-                const indicator = document.createElement('div');
-                indicator.className = 'cartotheque-indicator';
-                indicator.setAttribute('data-index', i);
-                if (i === 0) indicator.classList.add('active');
-                indicatorsContainer.appendChild(indicator);
+            function openLightbox(idx) {
+                const vis = visibleItems();
+                if (!vis[idx]) return;
+                currentIdx = idx;
+                const item = vis[idx];
+                lbImg.src   = item.querySelector('img').src;
+                lbImg.alt   = item.dataset.title;
+                lbTitle.textContent = item.dataset.title;
+                lbDesc.textContent  = item.dataset.desc;
+                const href = item.dataset.href;
+                lbLink.style.display = href ? 'inline-block' : 'none';
+                if (href) lbLink.href = href;
+                lbCounter.textContent = `${idx + 1} / ${vis.length}`;
+                lightbox.classList.add('open');
+                document.body.style.overflow = 'hidden';
             }
-            
-            const indicators = document.querySelectorAll('.cartotheque-indicator');
-            
-            // -----------------------------------------------------
-            // Créer le modal pour l'affichage en plein écran
-            // -----------------------------------------------------
-            const modal = document.createElement('div');
-            modal.className = 'image-modal';
-            modal.innerHTML = `
-                <button class="close-modal">&times;</button>
-                <img class="modal-content" src="" alt="">
-            `;
-            document.body.appendChild(modal);
-            
-            const modalImg = modal.querySelector('.modal-content');
-            const closeModal = modal.querySelector('.close-modal');
-            
-            // Fonction pour ouvrir l'image en plein écran
-            function openModal(imgSrc, imgAlt) {
-                modalImg.src = imgSrc; // Met à jour la source de l'image dans le modal
-                modalImg.alt = imgAlt; // Met à jour le texte alternatif
-                modal.classList.add('active'); // Affiche le modal
-                document.body.style.overflow = 'hidden'; // Empêche le défilement de la page derrière le modal
+
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+                document.body.style.overflow = '';
             }
-            
-            // Fonction pour fermer le modal
-            function closeModalFunc() { // Renomme la fonction pour éviter le conflit avec la variable
-                modal.classList.remove('active'); // Cache le modal
-                document.body.style.overflow = ''; // Restaure le défilement de la page
-            }
-            
-            // Événements pour les images
-            images.forEach(img => { // Ajoute un écouteur d'événement à chaque image
-                img.addEventListener('click', function() { // Lorsqu'une image est cliquée
-                    openModal(this.src, this.alt); // Ouvre le modal avec la source et le texte alternatif de l'image cliquée
+
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    const vis = visibleItems();
+                    const idx = vis.indexOf(item);
+                    if (idx !== -1) openLightbox(idx);
                 });
             });
-            
-            // Événements pour fermer le modal
-            closeModal.addEventListener('click', closeModalFunc);
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModalFunc();
-                }
+
+            lbClose.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+            lbPrev.addEventListener('click', () => { const v = visibleItems(); openLightbox((currentIdx - 1 + v.length) % v.length); });
+            lbNext.addEventListener('click', () => { const v = visibleItems(); openLightbox((currentIdx + 1) % v.length); });
+            document.addEventListener('keydown', e => {
+                if (!lightbox.classList.contains('open')) return;
+                if (e.key === 'Escape')     closeLightbox();
+                if (e.key === 'ArrowLeft')  lbPrev.click();
+                if (e.key === 'ArrowRight') lbNext.click();
             });
-            
-            // Fermer avec la touche Échap
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.classList.contains('active')) {
-                    closeModalFunc();
-                }
-            });
-            
-            // Fonction pour mettre à jour l'affichage
-            function updateSlider() {
-                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-                
-                // Mettre à jour les indicateurs
-                indicators.forEach((indicator, index) => {
-                    if (index === currentSlide) {
-                        indicator.classList.add('active');
-                    } else {
-                        indicator.classList.remove('active');
-                    }
-                });
-                
-                // Désactiver les boutons si nécessaire
-                prevBtn.disabled = currentSlide === 0;
-                nextBtn.disabled = currentSlide === totalSlides - 1;
-            }
-            
-            // Événements pour les boutons de navigation
-            prevBtn.addEventListener('click', function() {
-                if (currentSlide > 0) {
-                    currentSlide--;
-                    updateSlider();
-                }
-            });
-            
-            nextBtn.addEventListener('click', function() {
-                if (currentSlide < totalSlides - 1) {
-                    currentSlide++;
-                    updateSlider();
-                }
-            });
-            
-            // Événements pour les indicateurs
-            indicators.forEach(indicator => {
-                indicator.addEventListener('click', function() {
-                    currentSlide = parseInt(this.getAttribute('data-index'));
-                    updateSlider();
-                });
-            });
-            
-            // Initialisation
-            updateSlider();
-        });
+        })();
 
 
-        // ================================================
-        // SYSTÈME DE FILTRAGE DYNAMIQUE PAR BADGES
-        // ================================================
+// ===================================================================================
+// ====================SYSTÈME DE FILTRAGE DYNAMIQUE PAR BADGES=======================
 
         document.addEventListener('DOMContentLoaded', function() {
             initBadgeFilterSystem();
@@ -702,16 +554,4 @@
             
             // Démarrer le système
             init();
-        }
-
-        // Fonction utilitaire pour ajouter des données de badge à un projet
-        function addBadgeToProject(projectElement, badge) {
-            // Ajouter le badge à l'attribut data-badges
-            const currentBadges = projectElement.getAttribute('data-badges') || '';
-            const badgesArray = currentBadges ? currentBadges.split(' ') : [];
-            
-            if (!badgesArray.includes(badge)) {
-                badgesArray.push(badge);
-                projectElement.setAttribute('data-badges', badgesArray.join(' '));
-            }
         }
