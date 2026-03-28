@@ -170,14 +170,11 @@
                 <strong>Mission1 :</strong> Mise en place d'une base de données spatiale du foncier <br>
                 <strong>Mission2 :</strong> Réalisation d'un Atlas cartographique des Servitudes d'Utilités Publiques (SUP) pour le PLUi
             </div>
-            <a href="#item2" class="popup-link" onclick="document.querySelector('.item2').scrollIntoView({behavior: 'smooth'});">
+            <a href="./projects_list/Projet-stage-base-de-données-foncières.html" class="popup-link" onclick="document.querySelector('.item2').scrollIntoView({behavior: 'smooth'});">
                 🔍 Voir le projet
             </a>
             <a href="https://www.entre-bievreetrhone.fr/" target="_blank" class="popup-link">
                 🔍 Voir le site de la Communauté de Communes
-            </a>
-            <a href="img/memoire_stage_cceber.pdf" target="_blank" class="popup-link" style="margin-left: 8px;">
-                    📄 Rapport PDF
             </a>
         `, {
             className: 'custom-popup',
