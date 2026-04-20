@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risques technologiques des plateformes pétrolières</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #f31212;
+            --secondary: #488ed4;
+            --dark: #000000;
+            --light: #f8f9fa;
+            --gray: #3A3534;
+            --gray-light: #adb5bd;
+            --oil-dark:  #0d1117;
+            --oil-blue:  #1a2a3a;
+            --oil-gold:  #c9973a;
+            --oil-red:   #9d2b2b;
+            --wip-color: #3b82f6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('img/fond_globe.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(105,102,102,0.95) 0%, rgba(30,30,30,0.9) 100%);
+            z-index: -1;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background-color: rgb(164, 97, 20) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.459);
+            padding: 1rem 0;
+        }
+        .navbar-brand { font-weight: 700; color: var(--light) !important; }
+        .navbar-nav .nav-link {
+            color: var(--light) !important; font-weight: 500;
+            margin: 0 0.5rem; transition: color 0.3s ease; position: relative;
+        }
+        .navbar-nav .nav-link:hover { color: var(--primary) !important; }
+        .navbar-nav .nav-link::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 3px; background-color: var(--primary); transition: width 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover::after { width: 100%; }
+
+        /* ── HEADER ── */
+        .project-header {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position: relative; overflow: hidden;
+        }
+
+        /* Glow ambiance pétrole */
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: -30%; right: -10%;
+            width: min(700px, 90vw); height: min(700px, 90vw);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201,151,58,0.08) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .project-header h1 {
+            font-weight: 700; line-height: 1.2;
+            margin-bottom: 1rem;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+        }
+
+        /* ── BADGE "EN COURS" animé ── */
+        .wip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59,130,246,0.15);
+            border: 1.5px solid rgba(59,130,246,0.5);
+            color: #93c5fd;
+            padding: 0.4rem 1.1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            margin-bottom: 1.2rem;
+        }
+
+        .wip-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #60a5fa;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+
+        .hero-tag {
+            padding: 0.35rem 1rem; border-radius: 20px;
+            font-size: 0.82rem; font-weight: 600;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .hero-tag.oil  { background: rgba(201,151,58,0.15); border-color: var(--oil-gold); color: #f0c96e; }
+        .hero-tag.risk { background: rgba(157,43,43,0.2);   border-color: var(--oil-red);  color: #f87171; }
+        .hero-tag.sig  { background: rgba(72,142,212,0.15); border-color: var(--secondary); color: #93c5fd; }
+        .hero-tag.wip  { background: rgba(59,130,246,0.1);  border-color: rgba(59,130,246,0.4); color: #93c5fd; }
+
+        /* ── SECTIONS ── */
+        section { padding: clamp(3rem, 8vw, 5rem) 0; }
+
+        .section-title {
+            font-weight: 700; margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            position: relative; display: inline-block;
+            font-size: clamp(1.4rem, 3vw, 1.9rem);
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: -10px; left: 0;
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* ── CARTES CONTENU ── */
+        .bg-section {
+            background-color: rgba(50,49,49,0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(207,157,123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207,140,96);
+        }
+        .bg-section:hover { transform: translateY(-5px); }
+
+        /* ── GRILLE INFOS PROJET ── */
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem; margin-top: 1rem;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px; padding: 1.25rem;
+            text-align: center; border-left: 4px solid var(--primary);
+            transition: background 0.3s ease;
+        }
+        .info-card:hover { background: rgba(255,255,255,0.08); }
+        .info-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.75rem; display: block; }
+        .info-card h5 { margin-bottom: 0.4rem; color: var(--light); font-size: 0.9rem; }
+        .info-card p  { color: var(--gray-light); margin: 0; font-size: 0.85rem; }
+
+        /* ── PROBLÉMATIQUE MISE EN AVANT ── */
+        .problematique-box {
+            background: linear-gradient(135deg, rgba(201,151,58,0.1), rgba(30,30,30,0.6));
+            border: 1px solid rgba(201,151,58,0.35);
+            border-left: 5px solid var(--oil-gold);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            font-size: 1.05rem;
+            color: #f0e8d5;
+            line-height: 1.7;
+        }
+
+        /* ── PLAN / STRUCTURE ── */
+        .plan-item {
+            background: rgba(30,30,30,0.55);
+            border-radius: 10px;
+            padding: 1.1rem 1.4rem;
+            margin-bottom: 0.85rem;
+            border-left: 4px solid var(--primary);
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .plan-item:hover { border-left-color: var(--oil-gold); background: rgba(40,40,40,0.7); }
+        .plan-item h6 { color: var(--primary); margin-bottom: 0.3rem; font-weight: 600; font-size: 0.95rem; }
+        .plan-item p  { color: var(--gray-light); margin: 0; font-size: 0.88rem; }
+
+        /* ── CARTES ACCIDENTS ── */
+        .accident-card {
+            background: rgba(20,20,20,0.7);
+            border-radius: 12px;
+            padding: 1.4rem;
+            border: 1px solid rgba(255,255,255,0.07);
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .accident-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+        }
+        .accident-card.deepwater::before { background: linear-gradient(90deg, #e85d04, #9d0208); }
+        .accident-card.piper::before     { background: linear-gradient(90deg, #f59e0b, #dc2626); }
+
+        .accident-card:hover {
+            border-color: rgba(201,151,58,0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .accident-year {
+            font-size: 2rem; font-weight: 800;
+            color: var(--oil-gold); opacity: 0.25;
+            position: absolute; top: 0.8rem; right: 1rem;
+            line-height: 1;
+        }
+        .accident-card h5 { font-weight: 700; margin-bottom: 0.4rem; font-size: 1rem; }
+        .accident-card .location { color: var(--gray-light); font-size: 0.82rem; margin-bottom: 0.75rem; }
+        .accident-card p { color: var(--gray-light); font-size: 0.88rem; margin: 0; }
+
+        /* ── STAT CARDS ── */
+        .stat-card {
+            background: rgba(0,0,0,0.4); border-radius: 12px;
+            padding: 1.4rem; text-align: center;
+            border: 1px solid var(--primary);
+            transition: all 0.3s ease; height: 100%;
+        }
+        .stat-card:hover { border-color: var(--oil-gold); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,151,58,0.15); }
+        .stat-number { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.4rem; }
+        .stat-label  { color: var(--gray-light); font-size: 0.85rem; }
+
+        /* ── BLOC SOURCES ── */
+        .source-item {
+            background: rgba(30,30,30,0.5);
+            border-radius: 8px;
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 0.7rem;
+            border-left: 3px solid var(--secondary);
+            font-size: 0.88rem;
+            color: var(--gray-light);
+            transition: background 0.2s;
+        }
+        .source-item:hover { background: rgba(50,50,50,0.6); }
+        .source-item strong { color: var(--light); }
+
+        /* ── BLOC PROJET SIG EN COURS ── */
+        .wip-section {
+            background: linear-gradient(135deg, rgba(14,24,38,0.95), rgba(20,35,55,0.9));
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(59,130,246,0.08);
+        }
+
+        /* Grille de points SIG en fond */
+        .wip-section::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle, rgba(59,130,246,0.12) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+
+        .wip-header {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1.5rem; flex-wrap: wrap;
+        }
+
+        .wip-title { font-size: 1.3rem; font-weight: 700; margin: 0; }
+
+        .progress-label { color: var(--gray-light); font-size: 0.82rem; margin-bottom: 0.3rem; }
+        .progress-bar-wrap {
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px; height: 8px; overflow: hidden; margin-bottom: 1rem;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 6px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            animation: grow-bar 1.5s ease forwards;
+            width: 0%;
+        }
+        @keyframes grow-bar {
+            to { width: var(--target-width); }
+        }
+
+        /* Étapes du projet SIG */
+        .sig-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+
+        .sig-step {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 1.1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .sig-step:hover { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.3); }
+        .sig-step.done   { border-left: 3px solid #22c55e; }
+        .sig-step.active { border-left: 3px solid #3b82f6; }
+        .sig-step.todo   { border-left: 3px solid rgba(255,255,255,0.15); opacity: 0.65; }
+
+        .sig-step-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .sig-step h6 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .sig-step p  { font-size: 0.8rem; color: var(--gray-light); margin: 0; }
+
+        .step-status {
+            position: absolute; top: 0.75rem; right: 0.75rem;
+            font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem;
+            border-radius: 10px; letter-spacing: 0.05em;
+        }
+        .status-done   { background: rgba(34,197,94,0.2);  color: #86efac; }
+        .status-active { background: rgba(59,130,246,0.2); color: #93c5fd; }
+        .status-todo   { background: rgba(255,255,255,0.07); color: var(--gray-light); }
+
+        /* ── BADGES ── */
+        .badge {
+            font-weight: 500; padding: 0.45rem 0.9rem;
+            margin: 0.2rem; border-radius: 20px;
+        }
+        .bg-primary   { background-color: var(--primary)   !important; }
+        .bg-secondary { background-color: var(--secondary) !important; }
+        .text-primary { color: var(--primary) !important; }
+
+        /* ── BOUTONS ── */
+        .btn { border-radius: 30px; padding: 0.75rem clamp(1.5rem,3vw,2rem); font-weight: 600; transition: all 0.3s ease; }
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-3px); }
+        .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+        .btn-outline-primary:hover { background-color: var(--primary); border-color: var(--primary); transform: translateY(-3px); }
+
+        /* ── FADE IN ── */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── NOTE BOX ── */
+        .note-box {
+            background: rgba(157,43,43,0.1); border: 1px solid rgba(157,43,43,0.3);
+            border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0;
+            display: flex; gap: 0.75rem; align-items: flex-start;
+        }
+        .note-box i { color: #f87171; margin-top: 0.1rem; flex-shrink: 0; }
+        .note-box p { margin: 0; color: var(--gray-light); font-size: 0.9rem; }
+
+        /* ── FOOTER ── */
+        footer { border-top: 1px solid rgba(255,255,255,0.1); padding: 2rem 0; }
+        .social-links a {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; background-color: rgb(254,3,3);
+            border-radius: 50%; margin: 0 0.5rem; color: var(--light);
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover { background-color: var(--primary); transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            .navbar-collapse { background-color: rgba(18,18,18,0.95); padding: 1rem; border-radius: 10px; margin-top: 1rem; backdrop-filter: blur(10px); }
+            .sig-steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════
+         HEADER
+    ════════════════════════════════════════════ -->
+    <header class="project-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10">
+                    <p class="text-primary fw-semibold mb-2" style="letter-spacing:0.08em; font-size:0.85rem;">
+                        <i class="fas fa-book me-2"></i>NOTE BIBLIOGRAPHIQUE — RISQUES, VULNÉRABILITÉS & TERRITOIRES — M1 SIGAT — AVRIL 2026
+                    </p>
+                    <h1>Risques technologiques des<br>plateformes pétrolières</h1>
+                    <p style="color:var(--gray-light); font-size:1.05rem; margin-bottom:0.5rem;">
+                        Analyse de la vulnérabilité des systèmes offshore et des leviers de gestion du risque industriel et environnemental.
+                    </p>
+
+                    <div class="hero-tags">
+                        <span class="hero-tag oil"><i class="fas fa-oil-can me-1"></i>Offshore pétrolier</span>
+                        <span class="hero-tag risk"><i class="fas fa-exclamation-triangle me-1"></i>Risques technologiques</span>
+                        <span class="hero-tag risk">Vulnerabilité</span>
+                        <span class="hero-tag">Note bibliographique</span>
+                        <span class="hero-tag sig"><i class="fas fa-map me-1"></i>SIG en cours</span>
+                        <span class="hero-tag">Deepwater Horizon</span>
+                        <span class="hero-tag">Piper Alpha</span>
+                    </div>
+
+                    <a href="../index.html#projects" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════
+         CONTENU
+    ════════════════════════════════════════════ -->
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+
+
+                    <!-- ─── INFOS PROJET ─── -->
+                    <div class="bg-section fade-in">
+                        <div class="stage-info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h5>Période</h5>
+                                <p>Avril 2026</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h5>Formation</h5>
+                                <p>Master 1 SIGAT</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-book-open"></i>
+                                <h5>Type</h5>
+                                <p>Note bibliographique</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-user-graduate"></i>
+                                <h5>Individuel</h5>
+                                <p>Théo Bucaille</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-university"></i>
+                                <h5>Cours</h5>
+                                <p>Risques, Vulnérabilités & Territoires</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-file-alt"></i>
+                                <h5>Sources</h5>
+                                <p>5 références scientifiques</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ═══════════ BLOC PROJET SIG EN COURS ═══════════ -->
+                    <div class="wip-section fade-in">
+                        <div class="wip-header">
+                            <div class="wip-badge">
+                                <div class="wip-dot"></div>
+                                PROJET SIG — EN COURS
+                            </div>
+                            <h4 class="wip-title">
+                                <i class="fas fa-map-marked-alt me-2" style="color:#60a5fa;"></i>
+                                Cartographie des risques offshore en mer du Nord
+                            </h4>
+                        </div>
+
+                        <p style="color:var(--gray-light); font-size:0.95rem; max-width:700px;">
+                            En parallèle de cette note bibliographique, je développe un projet SIG personnel visant à spatialiser et visualiser les risques technologiques liés aux plateformes pétrolières offshore en mer du Nord. L'objectif est de croiser des données de localisation des installations, des historiques d'accidents et des données environnementales pour produire une cartographie des zones à risque.
+                        </p>
+
+                        <div class="row g-3 my-3">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card" style="border-color: rgba(59,130,246,0.4);">
+                                    <span class="stat-number" style="color:#60a5fa;">~...</span>
+                                    <span class="stat-label">plateformes référencées en mer du Nord</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card" style="border-color: rgba(59,130,246,0.4);">
+                                    <span class="stat-number" style="color:#60a5fa;">3</span>
+                                    <span class="stat-label">plusieurs types de données croisées (localisation, types, exploitations)</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card" style="border-color: rgba(59,130,246,0.4);">
+                                    <span class="stat-number" style="color:#60a5fa;">QGIS</span>
+                                    <span class="stat-label">outil principal de traitement et visualisation</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card" style="border-color: rgba(59,130,246,0.4);">
+                                    <span class="stat-number" style="color:#60a5fa;">5 %</span>
+                                    <span class="stat-label">avancement estimé du projet</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barres de progression -->
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <div class="progress-label">Collecte des données <span style="float:right; color:#93c5fd;">20 %</span></div>
+                                <div class="progress-bar-wrap"><div class="progress-fill" style="--target-width: %;"></div></div>
+
+                                <div class="progress-label">Structuration des données <span style="float:right; color:#93c5fd;">5 %</span></div>
+                                <div class="progress-bar-wrap"><div class="progress-fill" style="--target-width: 5%;"></div></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="progress-label">Traitements SIG & analyses <span style="float:right; color:#93c5fd;">5 %</span></div>
+                                <div class="progress-bar-wrap"><div class="progress-fill" style="--target-width: 5%;"></div></div>
+
+                                <div class="progress-label">Cartographie finale & mise en page <span style="float:right; color:#93c5fd;">0 %</span></div>
+                                <div class="progress-bar-wrap"><div class="progress-fill" style="--target-width: 0%;"></div></div>
+                            </div>
+                        </div>
+
+                        <!-- Étapes -->
+                        <div class="sig-steps">
+                            <div class="sig-step done">
+                                <span class="step-status status-done">✓ Fait</span>
+                                <div class="sig-step-icon">🔍</div>
+                                <h6>Cadrage bibliographique</h6>
+                                <p>Identification des sources, définition des enjeux et des zones d'étude.</p>
+                            </div>
+                            <div class="sig-step active">
+                                <span class="step-status status-active">⚙ En cours</span>
+                                <div class="sig-step-icon">🗄️</div>
+                                <h6>Collecte des données</h6>
+                                <p>Données OSPAR, BSEE, EMSA — localisation des plateformes & incidents déclarés.</p>
+                            </div>
+                            <div class="sig-step todo">
+                                <span class="step-status status-todo">À venir</span>
+                                <div class="sig-step-icon">🗺️</div>
+                                <h6>Analyses spatiales</h6>
+                                <p>Analyse de densité, zones tampons, croisement avec données environnementales.</p>
+                            </div>
+                            <div class="sig-step todo">
+                                <span class="step-status status-todo">À venir</span>
+                                <div class="sig-step-icon">🖼️</div>
+                                <h6>Cartographie finale</h6>
+                                <p>Mise en page QGIS + export des cartes thématiques de risque.</p>
+                            </div>
+                        </div>
+
+                        <p class="mt-3" style="color:var(--gray-light); font-size:0.82rem;">
+                            <i class="fas fa-clock me-1" style="color:#60a5fa;"></i>
+                            Le rendu final de ce projet sera mis en ligne ici dès sa finalisation.
+                        </p>
+                    </div>
+
+
+                    <!-- ─── CONTEXTE ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Contexte & Problématique</h2>
+
+                        <p>Cette note bibliographique a été réalisée dans le cadre du cours <strong>Risques, Vulnérabilités et Territoires</strong> du Master 1 SIGAT. Elle mobilise cinq sources scientifiques pour répondre à une problématique centrale autour des risques technologiques des plateformes offshore.</p>
+
+                        <div class="problematique-box">
+                            « Dans quelle mesure le développement des plateformes pétrolières offshore accroît-il les risques technologiques et environnementaux, et comment l'analyse scientifique de ces accidents permet-elle d'améliorer leur prévention et leur gestion ? »
+                        </div>
+
+                        <p>L'exploitation pétrolière offshore s'est fortement développée pour répondre à la demande énergétique mondiale, repoussant les frontières vers des milieux de plus en plus profonds et contraints. Les plateformes constituent des <strong>systèmes socio-techniques</strong> complexes, où interagissent facteurs techniques, humains et organisationnels — rendant la prévention des risques particulièrement difficile.</p>
+                    </div>
+
+
+                    <!-- ─── CAS D'ÉTUDES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Accidents de référence</h2>
+                        <p style="color:var(--gray-light);">Deux catastrophes majeures structurent l'analyse et illustrent la combinaison de facteurs à l'origine des accidents offshore.</p>
+
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <div class="accident-card deepwater">
+                                    <div class="accident-year">2010</div>
+                                    <h5>Deepwater Horizon</h5>
+                                    <p class="location"><i class="fas fa-map-marker-alt me-1"></i>Golfe du Mexique, États-Unis</p>
+                                    <p>Défaillance du dispositif anti-éruption (BOP) causée par un phénomène de <em>pipe buckling</em> inconnu au moment de la conception. Plus de 32 000 hectares d'impacts environnementaux, un panache sous-marin dont les effets restent encore mal connus (Camilli et al., 2010). La gestion de crise sur <strong>87 jours</strong> a dû inventer des solutions en temps réel sans précédent (Eude, 2018).</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="accident-card piper">
+                                    <div class="accident-year">1988</div>
+                                    <h5>Piper Alpha</h5>
+                                    <p class="location"><i class="fas fa-map-marker-alt me-1"></i>Mer du Nord, Royaume-Uni</p>
+                                    <p>Défaillance non pas technique mais <strong>organisationnelle</strong> : mauvaise communication entre équipes, permis de travail mal appliqués, déficit de vigilance lors des changements d'équipe (Paté-Cornell, 1993). Cet accident a directement conduit à la refonte du cadre réglementaire britannique offshore via le <strong>rapport Cullen (1990)</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="note-box mt-3">
+                            <i class="fas fa-exclamation-triangle mt-1"></i>
+                            <p>Ces deux accidents illustrent que les défaillances ne viennent pas d'une cause unique, mais d'une <strong>combinaison de facteurs techniques, humains et organisationnels</strong> dont la complexité dépasse souvent les modèles d'analyse disponibles.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── PLAN ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Structure de la note</h2>
+
+                        <div class="plan-item">
+                            <h6><i class="fas fa-industry me-2"></i>Partie 1 — La complexité des systèmes offshore, facteur de vulnérabilité accrue</h6>
+                            <p>A. Vulnérabilités techniques, matérielles et structurelles (interdépendances, effets en chaîne, dommages corporels/matériels/économiques, impacts environnementaux des milieux marins profonds) · B. Rôle déterminant des facteurs humains, organisationnels et de la culture du risque (pression économique, procédures défaillantes, vulnérabilité des victimes extérieures, notion de déni du risque).</p>
+                        </div>
+                        <div class="plan-item">
+                            <h6><i class="fas fa-chart-line me-2"></i>Partie 2 — L'analyse des accidents comme levier de gestion du risque</h6>
+                            <p>A. Le retour d'expérience et le renforcement des normes (rapport Cullen, Directive 2013/30/UE, MARPOL, OSPAR, méthodes quantitatives de Skogdalen & Vinnem) · B. Les limites des outils d'évaluation (incertitude structurelle, lacunes du droit international, sous-estimation des dimensions organisationnelles, contraintes économiques vs sécurité).</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── SOURCES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Sources bibliographiques mobilisées</h2>
+
+                        <div class="source-item">
+                            <strong>Camilli et al. (2010)</strong> — Tracking Hydrocarbon Plume Transport and Biodegradation at Deepwater Horizon. <em>Science</em>, vol. 330, n° 6001, p. 201-204.
+                        </div>
+                        <div class="source-item">
+                            <strong>Eude, T. (2018)</strong> — Forage des données et formalisation des connaissances sur un accident : le cas Deepwater Horizon. Thèse de doctorat, MINES ParisTech — 313 p.
+                        </div>
+                        <div class="source-item">
+                            <strong>Paté-Cornell, M. E. (1993)</strong> — Learning from the Piper Alpha Accident: A Postmortem Analysis of Technical and Organizational Factors. <em>Risk Analysis</em>, vol. 13, n° 2, p. 215-232.
+                        </div>
+                        <div class="source-item">
+                            <strong>Skogdalen, J. E. & Vinnem, J. E. (2011)</strong> — Quantitative risk analysis of oil and gas drilling, using Deepwater Horizon as case study. <em>Reliability Engineering & System Safety</em>, vol. 100, p. 58-66.
+                        </div>
+                        <div class="source-item">
+                            <strong>Troussier, J. (2015-2016)</strong> — Risques et responsabilité civile en matière d'installation pétrolière offshore. Mémoire de Master II Droit Maritime, Université d'Aix-Marseille — 155 p.
+                        </div>
+                    </div>
+
+
+                    <!-- ─── COMPÉTENCES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences mobilisées</h2>
+                        <div>
+                            <span class="badge bg-primary">Analyse bibliographique</span>
+                            <span class="badge bg-primary">Risques technologiques</span>
+                            <span class="badge bg-primary">Vulnérabilité des territoires</span>
+                            <span class="badge bg-secondary">Gestion de crise</span>
+                            <span class="badge bg-secondary">Retour d'expérience</span>
+                            <span class="badge bg-secondary">Droit international maritime</span>
+                            <span class="badge" style="background:rgba(59,130,246,0.5);">QGIS</span>
+                            <span class="badge" style="background:rgba(59,130,246,0.5);">PostgreSQL / PostGIS</span>
+                            <span class="badge" style="background:rgba(59,130,246,0.5);">Cartographie des risques</span>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── RENDU PDF ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Rendu — Note bibliographique complète</h2>
+                        <div class="text-center py-3">
+                            <embed src="../img/Note_biblio_risques_technologiques.pdf"
+                                   type="application/pdf" width="100%" height="1400px">
+                            <p class="mt-3" style="color:var(--gray-light); font-size:0.88rem;">
+                                <i class="fas fa-file-pdf me-2 text-primary"></i>
+                                Note bibliographique complète — Risques technologiques des plateformes pétrolières — M1 SIGAT — Théo Bucaille
+                            </p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille — Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/théo-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // Fade-in via IntersectionObserver
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Lancement des barres de progression quand la section devient visible
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.progress-fill').forEach(bar => {
+                        bar.style.animationPlayState = 'running';
+                    });
+                    progressObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        const wipSection = document.querySelector('.wip-section');
+        if (wipSection) {
+            // Pause les barres au départ
+            wipSection.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.animationPlayState = 'paused';
+            });
+            progressObserver.observe(wipSection);
+        }
+
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

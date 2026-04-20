@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télédétection - Analyses de l'impact des incendies de 2022 en Gironde</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #f31212;
+            --secondary: #488ed4;
+            --dark: #000000;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #3A3534;
+            --gray-light: #adb5bd;
+            --map-color: #c6a719;
+            --fire-orange: #e85d04;
+            --fire-red: #9d0208;
+            --smoke: #6c757d;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('img/fond_globe.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(105, 102, 102, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background-color: rgb(164, 97, 20) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand { font-weight: 700; color: var(--light) !important; }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link:hover { color: var(--primary) !important; }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after { width: 100%; }
+
+        /* ── HEADER HERO ── */
+        .project-header {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -5%;
+            width: min(600px, 80vw);
+            height: min(600px, 80vw);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(232, 93, 4, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .project-header h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+        }
+
+        .project-header .lead {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── HERO BADGE ── */
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+
+        .hero-tag {
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-tag.fire { background: rgba(232, 93, 4, 0.2); border-color: var(--fire-orange); color: #ffb347; }
+        .hero-tag.sat  { background: rgba(72, 142, 212, 0.2); border-color: var(--secondary); color: #88c9ff; }
+        .hero-tag.tool { background: rgba(254, 155, 56, 0.15); border-color: var(--primary); color: var(--primary); }
+
+        /* ── SECTIONS GÉNÉRALES ── */
+        section { padding: clamp(3rem, 8vw, 5rem) 0; }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 0;
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* ── CARTES CONTENU ── */
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207, 140, 96);
+        }
+
+        .bg-section:hover { transform: translateY(-5px); }
+
+        /* ── INFOS PROJET (grille) ── */
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+            transition: background 0.3s ease;
+        }
+
+        .info-card:hover { background: rgba(255,255,255,0.08); }
+
+        .info-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .info-card h5 { margin-bottom: 0.5rem; color: var(--light); font-size: 0.95rem; }
+        .info-card p  { color: var(--gray-light); margin: 0; font-size: 0.9rem; }
+
+        /* ── MÉTHODOLOGIE ── */
+        .methodology-item {
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 0 10px 10px 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .methodology-item:hover { border-left-color: var(--fire-orange); }
+        .methodology-item h5 { color: var(--primary); margin-bottom: 0.75rem; }
+
+        /* ── TIMELINE DES ÉTAPES ── */
+        .steps-timeline { position: relative; padding-left: 2rem; }
+
+        .steps-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.6rem; top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+
+        .step-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.25rem;
+            background: rgba(30,30,30,0.5);
+            border-radius: 10px;
+        }
+
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: -1.65rem; top: 1.2rem;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid var(--dark);
+        }
+
+        .step-item h6 { color: var(--primary); margin-bottom: 0.4rem; font-weight: 600; }
+        .step-item p  { color: var(--gray-light); margin: 0; font-size: 0.9rem; }
+
+        /* ── STAT CARDS ── */
+        .stat-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--primary);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            border-color: var(--fire-orange);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(232, 93, 4, 0.2);
+        }
+
+        .stat-number {
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label { color: var(--gray-light); font-size: 0.9rem; }
+
+        /* ── INDICE CARDS ── */
+        .indice-card {
+            background: rgba(30,30,30,0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .indice-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .indice-card .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: #ffb347;
+            font-size: 0.95rem;
+            margin: 1rem 0;
+            text-align: center;
+            border-left: 3px solid var(--primary);
+        }
+
+        .indice-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── CLASSIFICATION TABLE ── */
+        .class-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: rgba(30,30,30,0.5);
+            transition: background 0.2s ease;
+        }
+
+        .class-row:hover { background: rgba(50,50,50,0.7); }
+
+        .class-dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .class-name { flex: 1; font-weight: 500; }
+        .class-pct  { font-weight: 700; color: var(--primary); min-width: 55px; text-align: right; }
+
+        .pct-bar {
+            flex: 2;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .pct-fill { height: 100%; border-radius: 3px; }
+
+        /* ── MATRICE DE CONFUSION ── */
+        .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .matrix-table th, .matrix-table td {
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.5rem 0.75rem;
+            text-align: center;
+        }
+        .matrix-table th { background: rgba(254,155,56,0.15); color: var(--primary); font-weight: 600; }
+        .matrix-table td.hit { background: rgba(72,142,212,0.2); font-weight: 700; }
+        .matrix-table td.miss { background: rgba(232,93,4,0.15); color: #ffb347; }
+        .matrix-table .row-header { text-align: left; color: var(--gray-light); }
+
+        .kappa-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--primary);
+            margin-top: 1rem;
+        }
+
+        .kappa-val { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+        .kappa-label { color: var(--gray-light); font-size: 0.85rem; }
+
+        /* ── ALERT NOTE ── */
+        .note-box {
+            background: rgba(232, 93, 4, 0.1);
+            border: 1px solid rgba(232,93,4,0.3);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .note-box i { color: var(--fire-orange); margin-top: 0.1rem; flex-shrink: 0; }
+        .note-box p { margin: 0; color: var(--gray-light); font-size: 0.9rem; }
+
+        /* ── BADGES ── */
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+        }
+
+        .bg-primary  { background-color: var(--primary)   !important; }
+        .bg-secondary{ background-color: var(--secondary) !important; }
+        .text-primary{ color: var(--primary) !important; }
+
+        /* ── BOUTONS ── */
+        .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-3px); }
+
+        .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+        .btn-outline-primary:hover { background-color: var(--primary); border-color: var(--primary); transform: translateY(-3px); }
+
+        /* ── FADE IN ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── FOOTER ── */
+        footer { border-top: 1px solid rgba(255,255,255,0.1); padding: 2rem 0; }
+
+        .social-links a {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            background-color: rgb(254, 3, 3);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover { background-color: var(--primary); transform: translateY(-3px); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18,18,18,0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+
+            .kappa-box { flex-direction: column; text-align: center; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER
+    ════════════════════════════════════════════════════════════════════ -->
+    <header class="project-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10">
+                    <p class="text-primary fw-semibold mb-2" style="letter-spacing:0.08em;">
+                        <i class="fas fa-satellite me-2"></i>TÉLÉDÉTECTION — M1 SIGAT — AVRIL 2026
+                    </p>
+                    <h1>Les images de télédétection<br>au service des territoires</h1>
+                    <p class="lead">Analyses de l'impact des incendies de 2022 en Gironde (33)</p>
+
+                    <div class="hero-tags">
+                        <span class="hero-tag fire"><i class="fas fa-fire me-1"></i>Incendies 2022</span>
+                        <span class="hero-tag sat"><i class="fas fa-satellite me-1"></i>Sentinel-2</span>
+                        <span class="hero-tag tool">SNAP</span>
+                        <span class="hero-tag tool">QGIS</span>
+                        <span class="hero-tag tool">NDVI</span>
+                        <span class="hero-tag tool">NBR</span>
+                        <span class="hero-tag tool">Random Forest</span>
+                    </div>
+
+                    <a href="../index.html#projects" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         CONTENU PRINCIPAL
+    ════════════════════════════════════════════════════════════════════ -->
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+
+                    <!-- ─── INFORMATIONS PROJET ─── -->
+                    <div class="bg-section fade-in">
+                        <div class="stage-info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h5>Période</h5>
+                                <p>Avril 2026</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h5>Formation</h5>
+                                <p>Master 1 SIGAT</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-users"></i>
+                                <h5>Binôme</h5>
+                                <p>Lilian Danielo</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h5>Territoire</h5>
+                                <p>La Teste-de-Buch, Gironde</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-satellite"></i>
+                                <h5>Source image</h5>
+                                <p>Sentinel-2 L2A — Copernicus ESA</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-clock"></i>
+                                <h5>Dates d'analyse</h5>
+                                <p>05/09/2021 & 05/09/2022</p>
+                            </div>
+                        </div>
+                        <!-- Crédits -->
+                        <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
+                            <strong>
+                                <i class="fas fa-users me-1"></i> Projet réalisé avec : 
+                                <a href="https://www.linkedin.com/in/lilian-danielo-28b853223/" target="_blank" class="text-decoration-none">Lilian Danielo</a> • 
+                        </div>
+                    </div>
+
+
+                    <!-- ─── CONTEXTE ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Contexte</h2>
+
+                        <p>Les incendies survenus en Gironde à l'été 2022 constituent un événement majeur à l'échelle nationale. Deux foyers principaux se sont déclarés le <strong>12 juillet</strong> : l'un à <strong>Landiras</strong> et l'autre à <strong>La Teste-de-Buch</strong>. Ces incendies ont affecté le massif des Landes de Gascogne, provoquant une crise exceptionnelle tant par leur ampleur que par leur durée.</p>
+
+                        <div class="row g-3 my-3">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">50 %</span>
+                                    <span class="stat-label">des surfaces brûlées en France en 2022 concentrées en Gironde</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">32 000</span>
+                                    <span class="stat-label">hectares détruits dans le département</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">~1 M</span>
+                                    <span class="stat-label">hectares constituant le massif des Landes de Gascogne</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">10 m</span>
+                                    <span class="stat-label">résolution spatiale Sentinel-2 (bandes RGB & NIR)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p>Le secteur d'étude se situe sur la commune de La Teste-de-Buch, en bordure du bassin d'Arcachon, à proximité immédiate de la Dune du Pilat. Ce territoire est fortement dominé par des peuplements de <strong>pins maritimes</strong>, une essence particulièrement vulnérable aux incendies en raison de sa forte inflammabilité et de la structure homogène du couvert forestier.</p>
+
+                        <div class="note-box">
+                            <i class="fas fa-info-circle mt-1"></i>
+                            <p>Le choix d'utiliser Sentinel-2 plutôt que Landsat réside dans sa résolution plus fine (10 m contre 30 m), mieux adaptée à une analyse fine à l'échelle locale. Les images sélectionnées sont de niveau L2A — corrigées des effets atmosphériques.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── MÉTHODOLOGIE ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">I. Méthodologie et outils</h2>
+
+                        <p>La démarche s'est construite en plusieurs étapes complémentaires, menées via <strong>SNAP</strong> (traitements de télédétection) et <strong>QGIS</strong> (mise en page cartographique), à partir de deux images Sentinel-2 comparées avant et après incendie.</p>
+
+                        <div class="steps-timeline mt-4">
+                            <div class="step-item">
+                                <h6><i class="fas fa-download me-2"></i>1. Acquisition des images</h6>
+                                <p>Téléchargement sur le portail Copernicus ESA — images L2A du 05/09/2021 et 05/09/2022, découpées dans SNAP sur la zone d'intérêt (environs de la Dune du Pilat).</p>
+                            </div>
+                            <div class="step-item">
+                                <h6><i class="fas fa-eye me-2"></i>2. Compositions colorées</h6>
+                                <p>Visualisation en vraie couleur (bandes 2-3-4) et fausse couleur infrarouge (bande 8 assignée au rouge) pour une lecture visuelle directe des changements.</p>
+                            </div>
+                            <div class="step-item">
+                                <h6><i class="fas fa-calculator me-2"></i>3. Calcul des indices spectraux</h6>
+                                <p>Calcul du NDVI (état de santé végétation) et du NBR (intensité de brûlure) pour les deux dates, avec classifications binaires et seuillage.</p>
+                            </div>
+                            <div class="step-item">
+                                <h6><i class="fas fa-chart-area me-2"></i>4. Signatures spectrales</h6>
+                                <p>Extraction et analyse des signatures pour 5 classes (2021) et 6 classes avec la végétation brûlée (2022). La bande 8 (NIR) constitue la bande la plus discriminante.</p>
+                            </div>
+                            <div class="step-item">
+                                <h6><i class="fas fa-robot me-2"></i>5. Classification supervisée Random Forest</h6>
+                                <p>5 polygones d'entraînement par classe, 5 points de validation. Ré-échantillonnage des bandes sur la résolution de référence (bande 2). Évaluation par matrice de confusion.</p>
+                            </div>
+                            <div class="step-item">
+                                <h6><i class="fas fa-fire me-2"></i>6. Détection de changements</h6>
+                                <p>Multiplication du masque forestier 2021 (raster binaire) par l'indice NBR 2022 pour cibler et quantifier les surfaces brûlées.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── COMPOSITIONS COLORÉES & INDICES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">II. Compositions colorées & Indices</h2>
+
+                        <!-- Vraie couleur -->
+                        <div class="methodology-item">
+                            <h5><i class="fas fa-palette me-2"></i>1. Composition en vraie couleur</h5>
+                            <p>Affichage des bandes du spectre visible (B2 bleu, B3 vert, B4 rouge). La végétation saine apparaît en <strong>vert</strong>, la végétation brûlée en tons <strong>sombres et rouges</strong>, les surfaces en eau en <strong>bleu foncé</strong>. Cette représentation révèle une réflectance quasi similaire entre l'urbain et les sols nus — source de confusion dans l'analyse.</p>
+                        </div>
+
+                        <!-- Fausse couleur -->
+                        <div class="methodology-item">
+                            <h5><i class="fas fa-layer-group me-2"></i>2. Composition en fausse couleur infrarouge</h5>
+                            <p>La bande NIR (B8) est assignée au canal rouge. Une végétation dense et saine apparaît en <strong>rouge vif</strong> ; une végétation dégradée ou brûlée apparaît en <strong>vert</strong>. Ce choix repose sur la propriété de la chlorophylle : forte absorption dans le rouge visible (B4), forte réflectance dans le NIR (B8).</p>
+                        </div>
+
+                        <!-- Indices -->
+                        <div class="row g-4 mt-2">
+                            <div class="col-md-6">
+                                <div class="indice-card">
+                                    <div class="indice-icon">🌿</div>
+                                    <h5 class="text-primary mb-2">Indice NDVI</h5>
+                                    <p style="color:var(--gray-light); font-size:0.9rem;">Mesure l'état de santé de la végétation à partir des bandes Rouge (B4) et Proche Infrarouge (B8).</p>
+                                    <div class="formula">NDVI = (PIR − R) / (PIR + R)</div>
+                                    <ul style="color:var(--gray-light); font-size:0.9rem; padding-left:1.2rem;">
+                                        <li>Valeurs proches de <strong style="color:#7bc67e;">1</strong> → végétation saine (0,7–1 en 2021)</li>
+                                        <li>Valeurs proches de <strong style="color:#e85d04;">−1</strong> → surface non végétalisée ou brûlée</li>
+                                        <li>Seuil de classification binaire retenu : <strong>0,25</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="indice-card">
+                                    <div class="indice-icon">🔥</div>
+                                    <h5 class="text-primary mb-2">Indice NBR</h5>
+                                    <p style="color:var(--gray-light); font-size:0.9rem;">Quantifie le taux de brûlure via les bandes NIR (B8) et SWIR (B12).</p>
+                                    <div class="formula">NBR = (NIR − SWIR) / (NIR + SWIR)</div>
+                                    <ul style="color:var(--gray-light); font-size:0.9rem; padding-left:1.2rem;">
+                                        <li>Valeurs de <strong style="color:#7bc67e;">0,6–0,8</strong> en 2021 → végétation saine</li>
+                                        <li>Valeurs tendant vers <strong style="color:#e85d04;">−1</strong> en 2022 → zones brûlées</li>
+                                        <li>Seuil de classification binaire retenu : <strong>0,4</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── SIGNATURES SPECTRALES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">III. Signatures spectrales</h2>
+
+                        <p>Les signatures spectrales ont été extraites pour les deux dates, permettant de caractériser les différentes classes d'occupation du sol selon leur réflectance par bande spectrale.</p>
+
+                        <div class="row g-3 mt-2">
+                            <!-- 2021 -->
+                            <div class="col-md-6">
+                                <div style="background:rgba(30,30,30,0.6); border-radius:10px; padding:1.25rem; border:1px solid rgba(255,255,255,0.08); height:100%;">
+                                    <h6 class="text-primary mb-3"><i class="fas fa-calendar me-1"></i>Image 2021 — 5 classes</h6>
+                                    <ul style="color:var(--gray-light); font-size:0.9rem; padding-left:1.2rem; margin:0;">
+                                        <li><strong>Sable :</strong> réflectance élevée toutes bandes, pic à 1600 nm (B11)</li>
+                                        <li><strong>Eau :</strong> faible réflectance, forte absorption toutes longueurs d'onde</li>
+                                        <li><strong>Végétation :</strong> pic caractéristique dans le NIR</li>
+                                        <li><strong>Sol nu / Urbain :</strong> signatures très similaires — risque de confusion</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- 2022 -->
+                            <div class="col-md-6">
+                                <div style="background:rgba(30,30,30,0.6); border-radius:10px; padding:1.25rem; border:1px solid rgba(232,93,4,0.3); height:100%;">
+                                    <h6 style="color:var(--fire-orange);" class="mb-3"><i class="fas fa-fire me-1"></i>Image 2022 — 6 classes</h6>
+                                    <ul style="color:var(--gray-light); font-size:0.9rem; padding-left:1.2rem; margin:0;">
+                                        <li><strong>Sable, eau, sol nu, urbain :</strong> réflectances similaires à 2021</li>
+                                        <li><strong>Végétation :</strong> pic NIR présent mais affaibli</li>
+                                        <li><strong>Végétation brûlée (nouvelle classe) :</strong> pic NIR nettement réduit → faible activité chlorophyllienne liée aux dégâts de l'incendie</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="note-box mt-3">
+                            <i class="fas fa-lightbulb mt-1"></i>
+                            <p>La <strong>bande 8 (NIR)</strong> est la bande la plus discriminante pour les deux dates : c'est elle qui permet de distinguer le mieux chacune des occupations du sol.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── CLASSIFICATION RANDOM FOREST ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">IV. Classification supervisée — Random Forest</h2>
+
+                        <p>L'algorithme Random Forest repose sur un ensemble d'arbres de décision pour regrouper les pixels selon leur réflectance. Les images Sentinel-2 ont été ré-échantillonnées (référence : bande 2) afin d'uniformiser la résolution spatiale de toutes les bandes.</p>
+
+                        <!-- Fréquences 2021 -->
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <h5 class="mb-3"><i class="fas fa-calendar me-2 text-primary"></i>Résultats 2021</h5>
+
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#1a6fa8;"></div>
+                                    <span class="class-name">Eau</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:13.2%; background:#1a6fa8;"></div></div>
+                                    <span class="class-pct">13,2 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#2d7a2d;"></div>
+                                    <span class="class-name">Forêt</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:69.8%; background:#2d7a2d;"></div></div>
+                                    <span class="class-pct">69,8 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#d4c27a;"></div>
+                                    <span class="class-name">Sable</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:2.4%; background:#d4c27a;"></div></div>
+                                    <span class="class-pct">2,4 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#a0785a;"></div>
+                                    <span class="class-name">Sol nu</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:11.4%; background:#a0785a;"></div></div>
+                                    <span class="class-pct">11,4 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#6a6a6a;"></div>
+                                    <span class="class-name">Urbain</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:2.9%; background:#6a6a6a;"></div></div>
+                                    <span class="class-pct">2,9 %</span>
+                                </div>
+                            </div>
+
+                            <!-- Fréquences 2022 -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3"><i class="fas fa-fire me-2" style="color:var(--fire-orange);"></i>Résultats 2022</h5>
+
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#1a6fa8;"></div>
+                                    <span class="class-name">Eau</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:14.9%; background:#1a6fa8;"></div></div>
+                                    <span class="class-pct">14,9 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#2d7a2d;"></div>
+                                    <span class="class-name">Forêt (intacte)</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:30%; background:#2d7a2d;"></div></div>
+                                    <span class="class-pct">30,0 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#e85d04;"></div>
+                                    <span class="class-name">Forêt brûlée</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:38.4%; background:#e85d04;"></div></div>
+                                    <span class="class-pct">38,4 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#d4c27a;"></div>
+                                    <span class="class-name">Sable</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:2.6%; background:#d4c27a;"></div></div>
+                                    <span class="class-pct">2,6 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#a0785a;"></div>
+                                    <span class="class-name">Sol nu</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:5.2%; background:#a0785a;"></div></div>
+                                    <span class="class-pct">5,2 %</span>
+                                </div>
+                                <div class="class-row">
+                                    <div class="class-dot" style="background:#6a6a6a;"></div>
+                                    <span class="class-name">Urbain</span>
+                                    <div class="pct-bar"><div class="pct-fill" style="width:8.8%; background:#6a6a6a;"></div></div>
+                                    <span class="class-pct">8,8 %</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="note-box mt-3">
+                            <i class="fas fa-fire mt-1" style="color:var(--fire-orange);"></i>
+                            <p>Sur les <strong>~70 % de forêt</strong> identifiés en 2021, <strong>38,4 %</strong> sont classés en forêt brûlée en 2022. Soit <strong>plus de la moitié de la végétation initiale détruite</strong> lors des incendies de l'été 2022.</p>
+                        </div>
+
+                        <!-- Matrices de confusion -->
+                        <h5 class="mt-4 mb-3">Matrices de confusion</h5>
+
+                        <div class="row g-4">
+                            <!-- Matrice 2021 -->
+                            <div class="col-lg-6">
+                                <p class="text-primary fw-semibold mb-2">Classification 2021 — 5 classes</p>
+                                <div style="overflow-x:auto;">
+                                    <table class="matrix-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Réf. \ Préd.</th>
+                                                <th>Eau</th><th>Forêt</th><th>Sable</th><th>Sol nu</th><th>Urbain</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="row-header">Eau</td>   <td class="hit">5</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Forêt</td> <td>0</td><td class="hit">5</td><td>0</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Sable</td> <td>0</td><td>0</td><td class="hit">5</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Sol nu</td><td>0</td><td>0</td><td>0</td><td class="hit">5</td><td>0</td></tr>
+                                            <tr><td class="row-header">Urbain</td><td>0</td><td>0</td><td>0</td><td class="miss">2</td><td class="hit">3</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="kappa-box">
+                                    <div>
+                                        <div class="kappa-val">0,92</div>
+                                        <div class="kappa-label">Overall Accuracy</div>
+                                    </div>
+                                    <div>
+                                        <div class="kappa-val">0,90</div>
+                                        <div class="kappa-label">Coefficient Kappa</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Matrice 2022 -->
+                            <div class="col-lg-6">
+                                <p style="color:var(--fire-orange);" class="fw-semibold mb-2">Classification 2022 — 6 classes</p>
+                                <div style="overflow-x:auto;">
+                                    <table class="matrix-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Réf. \ Préd.</th>
+                                                <th>Eau</th><th>Forêt</th><th>Br.</th><th>Sable</th><th>Sol nu</th><th>Urb.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="row-header">Eau</td>         <td class="hit">5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Forêt</td>       <td>0</td><td class="hit">5</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Brûlée</td>      <td>0</td><td>0</td><td class="hit">4</td><td>0</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Sable</td>       <td>0</td><td>0</td><td>0</td><td class="hit">5</td><td>0</td><td>0</td></tr>
+                                            <tr><td class="row-header">Sol nu</td>      <td>0</td><td>0</td><td>0</td><td>0</td><td class="hit">3</td><td class="miss">2</td></tr>
+                                            <tr><td class="row-header">Urbain</td>      <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="hit">5</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="kappa-box">
+                                    <div>
+                                        <div class="kappa-val">0,93</div>
+                                        <div class="kappa-label">Overall Accuracy</div>
+                                    </div>
+                                    <div>
+                                        <div class="kappa-val">0,92</div>
+                                        <div class="kappa-label">Coefficient Kappa</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="note-box mt-3">
+                            <i class="fas fa-info-circle mt-1"></i>
+                            <p>Les seules confusions produites par le classifieur concernent les classes <strong>Urbain / Sol nu</strong>, ce qui était prévisible dès l'analyse des signatures spectrales. Cet impact reste négligeable dans le cadre d'une étude centrée sur les feux de forêts.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── DÉTECTION DE CHANGEMENTS ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">V. Détection de changements</h2>
+
+                        <div class="methodology-item">
+                            <h5><i class="fas fa-layer-group me-2"></i>Croisement classification × indice NBR</h5>
+                            <p>La classe <em>forêt</em> issue de la classification 2021 a été extraite pour produire un <strong>raster binaire</strong> (forêt = 1, reste = 0). Ce masque a ensuite été <strong>multiplié par l'indice NBR de 2022</strong>, générant une carte ciblée des surfaces forestières initiales avec une mesure de l'intensité de brûlure.</p>
+                            <p>Cette approche combine :</p>
+                            <ul>
+                                <li>Une information <strong>thématique</strong> (présence de forêt en 2021)</li>
+                                <li>Une information de <strong>dégradation</strong> (degré de brûlure en 2022)</li>
+                            </ul>
+                        </div>
+
+                        <div class="methodology-item">
+                            <h5><i class="fas fa-map me-2"></i>Interprétation des surfaces brûlées</h5>
+                            <p>Les valeurs de la carte résultante sont comprises entre <strong>−1 et 1</strong> (les zones non forestières affichent la valeur 0 et sont exclues de l'analyse) :</p>
+                            <ul>
+                                <li><strong style="color:#7bc67e;">Valeurs proches de 1</strong> → végétation relativement intacte (absence ou faible intensité de brûlure)</li>
+                                <li><strong style="color:#e85d04;">Valeurs négatives (→ −1)</strong> → zones fortement impactées, végétation détruite, forte diminution de la réflectance NIR</li>
+                            </ul>
+                            <p>L'analyse met en évidence une forte hétérogénéité spatiale de l'intensité des brûlures, avec des noyaux de brûlure intense à l'<strong>est de la dune du Pilat</strong>, expliqués par la direction et la vitesse du vent au moment de l'incendie et la densité du couvert.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── CONCLUSION ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Conclusion</h2>
+
+                        <p>Ce travail montre l'intérêt majeur de la télédétection pour l'analyse et la cartographie des impacts d'incendies forestiers. En mobilisant des images Sentinel-2 sur deux dates (septembre 2021 et septembre 2022), il a été possible de dresser un bilan spatial et quantitatif des dégâts.</p>
+
+                        <div class="row g-3 my-3">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <span class="stat-number" style="color:#7bc67e;">Kappa > 0,90</span>
+                                    <span class="stat-label">sur les deux classifications — robustesse de l'approche confirmée</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <span class="stat-number" style="color:#e85d04;">38,4 %</span>
+                                    <span class="stat-label">de la zone d'étude classée forêt brûlée en 2022</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <span class="stat-number">+ 50 %</span>
+                                    <span class="stat-label">de la végétation initiale détruite entre 2021 et 2022</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p>Plusieurs pistes d'amélioration seraient envisageables : extension de la zone au foyer de Landiras, intégration d'images post-incendie à intervalles réguliers pour suivre la régénération, et croisement avec des données MNT ou météorologiques pour analyser les facteurs de propagation.</p>
+                        <p>Dans un contexte de multiplication des risques liés au changement climatique, les méthodes de télédétection représentent un appui précieux pour les acteurs de la gestion forestière et de la prévention des risques.</p>
+                    </div>
+
+
+                    <!-- ─── RENDU PDF ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Rendu du dossier</h2>
+                        <div class="text-center py-3">
+                            <embed src="../img/dossier_teledec_feudeforet.pdf"
+                                   type="application/pdf" width="100%" height="1400px">
+                            <p class="mt-3" style="color:var(--gray-light); font-size:0.9rem;">
+                                <i class="fas fa-file-pdf me-2 text-primary"></i>
+                                Dossier complet — Télédétection — Analyses des incendies de 2022 en Gironde — M1 SIGAT
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── COMPÉTENCES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences mobilisées</h2>
+                        <div>
+                            <span class="badge bg-primary">SNAP</span>
+                            <span class="badge bg-primary">QGIS</span>
+                            <span class="badge bg-primary">Sentinel-2</span>
+                            <span class="badge bg-primary">Télédétection</span>
+                            <span class="badge bg-secondary">NDVI</span>
+                            <span class="badge bg-secondary">NBR</span>
+                            <span class="badge bg-secondary">Indice spectral</span>
+                            <span class="badge bg-secondary">Composition colorée</span>
+                            <span class="badge bg-secondary">Signature spectrale</span>
+                            <span class="badge" style="background:var(--fire-orange);">Random Forest</span>
+                            <span class="badge" style="background:var(--fire-orange);">Classification supervisée</span>
+                            <span class="badge" style="background:var(--fire-orange);">Détection de changements</span>
+                            <span class="badge" style="background:var(--fire-orange);">Analyse raster</span>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille — Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/théo-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script>
+        // Année automatique
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // Animation fade-in (IntersectionObserver — plus performant que scroll listener)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
