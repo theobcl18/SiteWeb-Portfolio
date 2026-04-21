@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet tutoré - Création d'un outil d'identification, de conservation et de gestion des sépultures</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary:      #fe9b38;
+            --primary-dark: #f31212;
+            --secondary:    #488ed4;
+            --dark:         #000000;
+            --light:        #f8f9fa;
+            --gray:         #3A3534;
+            --gray-light:   #adb5bd;
+            /* palette "patrimoine funéraire" */
+            --stone:        #8b7355;
+            --stone-light:  #c4a882;
+            --moss:         #6b7c5c;
+            --moss-light:   #9aaf88;
+            --parchment:    #d4c4a0;
+            --iron:         #5c6b7a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('img/fond_globe.jpg');
+            background-size: cover; background-position: center;
+            background-attachment: fixed;
+            z-index: -2; opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(105,102,102,0.95) 0%, rgba(30,30,30,0.9) 100%);
+            z-index: -1;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background-color: rgb(164,97,20) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.459);
+            padding: 1rem 0;
+        }
+        .navbar-brand { font-weight: 700; color: var(--light) !important; }
+        .navbar-nav .nav-link {
+            color: var(--light) !important; font-weight: 500;
+            margin: 0 0.5rem; transition: color 0.3s; position: relative;
+        }
+        .navbar-nav .nav-link:hover { color: var(--primary) !important; }
+        .navbar-nav .nav-link::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 3px; background: var(--primary); transition: width 0.3s;
+        }
+        .navbar-nav .nav-link:hover::after { width: 100%; }
+
+        /* ── HEADER ── */
+        .project-header {
+            padding: clamp(6rem,15vw,8rem) 0 clamp(3rem,8vw,5rem);
+            position: relative; overflow: hidden;
+        }
+
+        /* Motif pierre gravée en fond */
+        .project-header::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 38px,
+                    rgba(139,115,85,0.06) 38px,
+                    rgba(139,115,85,0.06) 40px
+                );
+            pointer-events: none;
+        }
+
+        .project-header::after {
+            content: '';
+            position: absolute; top: -40%; right: -8%;
+            width: min(500px, 70vw); height: min(500px, 70vw);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,115,85,0.07) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .project-header h1 {
+            font-weight: 700; line-height: 1.2; margin-bottom: 1rem;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+        }
+
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+        .hero-tag {
+            padding: 0.35rem 1rem; border-radius: 20px;
+            font-size: 0.82rem; font-weight: 600;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .hero-tag.stone   { background: rgba(139,115,85,0.2);  border-color: var(--stone);       color: var(--parchment); }
+        .hero-tag.sig     { background: rgba(72,142,212,0.15); border-color: var(--secondary);   color: #93c5fd; }
+        .hero-tag.history { background: rgba(107,124,92,0.2);  border-color: var(--moss);        color: var(--moss-light); }
+        .hero-tag.data    { background: rgba(254,155,56,0.15); border-color: var(--primary);     color: var(--primary); }
+
+        /* ── SECTIONS ── */
+        section { padding: clamp(3rem,8vw,5rem) 0; }
+
+        .section-title {
+            font-weight: 700; margin-bottom: clamp(1.5rem,4vw,2.5rem);
+            position: relative; display: inline-block;
+            font-size: clamp(1.4rem,3vw,1.9rem);
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: -10px; left: 0;
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* ── CARTES ── */
+        .bg-section {
+            background-color: rgba(50,49,49,0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem,4vw,3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(207,157,123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207,140,96);
+        }
+        .bg-section:hover { transform: translateY(-5px); }
+
+        /* ── GRILLE INFOS ── */
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px,1fr));
+            gap: 1.25rem; margin-top: 1rem;
+        }
+        .info-card {
+            background: rgba(255,255,255,0.05); border-radius: 10px;
+            padding: 1.25rem; text-align: center;
+            border-left: 4px solid var(--primary);
+            transition: background 0.3s;
+        }
+        .info-card:hover { background: rgba(255,255,255,0.08); }
+        .info-card i { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.75rem; display: block; }
+        .info-card h5 { margin-bottom: 0.4rem; color: var(--light); font-size: 0.9rem; }
+        .info-card p  { color: var(--gray-light); margin: 0; font-size: 0.85rem; }
+
+        /* ── CITATION / MISE EN AVANT ── */
+        .context-box {
+            background: linear-gradient(135deg, rgba(139,115,85,0.1), rgba(30,30,30,0.6));
+            border: 1px solid rgba(139,115,85,0.3);
+            border-left: 5px solid var(--stone);
+            border-radius: 12px;
+            padding: 1.4rem 1.8rem;
+            margin: 1.5rem 0;
+            color: #f0e8d8;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .context-box strong { color: var(--parchment); }
+
+        /* ── AXES DU PROJET ── */
+        .axe-card {
+            background: rgba(20,20,20,0.65);
+            border-radius: 12px; padding: 1.4rem;
+            border: 1px solid rgba(255,255,255,0.07);
+            height: 100%; transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .axe-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+        }
+        .axe-card.ax1::before { background: linear-gradient(90deg, var(--stone), var(--parchment)); }
+        .axe-card.ax2::before { background: linear-gradient(90deg, var(--secondary), #60a5fa); }
+        .axe-card.ax3::before { background: linear-gradient(90deg, var(--moss), var(--moss-light)); }
+
+        .axe-card:hover { border-color: rgba(139,115,85,0.3); transform: translateY(-4px); }
+        .axe-num { font-size: 3rem; font-weight: 800; opacity: 0.08; position: absolute; top: 0.3rem; right: 0.9rem; line-height: 1; }
+        .axe-card h5 { font-weight: 700; margin-bottom: 0.5rem; font-size: 1rem; }
+        .axe-card p  { color: var(--gray-light); font-size: 0.87rem; margin: 0; }
+
+        /* ── STATS ── */
+        .stat-card {
+            background: rgba(0,0,0,0.4); border-radius: 12px;
+            padding: 1.4rem; text-align: center;
+            border: 1px solid var(--primary);
+            transition: all 0.3s; height: 100%;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(139,115,85,0.15); border-color: var(--stone-light); }
+        .stat-number { font-size: clamp(1.5rem,3vw,2rem); font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.4rem; }
+        .stat-label  { color: var(--gray-light); font-size: 0.85rem; }
+
+        /* ── TIMELINE MÉTHODOLOGIE ── */
+        .pipeline { position: relative; padding-left: 2rem; }
+        .pipeline::before {
+            content: ''; position: absolute; left: 0.6rem; top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--stone), var(--secondary), var(--primary));
+        }
+        .pipe-step {
+            position: relative; margin-bottom: 1.25rem;
+            padding: 1rem 1.25rem;
+            background: rgba(30,30,30,0.55); border-radius: 10px;
+            transition: background 0.2s;
+        }
+        .pipe-step:hover { background: rgba(45,45,45,0.7); }
+        .pipe-step::before {
+            content: ''; position: absolute; left: -1.65rem; top: 1.2rem;
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--stone); border: 2px solid var(--dark);
+        }
+        .pipe-step h6 { color: var(--parchment); margin-bottom: 0.3rem; font-weight: 600; font-size: 0.9rem; }
+        .pipe-step p  { color: var(--gray-light); margin: 0; font-size: 0.85rem; }
+
+        /* ── MODULARIS ONGLETS ── */
+        .module-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem; }
+
+        .module-tab {
+            background: rgba(20,20,20,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            transition: all 0.3s;
+        }
+        .module-tab:hover { border-color: rgba(254,155,56,0.3); background: rgba(35,35,35,0.7); }
+        .module-tab .tab-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .module-tab h6 { color: var(--primary); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .module-tab p  { color: var(--gray-light); font-size: 0.8rem; margin: 0; }
+
+        /* ── SÉPULTURES REMARQUABLES ── */
+        .sepulture-card {
+            background: rgba(20,20,20,0.65);
+            border-radius: 10px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--stone);
+            transition: all 0.3s;
+        }
+        .sepulture-card:hover { border-left-color: var(--parchment); background: rgba(35,35,35,0.75); transform: translateX(4px); }
+        .sepulture-card h6 { color: var(--parchment); font-weight: 700; margin-bottom: 0.25rem; font-size: 0.95rem; }
+        .sepulture-card .dates { color: var(--stone-light); font-size: 0.78rem; margin-bottom: 0.4rem; }
+        .sepulture-card p { color: var(--gray-light); font-size: 0.85rem; margin: 0; }
+
+        /* ── MONUMENTS AUX MORTS ── */
+        .war-stat {
+            background: rgba(92,107,122,0.2);
+            border: 1px solid rgba(92,107,122,0.4);
+            border-radius: 10px;
+            padding: 1.1rem 1.4rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .war-stat:hover { border-color: rgba(92,107,122,0.7); }
+        .war-stat .war-num { font-size: 2rem; font-weight: 700; color: var(--stone-light); display: block; }
+        .war-stat .war-label { color: var(--gray-light); font-size: 0.82rem; }
+
+        /* ── NOTE / ALERTE ── */
+        .note-box {
+            background: rgba(139,115,85,0.1); border: 1px solid rgba(139,115,85,0.25);
+            border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0;
+            display: flex; gap: 0.75rem; align-items: flex-start;
+        }
+        .note-box i { color: var(--stone-light); margin-top: 0.1rem; flex-shrink: 0; }
+        .note-box p { margin: 0; color: var(--gray-light); font-size: 0.88rem; }
+
+        .limit-item {
+            background: rgba(30,30,30,0.5); border-radius: 10px;
+            padding: 1rem 1.4rem; margin-bottom: 0.85rem;
+            border-left: 4px solid var(--primary);
+            transition: border-color 0.3s;
+        }
+        .limit-item:hover { border-left-color: var(--stone-light); }
+        .limit-item h6 { color: var(--primary); margin-bottom: 0.3rem; font-size: 0.9rem; font-weight: 600; }
+        .limit-item p  { color: var(--gray-light); margin: 0; font-size: 0.85rem; }
+
+        /* ── RÉALISATIONS ── */
+        .done-item {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .done-item:last-child { border-bottom: none; }
+        .done-check { color: #86efac; flex-shrink: 0; margin-top: 0.15rem; }
+        .done-cross { color: #f87171; flex-shrink: 0; margin-top: 0.15rem; }
+        .done-item p { margin: 0; color: var(--gray-light); font-size: 0.88rem; }
+
+        /* ── BADGES ── */
+        .badge { font-weight: 500; padding: 0.45rem 0.9rem; margin: 0.2rem; border-radius: 20px; }
+        .bg-primary   { background-color: var(--primary)   !important; }
+        .bg-secondary { background-color: var(--secondary) !important; }
+        .text-primary { color: var(--primary) !important; }
+
+        /* ── BOUTONS ── */
+        .btn { border-radius: 30px; padding: 0.75rem clamp(1.5rem,3vw,2rem); font-weight: 600; transition: all 0.3s; }
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-3px); }
+        .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+        .btn-outline-primary:hover { background-color: var(--primary); border-color: var(--primary); transform: translateY(-3px); }
+
+        /* ── FADE IN ── */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── FOOTER ── */
+        footer { border-top: 1px solid rgba(255,255,255,0.1); padding: 2rem 0; }
+        .social-links a {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; background-color: rgb(254,3,3);
+            border-radius: 50%; margin: 0 0.5rem; color: var(--light);
+            transition: all 0.3s;
+        }
+        .social-links a:hover { background-color: var(--primary); transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18,18,18,0.95); padding: 1rem;
+                border-radius: 10px; margin-top: 1rem; backdrop-filter: blur(10px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══════════════════════════════════════════
+         HEADER
+    ═══════════════════════════════════════════════ -->
+    <header class="project-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10">
+                    <p class="text-primary fw-semibold mb-2" style="letter-spacing:0.08em; font-size:0.85rem;">
+                        <i class="fas fa-cross me-2"></i>PROJET TUTORÉ — LICENCE PRO SIGDAT — MARS 2025
+                    </p>
+                    <h1>La mémoire des défunts<br>dans une commune rurale du Calvados</h1>
+                    <p style="color:var(--gray-light); font-size:1.05rem; margin-bottom:0.5rem;">
+                        Identification, conservation et gestion numérique des sépultures de <strong style="color:var(--parchment);">Balleroy-sur-Drôme</strong> — Création d'un outil de gestion cartographique des cimetières (logiciel Modularis + QGIS).
+                    </p>
+
+                    <div class="hero-tags">
+                        <span class="hero-tag stone"><i class="fas fa-church me-1"></i>Patrimoine funéraire</span>
+                        <span class="hero-tag sig"><i class="fas fa-map me-1"></i>QGIS & RTK</span>
+                        <span class="hero-tag data"><i class="fas fa-database me-1"></i>Modularis / DBeaver</span>
+                        <span class="hero-tag history"><i class="fas fa-scroll me-1"></i>Archives historiques</span>
+                        <span class="hero-tag stone">Calvados</span>
+                        <span class="hero-tag data">Microsoft Access</span>
+                        <span class="hero-tag history">Monuments aux morts</span>
+                    </div>
+
+                    <a href="../index.html#projects" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════
+         CONTENU
+    ═══════════════════════════════════════════════ -->
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+
+
+                    <!-- ─── INFOS PROJET ─── -->
+                    <div class="bg-section fade-in">
+                        <div class="stage-info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h5>Période</h5>
+                                <p>Mars 2025</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h5>Formation</h5>
+                                <p>Licence Pro SIGDAT</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-users"></i>
+                                <h5>Équipe</h5>
+                                <p>Neveu · François · Bucaille</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-building"></i>
+                                <h5>Commanditaire</h5>
+                                <p>Mairie de Balleroy-sur-Drôme</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h5>Territoire</h5>
+                                <p>Balleroy & Vaubadon — Calvados (14)</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-clock"></i>
+                                <h5>Délai effectif</h5>
+                                <p>Moins de 15 jours (accès Modularis limité à la mairie)</p>
+                            </div>
+                        </div>
+                        <!-- Crédits -->
+                        <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
+                            <strong>
+                                <i class="fas fa-users me-1"></i> Projet réalisé avec : 
+                                <a href="" target="_blank" class="text-decoration-none">Aubin Neveu</a> • 
+                                <a href="" target="_blank" class="text-decoration-none"> Florian François</a> • 
+                        </div>
+                    </div>
+
+
+                    <!-- ─── CONTEXTE ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Contexte & Enjeux</h2>
+
+                        <div class="context-box">
+                            Depuis 2020, <strong>l'article 15 de la loi n°2019-828</strong> oblige chaque commune à disposer d'une gestion informatique de ses cimetières. La commune nouvelle de Balleroy-sur-Drôme, labellisée <strong>« Village de caractère »</strong>, a sollicité la Licence Pro SIGDAT de l'Université de Caen pour mettre à jour son outil de gestion Modularis et valoriser son patrimoine funéraire remarquable.
+                        </div>
+
+                        <p>Balleroy-sur-Drôme est née de la fusion, le 1er janvier 2016, des communes de <strong>Balleroy</strong> (912 hab.) et de <strong>Vaubadon</strong> (419 hab.), situées dans le Pays du Bessin, au cœur de la Basse-Normandie. Les deux cimetières communaux, datant du XVIIIe siècle, présentent des problématiques de conservation liées à la nature argileuse du sol et à la topographie du terrain.</p>
+
+                        <div class="row g-3 my-3">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">1748</span>
+                                    <span class="stat-label">année de fondation du cimetière de Vaubadon — le plus ancien des deux</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">1781</span>
+                                    <span class="stat-label">année de construction du cimetière de Balleroy, agrandi en 1916</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">4 carrés</span>
+                                    <span class="stat-label">structure du cimetière de Balleroy, chacun avec son plan Modularis</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="stat-card">
+                                    <span class="stat-number">49 + 16</span>
+                                    <span class="stat-label">soldats inscrits sur les monuments aux morts de Balleroy et Vaubadon</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── AXES DU PROJET ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Structure du projet</h2>
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="axe-card ax1">
+                                    <div class="axe-num">1</div>
+                                    <h5><i class="fas fa-map-marked-alt me-2" style="color:var(--parchment);"></i>Présentation des bourgs</h5>
+                                    <p>Approche géographique et historique de Balleroy et Vaubadon depuis l'époque mérovingienne jusqu'à nos jours. Genèse et législation des deux cimetières communaux.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="axe-card ax2">
+                                    <div class="axe-num">2</div>
+                                    <h5><i class="fas fa-database me-2" style="color:#93c5fd;"></i>Gestion numérique</h5>
+                                    <p>Extraction de la base de données Modularis (.mdb Access), recréation complète des plans sous QGIS, intégration des données de concessions, notice d'utilisation pour la mairie.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="axe-card ax3">
+                                    <div class="axe-num">3</div>
+                                    <h5><i class="fas fa-scroll me-2" style="color:var(--moss-light);"></i>Mémoire des défunts</h5>
+                                    <p>Recensement des sépultures remarquables (XIXe–début XXe s.), enquête dans les Archives Départementales du Calvados (BMS, recensements, registres matricules militaires).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── CHAÎNE DE TRAITEMENT ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Méthodologie — Axe 2 : Gestion numérique</h2>
+
+                        <p>Le cœur du projet a consisté à <strong>redonner vie à une base de données inexploitable</strong> et à en reconstruire les plans cartographiques depuis zéro, dans un délai très contraint.</p>
+
+                        <div class="pipeline mt-4">
+                            <div class="pipe-step">
+                                <h6><i class="fas fa-download me-2"></i>Extraction de Modularis (.mdb Access)</h6>
+                                <p>Impossibilité d'accéder au logiciel hors de la mairie → extraction manuelle du fichier <code>concess.mdb</code> (base Microsoft Access). Ouverture avec <strong>DBeaver</strong> pour explorer les tables <em>Emplacement</em>, <em>Concession</em> et <em>Inhumation</em>, puis export en <code>.csv</code> pour traitement QGIS.</p>
+                            </div>
+                            <div class="pipe-step">
+                                <h6><i class="fas fa-satellite-dish me-2"></i>Relevés GPS RTK sur le terrain</h6>
+                                <p>Utilisation d'une balise RTK (Real Time Kinematics) couplée à l'une des 6 antennes disponibles sur le territoire. Précision annoncée de <strong>5 m</strong> au centre du cimetière, ~15 m en périphérie — largement suffisante pour le recalage des plans.</p>
+                            </div>
+                            <div class="pipe-step">
+                                <h6><i class="fas fa-drafting-compass me-2"></i>Recréation des plans sous QGIS</h6>
+                                <p>Le cimetière de Balleroy présentant une géométrie régulière (4 carrés rectangulaires), chaque tombe a été construite à partir de <strong>2 points P1/P2</strong> définissant un rectangle. Un système de numérotation tripartite (n° carré + n° allée + n° rang) garantit l'unicité de chaque emplacement.</p>
+                            </div>
+                            <div class="pipe-step">
+                                <h6><i class="fas fa-sync me-2"></i>Intégration dans Modularis</h6>
+                                <p>Export des plans en <code>.bmp</code> pour import dans Modularis. Création du lien entre chaque plan et sa fiche de concession. Un code couleur (rouge = 50 ans, vert = 30 ans, etc.) permet de visualiser les durées de concession directement sur le plan.</p>
+                            </div>
+                            <div class="pipe-step">
+                                <h6><i class="fas fa-file-excel me-2"></i>Tableur de suivi pour la mairie</h6>
+                                <p>Production d'un tableur Excel répertoriant toutes les sépultures disparues, les erreurs d'attribution, les écarts entre emplacements théoriques et réels — transmis à la mairie pour la continuité du travail.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── MODULARIS : FONCTIONNALITÉS ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Le logiciel Modularis</h2>
+                        <p style="color:var(--gray-light);">Outil de gestion des cimetières communaux acquis par la mairie. Il repose sur une base de données Microsoft Access et organise les informations en plusieurs onglets par concession.</p>
+
+                        <div class="module-tabs mt-3">
+                            <div class="module-tab">
+                                <div class="tab-icon">👤</div>
+                                <h6>Concessionnaire</h6>
+                                <p>Identité, coordonnées, durée et tarif de la concession. Génération automatique de l'acte de concession imprimable.</p>
+                            </div>
+                            <div class="module-tab">
+                                <div class="tab-icon">📍</div>
+                                <h6>Emplacement</h6>
+                                <p>Plan du cimetière zoomé sur la concession avec pastille de couleur selon la durée. Champs allée + rang pour localiser l'emplacement.</p>
+                            </div>
+                            <div class="module-tab">
+                                <div class="tab-icon">📋</div>
+                                <h6>Inhumations</h6>
+                                <p>Informations personnelles du défunt, date de décès et d'inhumation. Historique de tous les défunts de la concession.</p>
+                            </div>
+                            <div class="module-tab">
+                                <div class="tab-icon">🔄</div>
+                                <h6>Exhumations</h6>
+                                <p>Sélection du défunt concerné, date et motif. L'emplacement libéré est automatiquement comptabilisé dans le suivi des places disponibles.</p>
+                            </div>
+                            <div class="module-tab">
+                                <div class="tab-icon">🔍</div>
+                                <h6>Suivi de l'état</h6>
+                                <p>Date de constatation, observations, suite à donner. Essentiel pour signaler les dégradations et gérer les procédures d'abandon.</p>
+                            </div>
+                            <div class="module-tab">
+                                <div class="tab-icon">📎</div>
+                                <h6>Documents</h6>
+                                <p>Photos de la tombe, scan des actes de concession, courriers. Centralisation de tout document lié à la concession.</p>
+                            </div>
+                        </div>
+
+                        <div class="note-box mt-4">
+                            <i class="fas fa-info-circle mt-1"></i>
+                            <p>La notice d'utilisation fournie à la mairie explique comment modifier les plans directement depuis <strong>Paint</strong> (outil pipette + pot de peinture sur les fichiers .bmp) sans avoir à toucher à QGIS, pour une prise en main immédiate par les agents.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── SÉPULTURES REMARQUABLES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Axe 3 — Mémoire des défunts</h2>
+                        <p>Environ <strong>une vingtaine de sépultures remarquables</strong> du XIXe–début XXe siècle ont été recensées et étudiées à partir des registres BMS, recensements de population et actes d'état civil numérisés des Archives Départementales du Calvados.</p>
+
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <h5 class="mb-3" style="color:var(--parchment);"><i class="fas fa-monument me-2"></i>Figures remarquables</h5>
+
+                                <div class="sepulture-card">
+                                    <h6>Famille de la Cour de Balleroy</h6>
+                                    <div class="dates">Noblesse — Marquis de Balleroy — XIIe siècle → XXe siècle</div>
+                                    <p>6 emplacements dans le 2ème carré gauche. Quatre tombeaux sarcophages cubiques en granite abritant notamment Albert de la Cour de Balleroy (1828-1872), Comte, député du Calvados et peintre. Titre de Marquis accordé par Louis XIV en décembre 1704.</p>
+                                </div>
+
+                                <div class="sepulture-card">
+                                    <h6>Famille Villeroy</h6>
+                                    <div class="dates">Médecins et Maires de Balleroy — XIXe siècle</div>
+                                    <p>La famille la plus représentée du cimetière. Michel-François Villeroy (1778-1841), docteur en médecine et maire de Balleroy, repose dans un tombeau sarcophage en granite. Son fils Guillaume Edmond (1808-1862), également maire (1842-1851), dans une sépulture en fer forgé.</p>
+                                </div>
+
+                                <div class="sepulture-card">
+                                    <h6>L'abbé Moulland</h6>
+                                    <div class="dates">Curé — 1757 (Bayeux) → 12 avril 1831 (Balleroy)</div>
+                                    <p>Grande figure locale de la Révolution. Fervent défenseur des idées révolutionnaires, il fut emprisonné à deux reprises (1794 et 1796) avant de devenir curé de Balleroy en 1803, rapidement apprécié de ses paroissiens malgré un conflit avec le Marquis de Balleroy.</p>
+                                </div>
+
+                                <div class="sepulture-card">
+                                    <h6>Pierre Dominique Lemonnier</h6>
+                                    <div class="dates">Huissier, Conseiller municipal — né à Caumont le 13 janvier 1812</div>
+                                    <p>Cas particulier : retrouvé assassiné dans la forêt de Cerisy le 27 avril 1854. L'affaire, relatée dans l'<em>Indicateur de Bayeux</em>, reste un « Cold Case » — deux suspects arrêtés en juillet 1854 mais aucune condamnation documentée.</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h5 class="mb-3" style="color:var(--moss-light);"><i class="fas fa-medal me-2"></i>Monuments aux morts</h5>
+                                <p style="color:var(--gray-light); font-size:0.9rem; margin-bottom:1.2rem;">Étude des fiches matricules des soldats inscrits sur les deux monuments aux morts, à partir des Archives Départementales du Calvados (AD14).</p>
+
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <div class="war-stat">
+                                            <span class="war-num">49</span>
+                                            <span class="war-label">soldats — Monument de Balleroy</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="war-stat">
+                                            <span class="war-num">16</span>
+                                            <span class="war-label">soldats — Monument de Vaubadon</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="war-stat">
+                                            <span class="war-num">8 + 12</span>
+                                            <span class="war-label">matricules introuvables (mobilisés hors Calvados)</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="war-stat">
+                                            <span class="war-num">7</span>
+                                            <span class="war-label">soldats décorés (Croix de guerre, médaille militaire…)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="note-box">
+                                    <i class="fas fa-info-circle mt-1"></i>
+                                    <p>Une grande partie des soldats étaient <strong>domestiques, journaliers ou ouvriers</strong>. Beaucoup sont morts de <strong>maladies</strong> (grippe espagnole notamment) plutôt que directement au combat. Les officiers et marins sont archivés dans des dépôts différents (ex. archives de la Défense).</p>
+                                </div>
+
+                                <div style="background:rgba(107,124,92,0.1); border:1px solid rgba(107,124,92,0.25); border-radius:10px; padding:1rem; margin-top:0.5rem;">
+                                    <h6 style="color:var(--moss-light); margin-bottom:0.6rem;"><i class="fas fa-search me-2"></i>Méthode de recherche archivistique</h6>
+                                    <p style="color:var(--gray-light); font-size:0.85rem; margin:0;">Registres BMS (Baptêmes Mariages Sépultures) + tables décennales + recensements de population numérisés sur le portail des AD14. Les actes de mariage se révèlent les sources les plus riches en informations biographiques.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── RÉALISATIONS & LIMITES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Réalisations & Limites</h2>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h5 class="mb-3" style="color:#86efac;"><i class="fas fa-check-circle me-2"></i>Ce qui a été réalisé</h5>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Création de <strong>4 plans réguliers</strong> pour chaque carré du cimetière de Balleroy, entièrement repensés depuis zéro</p></div>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Recalage de l'ensemble des tombes et correction des erreurs/doublons dans la base de données</p></div>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Photographies complètes de l'ensemble des tombes du cimetière</p></div>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Ajout des concessions manquantes dans le 2ème carré droit, à partir de l'analyse photographique</p></div>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Production des plans en deux formats (PDF imprimable + SVG modifiable) et en deux versions (vierge + complété avec données Modularis)</p></div>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Tableur Excel des sépultures disparues et des erreurs d'attribution pour la mairie</p></div>
+                                <div class="done-item"><i class="fas fa-check done-check"></i><p>Étude historique de ~20 sépultures remarquables + tableur complet sur les soldats des monuments aux morts</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="mb-3" style="color:#f87171;"><i class="fas fa-times-circle me-2"></i>Ce qui n'a pas pu être réalisé</h5>
+                                <div class="done-item"><i class="fas fa-times done-cross"></i><p>Vérification exhaustive de toutes les concessions et inhumations renseignées dans Modularis <em>avant</em> notre arrivée</p></div>
+                                <div class="done-item"><i class="fas fa-times done-cross"></i><p>Ajout des inhumations pour l'ensemble des tombes (manque de temps)</p></div>
+                                <div class="done-item"><i class="fas fa-times done-cross"></i><p>Traitement du cimetière de Vaubadon au même niveau de détail que celui de Balleroy</p></div>
+
+                                <h5 class="mb-3 mt-4"><i class="fas fa-exclamation-triangle me-2 text-primary"></i>Limites identifiées</h5>
+                                <div class="limit-item">
+                                    <h6><i class="fas fa-lock me-2"></i>Accès restreint à Modularis</h6>
+                                    <p>Le logiciel n'était accessible que depuis la mairie, imposant une extraction manuelle de la base de données et complexifiant considérablement la chaîne de travail.</p>
+                                </div>
+                                <div class="limit-item">
+                                    <h6><i class="fas fa-exclamation me-2"></i>Plans originaux inexploitables</h6>
+                                    <p>Les plans existants présentaient des décalages, un mauvais comptage des tombes et des incohérences avec la base de données — nécessitant une reconstruction intégrale et un comptage manuel sur le terrain.</p>
+                                </div>
+                                <div class="limit-item">
+                                    <h6><i class="fas fa-clock me-2"></i>Contrainte temporelle forte</h6>
+                                    <p>L'essentiel du travail a été accompli en moins de 15 jours de présence effective, en raison des contraintes d'accès au logiciel.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── COMPÉTENCES ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences mobilisées</h2>
+                        <div>
+                            <span class="badge bg-primary">QGIS</span>
+                            <span class="badge bg-primary">DBeaver</span>
+                            <span class="badge bg-primary">Microsoft Access (.mdb)</span>
+                            <span class="badge bg-secondary">Modularis</span>
+                            <span class="badge bg-secondary">GPS RTK / GNSS</span>
+                            <span class="badge bg-secondary">Géoréférencement</span>
+                            <span class="badge bg-secondary">Gestion de base de données</span>
+                            <span class="badge" style="background:rgba(139,115,85,0.6);">Archives départementales</span>
+                            <span class="badge" style="background:rgba(139,115,85,0.6);">Patrimoine funéraire</span>
+                            <span class="badge" style="background:rgba(107,124,92,0.6);">Recherche historique</span>
+                            <span class="badge" style="background:rgba(107,124,92,0.6);">Rétro-ingénierie logicielle</span>
+                        </div>
+                    </div>
+
+
+                    <!-- ─── RENDU PDF ─── -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Rapport complet du projet tutoré</h2>
+                        <div class="text-center py-3">
+                            <embed src="../img/Creation_outil_gestion_cimetiere.pdf"
+                                   type="application/pdf" width="100%" height="1400px">
+                            <p class="mt-3" style="color:var(--gray-light); font-size:0.88rem;">
+                                <i class="fas fa-file-pdf me-2 text-primary"></i>
+                                Projet Tutoré — La mémoire des défunts à Balleroy-sur-Drôme — Licence Pro SIGDAT — Mars 2025
+                            </p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille — Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/théo-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
