@@ -49,48 +49,78 @@
             });
         });
 
-        // ========================================
-        // CARTE INTERACTIVE
-        // ======================================== 
+// ========================================
+// CARTE INTERACTIVE
+// ========================================
+
+// Initialisation de la carte
+var map = L.map('map', {
+    center: [47.5, 0.5],
+    zoom: 6,
+    zoomControl: true
+});
+
+// Fonds de carte
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+var dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+});
+
+var googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    maxZoom: 20,
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+});
+
+var googleSat = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    maxZoom: 20,
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+});
+
+// Fond par défaut
+osm.addTo(map);
+
+// Gestionnaire de couches — watercolor supprimé car non défini
+var baseMaps = {
+    "OpenStreetMap": osm,
+    "Sombre": dark,
+    "Google Street": googleStreets,
+    "Google Satellite": googleSat
+};
+
+L.control.layers(baseMaps, null, { collapsed: true }).addTo(map);
 
 
-        // Initialisation de la carte
-        var mapParcours = L.map('map-parcours', {
-        center: [47.5, 0.5], // Permet de centrer approximativement entre les 4 villes
-        zoom: 6,
-        zoomControl: true
-        });
 
-        // Fond de carte OSM CartoDB Voyager
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(mapParcours);
+
 
         // Définition des icônes personnalisées
-        let LycéeIcon = L.divIcon({
+        var LycéeIcon = L.divIcon({
             html: '<div style="background-color: #3d658fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
             iconAnchor: [18, 18]
         });
 
-        let universiteIcon = L.divIcon({
-            html: '<div style="background-color: #667eea; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
+        var universiteIcon = L.divIcon({
+            html: '<div style="background-color: #ea66df; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
             iconAnchor: [18, 18]
         });
 
-        let stageIcon = L.divIcon({
+        var stageIcon = L.divIcon({
             html: '<div style="background-color: #e2d0e4ff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">💼</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
             iconAnchor: [18, 18]
         });
 
-        let masterIcon = L.divIcon({
+        var masterIcon = L.divIcon({
             html: '<div style="background-color: #4facfe; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎯</span></div>',
             className: 'custom-div-icon',
             iconSize: [36, 36],
@@ -99,29 +129,8 @@
 
         // Marqueurs avec popups personnalisées
 
-
-        const LOCATIONS = [
-            {
-                id: 'deauville',
-                name: 'Lycée Andrès Maurois de Deauville',
-                type: 'education',
-                coords: [49.3570, 0.0737],
-                htmlContent: `
-                    <div class="popup-title">🎓 Lycée Andrès Maurois de Deauville</div>
-                    <div class="popup-content">
-                        <strong>Formation :</strong> Collège et Lycée <br>
-                        <strong>Période :</strong> 2015-2021<br>
-                        <strong>Statut :</strong> Baccalauréat général obtenu avec spécialité Mathématiques et Numériques Sciences Informatiques
-                    </div>
-                    <a href="#item5" class="popup-link">
-                        📖 Voir les détails
-                    </a>
-                `,
-                targetElement: '.item5'
-            }];
-
         // 1. Lycée Andrés Maurois de Deauville
-        let deauvilleMarker = L.marker([49.3570, 0.0737], {icon: LycéeIcon}).addTo(mapParcours);
+        let deauvilleMarker = L.marker([49.3570, 0.0737], {icon: LycéeIcon}).addTo(map);
         deauvilleMarker.bindPopup(`
             <div class="popup-title">🎓 Lycée Andrès Maurois de Deauville</div>
             <div class="popup-content">
@@ -138,13 +147,13 @@
         });
 
         // 2. Université de Caen
-        let caenMarker = L.marker([49.1829, -0.3707], {icon: universiteIcon}).addTo(mapParcours);
+        let caenMarker = L.marker([49.1829, -0.3707], {icon: universiteIcon}).addTo(map);
         caenMarker.bindPopup(`
             <div class="popup-title">🎓 Université de Caen Normandie</div>
             <div class="popup-content">
                 <strong>Formation :</strong> 2 année de licence de Géographie et Aménagement du Territoire puis la licence professionnelle Systèmes d'Information Géographique et Diagnostic d'Aménagement du Territoire (SIGDAT) <br>
-                <strong>Période :</strong> 2021-2024<br>
-                <strong>Statut :</strong> Licence 2 obtenue
+                <strong>Période :</strong> 2021-2025<br>
+                <strong>Statut :</strong> Licence 2 obtenue & Licence professionnelle obtenue avec mention Bien
             </div>
             <a href="#item4" class="popup-link" onclick="document.querySelector('.item4').scrollIntoView({behavior: 'smooth'});">
                 📖 Voir les détails
@@ -161,7 +170,7 @@
         });
 
         // 3. Communauté de Communes Entre Bièvre et Rhône (Beaurepaire)
-        let biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(mapParcours);
+        let biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(map);
         biervreMarker.bindPopup(`
             <div class="popup-title">💼 Communauté de Communes Entre Bièvre et Rhône</div>
             <div class="popup-content">
@@ -182,7 +191,7 @@
         });
 
         // 4. Université Rennes 2
-        let rennesMarker = L.marker([48.119, -1.7013], {icon: masterIcon}).addTo(mapParcours);
+        let rennesMarker = L.marker([48.119, -1.7013], {icon: masterIcon}).addTo(map);
         rennesMarker.bindPopup(`
             <div class="popup-title">🎯 Université Rennes 2</div>
             <div class="popup-content">

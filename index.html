@@ -195,11 +195,10 @@
         .hero .btn-primary {
             background-color: var(--primary);
             border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
         }
 
         .hero .btn-primary:hover {
-            background-color: var(--primary-dark);
+            background-color: var(--fond);
             border-color: var(--primary-dark);
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgb(192, 191, 207);
@@ -211,9 +210,11 @@
         }
 
         .hero .btn-outline-primary:hover {
-            background-color: var(--primary);
+            background-color: var(--fond);
             border-color: var(--primary);
             transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgb(192, 191, 207);
+
         }
 
         .profile-img {
@@ -253,7 +254,7 @@
 
 
         .btn-outline-primary:hover {
-            text-decoration: #adb5bd;
+            text-decoration: #baadbd;
         }
 
         /* Styles pour le filtre de badges */
@@ -1003,7 +1004,7 @@
         </div>
     </section>
 
-    <!------------------- SECTION CARTE INTERACTIVE LEAFLET (diapo Boris) --------------->
+    <!------------------- SECTION CARTE INTERACTIVE LEAFLET --------------->
     <section id="map-section" class="py-5">
         <div class="container">
             <h2 class="section-title">Mon parcours scolaire et professionnel en carte</h2>
@@ -1022,11 +1023,19 @@
                                     <h5 class="text-primary mb-3"> <i class="fa-solid fa-graduation-cap"></i> Lieux d'études</h5>
                                     <div class="location-item education-item mb-3 p-3 rounded bg-dark">
                                         <h6 class="mb-1">Université Rennes 2</h6>
-                                        <small class="text">Master SIGAT - 2025-2027</small>
+                                        <small class="text">Master Géomatique - parcours SIGAT - 2025-2027</small>
+                                    </div>
+                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Université de Caen Normandie</h6>
+                                        <small class="text">Licence professionnelle Cartographie, topographie et systèmes d'information géographique - parcours SIGDAT - 2024-2025</small>
                                     </div>
                                     <div class="location-item education-item mb-3 p-3 rounded bg-dark">
                                         <h6 class="mb-1">Université de Caen Normandie</h6>
                                         <small class="text">Licence géographie et aménagement du territoire - 2021-2024</small>
+                                    </div>
+                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                        <h6 class="mb-1">Lycée Andrès Maurois Deauville</h6>
+                                        <small class="text">Baccalauréat général - 2018-2021</small>
                                     </div>
                                 </div>
                             </div>
@@ -1053,7 +1062,7 @@
 
                     <!----------------  Taille de la carte Leaflet ----------------->
                     <div class="col-lg-8">
-                        <div id="map-parcours" style="height: 500px; width: 100%;"></div>
+                        <div id="map" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
             </div>
