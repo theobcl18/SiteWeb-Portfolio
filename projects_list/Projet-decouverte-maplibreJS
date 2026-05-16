@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur 3D inondation - Deauville</title>
+    <!-- MapLibre GL JS CSS -->
+    <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; background: #1a1a1a; color: white;}
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        /* Style du panneau de contrôle du slider */
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(30, 30, 30, 0.85);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 1;
+            width: 280px;
+            border: 1px solid #fe9b38;
+        }
+        .slider { width: 100%; margin-top: 10px; }
+        .height-display { font-size: 24px; font-weight: bold; color: #488ed4; }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <h3>Risque Submersion</h3>
+        <p>Deauville / Trouville-sur-Mer</p>
+        <hr style="border-color: #3a3534;">
+        <div>Niveau de l'eau : <span id="height-val" class="height-display">0</span> m</div>
+        <input type="range" id="water-slider" class="slider" min="0" max="5" value="0" step="1">
+    </div>
+
+    <div id="map"></div>
+
+    <!-- MapLibre GL JS Script -->
+    <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+    <script>
+        // 1. Initialisation de la carte centrée sur Deauville avec inclinaison (Pitch)
+        const map = new maplibre-gl.Map({
+            container: 'map',
+            style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', // Fond sombre stylé
+            center: [0.075, 49.358], 
+            zoom: 13.5,
+            pitch: 60, // Inclinaison pour voir la 3D
+            bearing: -20 // Rotation de la caméra
+        });
+
+        map.on('load', () => {
+            // 2. AJOUT DU RELIEF 3D (DEM)
+            // Utilisation des tuiles de relief globales de MapTiler (nécessite une clé gratuite)
+            // Ou de l'IGN si tu héberges tes tuiles RGB
+            map.addSource('terrain-source', {
+                type: 'raster-dem',
+                url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=TON_CODE_MAPTILER',
+                tileSize: 256
+            });
+            map.setTerrain({ source: 'terrain-source', exaggeration: 1.5 });
+
+            // 3. AJOUT DE TA COUCHE DE SUBMERSION (Issue de QGIS)
+            map.addSource('submersion-data', {
+                type: 'geojson',
+                data: './data/deauville-submersion.geojson' // Ton fichier exporté
+            });
+
+            map.addLayer({
+                id: 'water-layer',
+                type: 'fill',
+                source: 'submersion-data',
+                paint: {
+                    'fill-color': '#488ed4',
+                    'fill-opacity': 0.6,
+                    'fill-outline-color': '#2a5a8f'
+                },
+                // Filtre initial : On n'affiche rien si le niveau est à 0
+                filter: ['==', ['get', 'hauteur'], 0]
+            });
+
+            // 4. GESTION DU SLIDER INTERACTIF
+            const slider = document.getElementById('water-slider');
+            const display = document.getElementById('height-val');
+
+            slider.addEventListener('input', (e) => {
+                const currentLevel = parseInt(e.target.value);
+                display.innerText = currentLevel;
+
+                // L'expression magique MapLibre : 
+                // On affiche tous les polygones dont le niveau requis est inférieur ou égal au slider
+                if (currentLevel === 0) {
+                    map.setFilter('water-layer', ['==', ['get', 'hauteur'], 0]);
+                } else {
+                    map.setFilter('water-layer', ['<=', ['get', 'hauteur'], currentLevel]);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
