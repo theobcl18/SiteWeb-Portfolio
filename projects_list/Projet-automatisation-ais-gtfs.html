@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICDM - Indicateur de cohérence de desserte maritime | Théo Bucaille</title>
+
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #fe9b38;
+            --primary-dark: #f31212;
+            --secondary: #488ed4;
+            --dark: #000000;
+            --red: #b72a2a;
+            --light: #f8f9fa;
+            --gray: #3A3534;
+            --gray-light: #adb5bd;
+            --map-color: #c6a719;
+            --fire-orange: #e85d04;
+            --fire-red: #9d0208;
+            --smoke: #6c757d;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('img/fond_globe.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.15;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(105, 102, 102, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            z-index: -1;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--fond);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand { font-weight: 700; color: var(--light) !important; }
+
+        .navbar-nav .nav-link {
+            color: var(--light) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link:hover { color: var(--primary) !important; }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 3px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after { width: 100%; }
+
+        /* Header Hero */
+        .project-header {
+            padding: clamp(6rem, 15vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -5%;
+            width: min(600px, 80vw);
+            height: min(600px, 80vw);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(254, 155, 56, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .project-header h1 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+        }
+
+        .project-header .lead {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--gray-light);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Hero tags */
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+
+        .hero-tag {
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-tag.ferry { background: rgba(72, 142, 212, 0.2); border-color: var(--secondary); color: #88c9ff; }
+        .hero-tag.gtfs { background: rgba(254, 155, 56, 0.2); border-color: var(--primary); color: #ffbc6e; }
+        .hero-tag.ais  { background: rgba(72, 142, 212, 0.2); border-color: #2c7da0; color: #7bc8f7; }
+        .hero-tag.qgis { background: rgba(72, 142, 212, 0.15); border-color: #5899d4; color: #b2dcff; }
+
+        /* Sections */
+        section { padding: clamp(3rem, 8vw, 5rem) 0; }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            position: relative;
+            display: inline-block;
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 0;
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .bg-section {
+            background-color: rgba(50, 49, 49, 0.85);
+            border-radius: 15px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgb(207, 157, 123);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 0.5px solid rgb(207, 140, 96);
+        }
+
+        .bg-section:hover { transform: translateY(-5px); }
+
+        .container {
+            max-width: 100%;
+            padding-left: clamp(1rem, 3vw, 2rem);
+            padding-right: clamp(1rem, 3vw, 2rem);
+        }
+
+        /* Info grid */
+        .stage-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+            transition: background 0.3s ease;
+        }
+
+        .info-card:hover { background: rgba(255,255,255,0.08); }
+        .info-card i { font-size: 2rem; color: var(--primary); margin-bottom: 1rem; display: block; }
+        .info-card h5 { margin-bottom: 0.5rem; color: var(--light); font-size: 0.95rem; }
+        .info-card p  { color: var(--gray-light); margin: 0; font-size: 0.9rem; }
+
+        /* Methodology items */
+        .methodology-item {
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 0 10px 10px 0;
+            transition: border-color 0.3s ease;
+        }
+
+        .methodology-item:hover { border-left-color: var(--fire-orange); }
+        .methodology-item h5 { color: var(--primary); margin-bottom: 0.75rem; }
+
+        /* Timeline */
+        .steps-timeline { position: relative; padding-left: 2rem; }
+        .steps-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.6rem; top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+        .step-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.25rem;
+            background: rgba(30,30,30,0.5);
+            border-radius: 10px;
+        }
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: -1.65rem; top: 1.2rem;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid var(--dark);
+        }
+        .step-item h6 { color: var(--primary); margin-bottom: 0.4rem; font-weight: 600; }
+        .step-item p  { color: var(--gray-light); margin: 0; font-size: 0.9rem; }
+
+        /* Stat cards */
+        .stat-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--primary);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .stat-card:hover { border-color: var(--fire-orange); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(232, 93, 4, 0.2); }
+        .stat-number { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.5rem; }
+        .stat-label { color: var(--gray-light); font-size: 0.9rem; }
+
+        /* Indice cards */
+        .indice-card {
+            background: rgba(30,30,30,0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        .indice-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+        .indice-card .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: #ffb347;
+            font-size: 0.95rem;
+            margin: 1rem 0;
+            text-align: center;
+            border-left: 3px solid var(--primary);
+        }
+        .indice-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+        /* Tableaux / class-row */
+        .class-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: rgba(30,30,30,0.5);
+            transition: background 0.2s ease;
+        }
+        .class-row:hover { background: rgba(50,50,50,0.7); }
+        .class-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+        .class-name { flex: 1; font-weight: 500; }
+        .class-pct  { font-weight: 700; color: var(--primary); min-width: 55px; text-align: right; }
+        .pct-bar {
+            flex: 2;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .pct-fill { height: 100%; border-radius: 3px; }
+
+        .note-box {
+            background: rgba(232, 93, 4, 0.1);
+            border: 1px solid rgba(232,93,4,0.3);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        .note-box i { color: var(--fire-orange); margin-top: 0.1rem; flex-shrink: 0; }
+        .note-box p { margin: 0; color: var(--gray-light); font-size: 0.9rem; }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+        }
+        .bg-primary  { background-color: var(--primary)   !important; }
+        .bg-secondary{ background-color: var(--secondary) !important; }
+        .text-primary{ color: var(--primary) !important; }
+
+        .btn {
+            border-radius: 30px;
+            padding: 0.75rem clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-3px); }
+        .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+        .btn-outline-primary:hover { background-color: var(--primary); border-color: var(--primary); transform: translateY(-3px); }
+
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        footer { border-top: 1px solid rgba(255,255,255,0.1); padding: 2rem 0; }
+        .social-links a {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            background-color: rgb(164, 97, 20);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover { background-color: var(--primary); transform: translateY(-3px); }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background-color: rgba(18,18,18,0.95);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                backdrop-filter: blur(10px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Théo Bucaille</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                    aria-controls="navbar" aria-expanded="false" aria-label="Afficher le menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <header class="project-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10">
+                    <p class="text-primary fw-semibold mb-2" style="letter-spacing:0.08em;">
+                        <i class="fas fa-ship me-2"></i>ICDM — AUTOMATISATION DES TRAITEMENTS GÉOGRAPHIQUES — 2026
+                    </p>
+                    <h1>Indicateur de cohérence<br>de desserte maritime</h1>
+                    <p class="lead">Évaluer l’adéquation entre l’offre de transport maritime (GTFS) et l’importance réelle des ports (population + trafic AIS)</p>
+                    <div class="hero-tags">
+                        <span class="hero-tag gtfs"><i class="fas fa-bus me-1"></i>GTFS maritime</span>
+                        <span class="hero-tag ais"><i class="fas fa-ship me-1"></i>Données AIS</span>
+                        <span class="hero-tag qgis"><i class="fas fa-project-diagram me-1"></i>QGIS Modeleur</span>
+                        <span class="hero-tag ferry">Corsica Ferries</span>
+                        <span class="hero-tag ferry">Brittany Ferries</span>
+                        <span class="hero-tag gtfs">Normalisation</span>
+                        <span class="hero-tag ais">SHOM · Géolittoral</span>
+                    </div>
+                    <a href="../index.html#projects" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="project-content" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+
+                    <!-- INFOS PROJET -->
+                    <div class="bg-section fade-in">
+                        <div class="stage-info-grid">
+                            <div class="info-card"><i class="fas fa-calendar-alt"></i><h5>Période</h5><p>Avril – Mai 2026</p></div>
+                            <div class="info-card"><i class="fas fa-graduation-cap"></i><h5>Formation</h5><p>Master 1 SIGAT</p></div>
+                            <div class="info-card"><i class="fas fa-users"></i><h5>Binôme</h5><p>MARION HERVE</p></div>
+                            <div class="info-card"><i class="fas fa-globe-europe"></i><h5>Périmètre</h5><p>France métropolitaine, Corse, Baléares, Sardaigne</p></div>
+                            <div class="info-card"><i class="fas fa-database"></i><h5>Données clés</h5><p>GTFS (2 opérateurs) · AIS (5 classes) · Population IGN</p></div>
+                            <div class="info-card"><i class="fas fa-cogs"></i><h5>Outils</h5><p>QGIS · Modeleur graphique</p></div>
+                        </div>
+                        <!-- Crédits -->
+                        <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
+                            <strong>
+                                <i class="fas fa-users me-1"></i> Projet réalisé avec : 
+                                <a href="https://www.linkedin.com/in/marion-hervé-28b853223/" target="_blank" class="text-decoration-none">Marion Hervé</a> • 
+                            </strong>
+                        </div>
+                    </div>
+
+                    <!-- CONTEXTE & OBJECTIF -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Contexte & objectif</h2>
+                        <p>Les liaisons par ferry constituent souvent le seul lien entre les îles et le continent, mais leur fréquence est bien souvent dictée par l’importance touristique au détriment des besoins réels des habitants. Ce projet propose <strong>l’Indicateur de Cohérence de Desserte Maritime (ICDM)</strong>, un outil reproductible destiné aux chargés de mission mobilité.</p>
+                        <div class="row g-3 my-3">
+                            <div class="col-sm-6">
+                                <div class="stat-card"><span class="stat-number">IF</span><span class="stat-label">Indice de fréquence (GTFS) – offre réelle de traversées</span></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="stat-card"><span class="stat-number">IIP</span><span class="stat-label">Indice d’importance (population + trafic AIS) – poids réel du port</span></div>
+                            </div>
+                        </div>
+                        <p>Le croisement des deux indices identifie les ports <strong>sous-desservis</strong> (forte importance / faible fréquence) ou <strong>sur-desservis</strong> (faible importance / offre élevée), orientant les décisions d’aménagement maritime.</p>
+                    </div>
+
+                    <!-- DONNÉES EN ENTRÉE -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Données mobilisées</h2>
+                        <div class="row g-4">
+                            <div class="col-md-6"><div class="methodology-item"><h5><i class="fas fa-map-marked-alt me-2"></i>GTFS (Corsica & Brittany Ferries)</h5><p>Stops, stop_times, trips, routes. Période janv.-déc. 2026. Sources : transport.data.gouv.fr.</p></div></div>
+                            <div class="col-md-6"><div class="methodology-item"><h5><i class="fas fa-city me-2"></i>Population IGN</h5><p>Admin Express – communes littorales pour pondérer l’importance démographique.</p></div></div>
+                            <div class="col-md-6"><div class="methodology-item"><h5><i class="fas fa-water me-2"></i>AIS – Géolittoral (CEREMA)</h5><p>Trafic par type : pêche, passagers, cargo, tankers, yachts. Intensité normalisée.</p></div></div>
+                            <div class="col-md-6"><div class="methodology-item"><h5><i class="fas fa-anchor me-2"></i>Ports SHOM & communes littorales</h5><p>Typologie d’activité portuaire + filtrage des communes ayant un accès maritime.</p></div></div>
+                        </div>
+                    </div>
+
+                    <!-- MÉTHODOLOGIE (CHAÎNE DE TRAITEMENT) -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Méthodologie : chaîne QGIS (Modeleur graphique)</h2>
+                        <div class="steps-timeline">
+                            <div class="step-item"><h6><i class="fas fa-map-marker-alt me-2"></i>Étape 1 – Création couches points depuis GTFS</h6><p>Conversion stops.csv en couche ponctuelle (WGS84 → Lambert93).</p></div>
+                            <div class="step-item"><h6><i class="fas fa-chart-line me-2"></i>Étape 2 – Indice de fréquence (IF)</h6><p>Jointures stop_times → trips → routes, comptage des passages par port, normalisation [0,1].</p></div>
+                            <div class="step-item"><h6><i class="fas fa-users me-2"></i>Étape 3 – Indice de population (IP)</h6><p>Filtrage communes littorales, extraction centroïdes, jointure avec Admin Express, normalisation identique.</p></div>
+                            <div class="step-item"><h6><i class="fas fa-chart-pie me-2"></i>Étape 4 – Intégration AIS (5 flux)</h6><p>Jointure spatiale AIS/ports SHOM, remplacement NULL par 0, pondération conditionnelle via CASE WHEN (activité portuaire).</p></div>
+                            <div class="step-item"><h6><i class="fas fa-code-branch me-2"></i>Étape 5 – Calcul IIP & jointure finale</h6><p>IIP = intensité_peche + passagers + cargo + tankers + yachts + IP. Jointure par le plus proche avec la couche IF.</p></div>
+                            <div class="step-item"><h6><i class="fas fa-chart-simple me-2"></i>Étape 6 – Visualisation</h6><p>Discretisation, taille = IIP (importance), couleur = IF (fréquence). Dégradé continu.</p></div>
+                        </div>
+                        <div class="note-box mt-2"><i class="fas fa-cogs"></i><p>Modèle entièrement paramétrable, exportable en <code>.model3</code>. Reproductible sur d’autres opérateurs (BreizhGo testé).</p></div>
+                    </div>
+
+                    <!-- FORMULES & INDICES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Construction des indices</h2>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="indice-card">
+                                    <div class="indice-icon">📊</div>
+                                    <h5 class="text-primary">Indice de fréquence (IF)</h5>
+                                    <div class="formula">IF = (nb_passages − min) / (max − min)</div>
+                                    <p class="mt-2">Normalisation linéaire. Le port le plus fréquenté (max) obtient 1, le moins fréquenté 0.</p>
+                                    <p class="small" style="color:var(--gray-light);">Exemple extrait : Quiberon (2029 passages) → IF=1 ; Houat (554) → IF=0.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="indice-card">
+                                    <div class="indice-icon">⚖️</div>
+                                    <h5 class="text-primary">Indice d’importance (IIP)</h5>
+                                    <div class="formula">IIP = IP + Σ(intensités AIS pondérées)</div>
+                                    <p>IP = population normalisée [0,1]. Les intensités AIS proviennent de Géolittoral, déjà normalisées. Gestion NULL et typologie d’activité (SHOM).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3"><h5 class="mb-2">Pondération AIS (adaptable)</h5>
+                            <div class="class-row"><div class="class-dot" style="background:#1a6fa8;"></div><span class="class-name">Passagers / Pêche / Cargo / Tankers / Yachts</span><span class="class-pct">×1 ou ×2</span><div class="pct-bar"><div class="pct-fill" style="width:80%; background:#fe9b38;"></div></div><span class="class-pct">modulable</span></div>
+                            <p class="small mt-2">Exemple : un port sans terminal hydrocarbure voit l’intensité tanker forcée à 0 grâce au CASE WHEN basé sur SHOM.</p>
+                        </div>
+                    </div>
+
+                    <!-- EXEMPLE DE RÉSULTATS & VISUALISATION -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Résultats : double lecture cartographique</h2>
+                        <p>Chaque port est représenté par un cercle dont la <strong>taille</strong> reflète l’IIP (importance) et la <strong>couleur</strong> l’IF (fréquence). Palette dégradée (bleu → orange → rouge).</p>
+                        <div class="row g-3 my-2">
+                            <div class="col-md-6">
+                                <div class="stat-card"><span class="stat-number">Bastia</span><span class="stat-label">IIP élevé (forte population + trafic AIS) → taille importante. IF modéré.</span></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card"><span class="stat-number">Quiberon</span><span class="stat-label">IF très élevé (liaisons nombreuses) mais IIP moyen → sur-desserte potentielle.</span></div>
+                            </div>
+                        </div>
+                        <p><strong>Observation clé :</strong> Les ports internationaux (Caen, Cherbourg, Le Havre) disposent d’une fréquence élevée mais leur IIP est souvent sous-estimé par les données AIS limitées à la zone métropolitaine. À l’inverse, certains ports corses (Ajaccio, Porto-Vecchio) montrent un déséquilibre avec une forte importance démographique et touristique mais une offre GTFS moins dense.</p>
+                        <div class="note-box"><i class="fas fa-chart-simple"></i><p>Les représentations cartographiques et le style final (.qml) sont disponibles dans le dossier annexe.</p></div>
+                    </div>
+
+                    <!-- TABLEAU EXEMPLE DE NOMBRE DE PASSAGES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Extrait GTFS – fréquence brute (Brittany Ferries – Morbihan)</h2>
+                        <div style="overflow-x:auto;">
+                            <table class="table table-dark table-hover" style="border-radius:12px; background:rgba(0,0,0,0.4);">
+                                <thead><tr><th>stop_id</th><th>Port</th><th>Nb passages (période)</th><th>IF normalisé</th></tr></thead>
+                                <tbody>
+                                    <tr><td>156HOE</td><td>Hoedic</td><td>556</td><td>0.001</td></tr>
+                                    <tr><td>156HOU</td><td>Houat</td><td>554</td><td>0.000</td></tr>
+                                    <tr><td>156BIP</td><td>Belle-Île-en-Mer</td><td>1459</td><td>0.532</td></tr>
+                                    <tr><td>156GRX</td><td>Groix</td><td>648</td><td>0.055</td></tr>
+                                    <tr><td>156LRT</td><td>Lorient</td><td>648</td><td>0.055</td></tr>
+                                    <tr><td>156QUI</td><td>Quiberon</td><td>2029</td><td>1.000</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="small mt-2">Données issues du GTFS Brittany Ferries (liaisons Quiberon – Belle-Île, Lorient – Groix). Les allers-retours ne sont pas systématiquement dédoublés mais la comparaison inter-port reste cohérente.</p>
+                    </div>
+
+                    <!-- LIMITES & PERSPECTIVES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Limites identifiées & perspectives</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="methodology-item"><h5><i class="fas fa-exclamation-triangle"></i> Absence AIS hors métropole</h5><p>Les ports de Corse, Baléares, Sardaigne ne disposent pas d’intensité AIS, l’IIP se base alors uniquement sur la population → potentiel biais.</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="methodology-item"><h5><i class="fas fa-chart-line"></i> Comptage des passages</h5><p>La table trips ne comptabilise parfois qu’un seul sens par trajet, mais l’indice normalisé compense pour la comparaison inter-portuaire.</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="methodology-item"><h5><i class="fas fa-chart-pie"></i> Population saisonnière</h5><p>Intégrer les résidences secondaires (INSEE) améliorerait la prise en compte du tourisme estival, surtout pour la Corse.</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="methodology-item"><h5><i class="fas fa-draw-polygon"></i> Shapes des lignes</h5><p>L’accès à la table <em>shapes.txt</em> permettrait de calculer l’IF par liaison (plutôt que par port) et de cartographier le réseau réel.</p></div>
+                            </div>
+                        </div>
+                        <p class="mt-3"><strong>Perspectives :</strong> ajout d’une dimension tarifaire (données ouvertes de prix) et analyse diachronique sur plusieurs années pour détecter les évolutions de desserte.</p>
+                    </div>
+
+                    <!-- Diaporama du projet -->
+                    <div class="bg-section fade-in" id="diaporama">
+                        <h2 class="section-title">Rendu du projet</h2>
+                        <div class="text-center py-3">
+                            <embed src="../img/dossier_ICDM.pdf" type="application/pdf" width="100%" height="1300px" style="border-radius:12px;">
+                            <p class="mt-3" style="color:var(--gray-light); font-size:0.9rem;">
+                                <i class="fas fa-file-pdf me-2 text-primary"></i>
+                                Dossier complet – Indicateur de cohérence de desserte maritime – M1 SIGAT
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- COMPÉTENCES -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Compétences mobilisées</h2>
+                        <div>
+                            <span class="badge bg-primary">QGIS Modeleur graphique</span>
+                            <span class="badge bg-primary">GTFS maritime</span>
+                            <span class="badge bg-primary">Données AIS</span>
+                            <span class="badge bg-secondary">Jointures spatiales</span>
+                            <span class="badge bg-secondary">Normalisation d’indices</span>
+                            <span class="badge bg-secondary">Analyse de mobilité</span>
+                            <span class="badge" style="background:var(--fire-orange);">Traitement CSV / txt</span>
+                            <span class="badge" style="background:var(--fire-orange);">CASE WHEN · SQL</span>
+                            <span class="badge" style="background:var(--fire-orange);">Cartographie thématique</span>
+                            <span class="badge" style="background:var(--fire-orange);">Reprojection (Lambert93)</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Théo Bucaille — Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/théo-bucaille/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="mailto:gtbe189@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

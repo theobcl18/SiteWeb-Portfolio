@@ -32,6 +32,7 @@
             --gray: #3A3534;
             --gray-light: #adb5bd;
             --map-color: #c6a719;
+            --fond: #65594c;
         }
 
         * {
@@ -75,7 +76,7 @@
         }
 
         .navbar {
-            background-color: rgb(164, 97, 20) !important;
+            background-color: var(--fond) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.459);
             padding: 1rem 0;
@@ -375,10 +376,10 @@
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
                     <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
                     <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
                 </ul>
             </div>
@@ -429,8 +430,7 @@
                         <div class="text-center mt-4 pt-2 border-top border-secondary" style="opacity: 0.7;">
                             <strong>
                                 <i class="fas fa-users me-1"></i> Projet réalisé avec : 
-                                <a href="https://www.linkedin.com/in/lilian-danielo-28b853223/" target="_blank" class="text-decoration-none text-light">Lilian Danielo</a>
-                            </strong>
+                                <a href="https://www.linkedin.com/in/lilian-danielo-28b853223/" target="_blank" class="text-decoration-none">Lilian Danielo</a> • 
                         </div>
                     </div>
 

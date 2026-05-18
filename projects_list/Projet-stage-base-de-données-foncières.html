@@ -33,6 +33,7 @@
             --gray: #3A3534;
             --gray-light: #adb5bd;
             --map-color: #c6a719;
+            --fond:#65594c;
         }
 
         * {
@@ -76,7 +77,7 @@
         }
 
         .navbar {
-            background-color: rgb(164, 97, 20) !important;
+            background-color: var(--fond);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.459);
             padding: 1rem 0;
@@ -654,10 +655,10 @@
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.html#about">À propos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
                     <li class="nav-item"><a class="nav-link" href="../index.html#map-section">Parcours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#projects">Projets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#cartotheque">Cartothèque</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html#skills">Compétences</a></li>
                     <li class="nav-item"><a class="nav-link" href="../index.html#contact">Contact</a></li>
                 </ul>
             </div>
@@ -1079,7 +1080,7 @@
                     <div class="bg-section fade-in" id="memoire">
                         <h2 class="section-title">Mémoire de stage</h2>
                         <div class="text-center py-5">
-                            <embed src="../img/Mémoire de stage CC EBER.pdf" type="application/pdf" width="100%" height="1450px">
+                            <embed src="../img/Mémoire de stage CC EBER.pdf" type="application/pdf" width="100%" height="1300px">
                             </embed> 
                         </div>
                     </div>
@@ -1124,8 +1125,6 @@
                             <li><strong>Intégration de QField</strong> pour la saisie de données sur le terrain</li>
                             <li><strong>Connexion avec une GMAO</strong> (Gestion de Maintenance Assistée par Ordinateur)</li>
                             <li><strong>Extension à de nouvelles thématiques</strong> : mobilier urbain, espaces verts, éclairage public</li>
-                            <li><strong>Développement d'indicateurs de performance</strong> pour le suivi patrimonial</li>
-                            <li><strong>Ouverture aux citoyens</strong> via une version publique du WebSIG</li>
                         </ul>
                         
                         <h4 class="mt-4">Recommandations pour la pérennisation</h4>
