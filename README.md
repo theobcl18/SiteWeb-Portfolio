@@ -14,7 +14,7 @@ Passionné par les données géographiques et leur valorisation, du terrain à l
 ## 📫 Me contacter
 
 - **Email** : [gtbe189@gmail.com](mailto:gtbe189@gmail.com)
-- **LinkedIn** : [Théo Bucaille](https://www.linkedin.com/in/théo-bucaille/) *(à adapter selon votre profil)*
+- **LinkedIn** : [Théo Bucaille](https://www.linkedin.com/in/théo-bucaille/)
 
 ---
 
@@ -27,7 +27,7 @@ Passionné par les données géographiques et leur valorisation, du terrain à l
 | Bases de données spatiales | PostgreSQL / pgAdmin, DBeaver |
 | Traitement & statistiques | R, Python (pandas, geopandas) |
 | Versionnement & collaboration | Git, GitHub |
-| Cartographie & diffusion | , HTML/CSS, Leaflet (bases) |
+| Cartographie & diffusion | HTML/CSS, Leaflet (bases) |
 
 ---
 
