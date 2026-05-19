@@ -210,8 +210,8 @@ L.control.layers(baseMaps, null, { collapsed: true }).addTo(map);
             maxWidth: 300
         });
 
-// ===================================================================================
-// ==================== CARTOTHEQUE ==================================================
+// ============================================================
+// ==================== CARTOTHEQUE ===========================
 
         (function () {
             const filterBtns = document.querySelectorAll('[data-carto-filter]');
@@ -291,7 +291,7 @@ L.control.layers(baseMaps, null, { collapsed: true }).addTo(map);
 
 
 // ===================================================================================
-// ====================SYSTÈME DE FILTRAGE DYNAMIQUE PAR BADGES=======================
+// ==================== SYSTÈME DE FILTRAGE DYNAMIQUE PAR BADGES =======================
 
         document.addEventListener('DOMContentLoaded', function() {
             initBadgeFilterSystem();
