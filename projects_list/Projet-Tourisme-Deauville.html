@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deauville — Carte interactive OSM</title>
+
+  <!-- MapLibre GL JS -->
+  <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+
+  <!-- Turf.js -->
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand:       #F2E8D5;
+      --sand-dark:  #E0D0B0;
+      --navy:       #1B3A4B;
+      --navy-light: #2D5F7A;
+      --sea:        #5B9CB5;
+      --sea-light:  #A8D4E6;
+      --gold:       #C4963A;
+      --text:       #2C2C2C;
+      --text-muted: #6B6B6B;
+      --white:      #FFFFFF;
+      --panel-w:    320px;
+      --radius:     10px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--sand);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    #app {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Panneau latéral */
+    #panel {
+      width: var(--panel-w);
+      min-width: var(--panel-w);
+      background: var(--sand);
+      border-right: 1.5px solid var(--sand-dark);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 10;
+      box-shadow: 2px 0 12px rgba(27,58,75,0.08);
+    }
+
+    #panel-header {
+      background: var(--navy);
+      padding: 1.5rem 1.25rem 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .panel-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sea-light);
+      margin-bottom: 0.4rem;
+    }
+
+    #panel-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+
+    #panel-header p {
+      font-size: 1rem;
+      color: var(--sea-light);
+      opacity: 0.85;
+      line-height: 1.45;
+    }
+
+    #filters {
+      padding: 1rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--sand-dark);
+      flex-shrink: 0;
+    }
+
+    #filters h3 {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+    }
+
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.65rem;
+      border: 1.5px solid var(--sand-dark);
+      border-radius: 6px;
+      background: var(--white);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--navy-light);
+      color: var(--navy);
+    }
+
+    .filter-btn.active {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+    }
+
+    .filter-btn .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    #buffer-ctrl {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--sand-dark);
+      flex-shrink: 0;
+    }
+
+    #buffer-ctrl h3 {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.55rem;
+    }
+
+    .buffer-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    #buffer-range {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: var(--sand-dark);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    #buffer-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--navy);
+      cursor: pointer;
+      border: 2px solid var(--white);
+      box-shadow: 0 1px 4px rgba(27,58,75,0.3);
+    }
+
+    #buffer-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--navy);
+      min-width: 44px;
+      text-align: right;
+    }
+
+    #poi-info {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--sand-dark);
+      min-height: 70px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #poi-info.empty p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    #poi-info h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.2rem;
+    }
+
+    #poi-info .poi-cat {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    #poi-info .poi-desc {
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    #poi-info .poi-nearby {
+      margin-top: 0.45rem;
+      font-size: 0.72rem;
+      color: var(--sea);
+      font-weight: 600;
+    }
+
+    #poi-list-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.75rem 1.25rem;
+    }
+
+    #poi-list-wrap h3 {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.55rem;
+      position: sticky;
+      top: 0;
+      background: var(--sand);
+      padding: 0.25rem 0;
+    }
+
+    .poi-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 0.2rem;
+    }
+
+    .poi-item:hover { background: var(--sand-dark); }
+    .poi-item.selected { background: rgba(27,58,75,0.08); }
+
+    .poi-item-icon {
+      font-size: 1.1rem;
+      width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .poi-item-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .poi-item-sub {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    #panel-footer {
+      padding: 0.6rem 1.25rem;
+      border-top: 1px solid var(--sand-dark);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    #panel-footer a { color: var(--sea); text-decoration: none; }
+    #panel-footer a:hover { text-decoration: underline; }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Barre de recherche par nom de POI (centrée en haut de la carte) */
+    #search-container {
+      justify-content: flex-start;
+      left: calc(var(--panel-w) - 18rem); /* réduit l'espace à gauche */
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      display: flex;
+      pointer-events: none;
+    }
+    #poi-search {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.7rem 1rem;
+      border: 2px solid var(--sand-dark);
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      outline: none;
+      transition: all 0.2s;
+      pointer-events: auto;
+    }
+    #poi-search:focus {
+      border-color: var(--navy);
+      box-shadow: 0 4px 14px rgba(27,58,75,0.2);
+    }
+    @media (max-width: 680px) {
+      #search-container {
+        left: 0.5rem;
+        right: 0.5rem;
+        top: 0.5rem;
+      }
+    }
+
+    .maplibregl-ctrl-attrib {
+      font-size: 0.6rem !important;
+    }
+
+    .maplibregl-popup-content {
+      background: var(--white);
+      border-radius: var(--radius) !important;
+      padding: 0.85rem 1rem !important;
+      box-shadow: 0 4px 20px rgba(27,58,75,0.18) !important;
+      border-top: 3px solid var(--navy);
+      min-width: 200px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .maplibregl-popup-tip { border-top-color: var(--navy) !important; }
+
+    .popup-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.15rem;
+    }
+
+    .popup-cat {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .popup-desc {
+      font-size: 0.75rem;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 0.3rem;
+    }
+
+    .popup-website {
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+    }
+    .popup-website a {
+      color: var(--sea);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .popup-website a:hover {
+      text-decoration: underline;
+    }
+
+    #tech-badge {
+      position: absolute;
+      bottom: 1.2rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .tech-pill {
+      background: rgba(27,58,75,0.85);
+      color: var(--sea-light);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    @media (max-width: 680px) {
+      #panel {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        width: 100%;
+        height: 45vh;
+        border-right: none;
+        border-top: 1.5px solid var(--sand-dark);
+        flex-direction: column;
+        z-index: 20;
+      }
+      #map { height: 55vh; }
+      #app { flex-direction: column; }
+      #panel-footer { display: none; }
+      #tech-badge { bottom: 46vh; }
+    }
+
+    #poi-list-wrap::-webkit-scrollbar { width: 4px; }
+    #poi-list-wrap::-webkit-scrollbar-track { background: transparent; }
+    #poi-list-wrap::-webkit-scrollbar-thumb { background: var(--sand-dark); border-radius: 2px; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <aside id="panel">
+    <div id="panel-header">
+      <p class="panel-eyebrow">Carte touristique interactive</p>
+      <h1>Deauville</h1>
+      <p>Données OpenStreetMap en temps réel — hôtels, restaurants,<br>culture, shopping, plages.</p>
+    </div>
+
+    <div id="filters">
+      <h3>Catégories</h3>
+      <div class="filter-grid">
+        <button class="filter-btn active" data-cat="all"><span class="dot" style="background:var(--navy)"></span> Tout afficher</button>
+        <button class="filter-btn" data-cat="hotel"><span class="dot" style="background:#E8A045"></span> Hôtels</button>
+        <button class="filter-btn" data-cat="restaurant"><span class="dot" style="background:#E05C5C"></span> Restaurants</button>
+        <button class="filter-btn" data-cat="plage"><span class="dot" style="background:#5BC4D4"></span> Plages</button>
+        <button class="filter-btn" data-cat="culture"><span class="dot" style="background:#7C6BA8"></span> Culture</button>
+        <button class="filter-btn" data-cat="shopping"><span class="dot" style="background:#6BAA5C"></span> Shopping</button>
+      </div>
+    </div>
+
+    <div id="buffer-ctrl">
+      <h3>Rayon de proximité — <span style="color:var(--sea)">Turf.js</span></h3>
+      <div class="buffer-row">
+        <input type="range" id="buffer-range" min="100" max="1000" step="50" value="300" />
+        <span id="buffer-label">300 m</span>
+      </div>
+    </div>
+
+    <div id="poi-info" class="empty">
+      <p>Cliquez sur un point d'intérêt<br>pour afficher les détails et calculer<br>les lieux à proximité.</p>
+    </div>
+
+    <div id="poi-list-wrap">
+      <h3>Points d'intérêt</h3>
+      <div id="poi-list"><div style="text-align:center; padding:1rem;">Chargement des données OSM...</div></div>
+    </div>
+
+    <div id="panel-footer">
+      Données : <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> via Overpass API · 
+      Fond : <a href="https://carto.com" target="_blank">CartoDB Positron</a><br>
+      Stack : MapLibre GL JS · Turf.js · OSM live
+    </div>
+  </aside>
+
+  <div id="map">
+    <!-- Barre de recherche par nom de POI, centrée en haut de la carte -->
+    <div id="search-container">
+      <input type="text" id="poi-search" placeholder="🔍 Rechercher un point d'intérêt (par nom)..." autocomplete="off">
+    </div>
+  </div>
+  <div id="tech-badge">
+    <span class="tech-pill">MapLibre GL JS</span>
+    <span class="tech-pill">Turf.js</span>
+    <span class="tech-pill">Overpass API</span>
+    <span class="tech-pill">OpenStreetMap</span>
+  </div>
+</div>
+
+<script>
+  // ========================
+  // 1. Configuration des catégories
+  // ========================
+  const CAT_COLORS = {
+    hotel:      "#E8A045",
+    restaurant: "#E05C5C",
+    plage:      "#5BC4D4",
+    culture:    "#7C6BA8",
+    shopping:   "#6BAA5C"
+  };
+  const CAT_LABELS = {
+    hotel:      "Hôtel",
+    restaurant: "Restaurant",
+    plage:      "Plage",
+    culture:    "Culture & Loisirs",
+    shopping:   "Shopping"
+  };
+  const EMOJI_MAP = {
+    hotel:      "🏨",
+    restaurant: "🍽️",
+    plage:      "🏖️",
+    culture:    "🏛️",
+    shopping:   "🛍️"
+  };
+
+  // ========================
+  // 2. Requête Overpass pour Deauville (zone géographique)
+  // ========================
+  const OVERPASS_QUERY = `
+    [out:json][timeout:30];
+    (
+      node["tourism"~"hotel|motel|guest_house|bed_and_breakfast|apartment|hostel"](49.345,0.058,49.371,0.089);
+      way["tourism"~"hotel|motel|guest_house|bed_and_breakfast|apartment|hostel"](49.345,0.058,49.371,0.089);
+      node["amenity"~"restaurant|fast_food|cafe|bar|pub|bistro"](49.345,0.058,49.371,0.089);
+      way["amenity"~"restaurant|fast_food|cafe|bar|pub|bistro"](49.345,0.058,49.371,0.089);
+      node["tourism"~"museum|gallery|attraction|artwork"](49.345,0.058,49.371,0.089);
+      way["tourism"~"museum|gallery|attraction|artwork"](49.345,0.058,49.371,0.089);
+      node["amenity"~"cinema|theatre|arts_centre|casino"](49.345,0.058,49.371,0.089);
+      way["amenity"~"cinema|theatre|arts_centre|casino"](49.345,0.058,49.371,0.089);
+      node["historic"~"castle|monument|memorial"](49.345,0.058,49.371,0.089);
+      way["historic"~"castle|monument|memorial"](49.345,0.058,49.371,0.089);
+      node["leisure"~"horse_racing|track"](49.345,0.058,49.371,0.089);
+      way["leisure"~"horse_racing|track"](49.345,0.058,49.371,0.089);
+      node["shop"](49.345,0.058,49.371,0.089);
+      way["shop"](49.345,0.058,49.371,0.089);
+      node["natural"="beach"](49.345,0.058,49.371,0.089);
+      way["natural"="beach"](49.345,0.058,49.371,0.089);
+      node["leisure"="beach_resort"](49.345,0.058,49.371,0.089);
+      way["leisure"="beach_resort"](49.345,0.058,49.371,0.089);
+    );
+    out center;
+  `;
+
+  // ========================
+  // 3. Variables globales
+  // ========================
+  let map;
+  let selectedId = null;
+  let activeFilter = 'all';
+  let bufferRadius = 300;
+  let popup = null;
+  let currentPoiData = { type: "FeatureCollection", features: [] };
+  let searchTerm = '';   // terme de recherche par nom
+
+  // ========================
+  // 4. Conversion Overpass -> GeoJSON
+  // ========================
+  function convertOverpassToGeoJSON(data) {
+    const features = [];
+    if (!data.elements) return { type: "FeatureCollection", features: [] };
+
+    for (const elem of data.elements) {
+      let lon, lat;
+      if (elem.type === 'node') {
+        lon = elem.lon;
+        lat = elem.lat;
+      } else if (elem.center) {
+        lon = elem.center.lon;
+        lat = elem.center.lat;
+      } else {
+        continue;
+      }
+
+      let cat = null;
+      let name = elem.tags?.name || "Sans nom";
+      let website = elem.tags?.website || elem.tags?.contact_website || null;
+      let description = "";
+
+      if (elem.tags?.tourism === 'hotel' || elem.tags?.tourism === 'motel' || elem.tags?.tourism === 'guest_house' || elem.tags?.tourism === 'apartment') {
+        cat = 'hotel';
+        description = elem.tags?.description || `Hôtel à Deauville.${elem.tags?.stars ? ` ${elem.tags.stars} étoiles.` : ''}`;
+      } else if (elem.tags?.amenity === 'restaurant' || elem.tags?.amenity === 'fast_food' || elem.tags?.amenity === 'cafe' || elem.tags?.amenity === 'bar') {
+        cat = 'restaurant';
+        description = elem.tags?.description || `Restaurant ${elem.tags?.cuisine ? `spécialité ${elem.tags.cuisine}` : 'local'}.`;
+      } else if (elem.tags?.natural === 'beach' || elem.tags?.leisure === 'beach_resort') {
+        cat = 'plage';
+        description = elem.tags?.description || "Plage de sable fin, cadre balnéaire.";
+      } else if (elem.tags?.tourism === 'museum' || elem.tags?.tourism === 'gallery' || elem.tags?.amenity === 'cinema' || elem.tags?.amenity === 'theatre' || elem.tags?.amenity === 'casino' || elem.tags?.leisure === 'horse_racing') {
+        cat = 'culture';
+        description = elem.tags?.description || "Lieu culturel ou de loisirs emblématique.";
+      } else if (elem.tags?.shop) {
+        cat = 'shopping';
+        description = elem.tags?.description || `Boutique ${elem.tags.shop.replace('_', ' ')}.`;
+      } else {
+        continue;
+      }
+
+      const emoji = EMOJI_MAP[cat] || "📍";
+      features.push({
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [lon, lat] },
+        properties: {
+          id: elem.id,
+          cat: cat,
+          name: name,
+          emoji: emoji,
+          desc: description || (cat === 'hotel' ? "Hébergement de qualité." : "Point d'intérêt touristique."),
+          website: website,
+          color: CAT_COLORS[cat]
+        }
+      });
+    }
+    return { type: "FeatureCollection", features: features };
+  }
+
+  // ========================
+  // 5. Chargement des données OSM
+  // ========================
+  async function loadOSMData() {
+    try {
+      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(OVERPASS_QUERY)}`;
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'DeauvilleTourismApp/1.0 (contact@example.com)' }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const raw = await response.json();
+      const geojson = convertOverpassToGeoJSON(raw);
+      if (geojson.features.length === 0) throw new Error("Aucun POI trouvé pour cette zone");
+      currentPoiData = geojson;
+      return geojson;
+    } catch (err) {
+      console.error("Erreur Overpass:", err);
+      return {
+        type: "FeatureCollection",
+        features: [
+          { type: "Feature", geometry: { type: "Point", coordinates: [0.0733, 49.3571] }, properties: { id: -1, cat: "hotel", name: "Hôtel Normandy Barrière (fallback)", emoji: "🏨", desc: "Exemple fallback", website: null, color: "#E8A045" } },
+          { type: "Feature", geometry: { type: "Point", coordinates: [0.0762, 49.3640] }, properties: { id: -2, cat: "plage", name: "Plage de Deauville", emoji: "🏖️", desc: "Fallback", website: null, color: "#5BC4D4" } }
+        ]
+      };
+    }
+  }
+
+  // ========================
+  // 6. Filtre combiné (catégorie + recherche textuelle)
+  //    Met à jour les couches et la liste
+  // ========================
+  function updateFiltersAndList() {
+    // Filtre MapLibre : d'abord par catégorie, puis on applique le filtre de recherche par propriété "name"
+    // On ne peut pas facilement faire un filtre textuel dynamique dans MapLibre sans recharger la source.
+    // Solution : on recharge la source GeoJSON avec les features filtrées (catégorie + recherche).
+    // Mais on veut garder la même source. On va donc créer un nouveau GeoJSON filtré et le réinjecter.
+    let filtered = currentPoiData.features;
+
+    // Filtre par catégorie
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter(f => f.properties.cat === activeFilter);
+    }
+    // Filtre par recherche textuelle (insensible à la casse)
+    if (searchTerm.trim() !== '') {
+      const term = searchTerm.trim().toLowerCase();
+      filtered = filtered.filter(f => f.properties.name.toLowerCase().includes(term));
+    }
+
+    const filteredGeoJSON = {
+      type: "FeatureCollection",
+      features: filtered
+    };
+
+    // Mettre à jour la source de la carte
+    if (map.getSource('poi')) {
+      map.getSource('poi').setData(filteredGeoJSON);
+    }
+
+    // Reconstruire la liste latérale avec les mêmes filtres
+    buildListFromFeatures(filtered);
+  }
+
+  // Construit la liste à partir d'un tableau de features (déjà filtrées)
+  function buildListFromFeatures(features) {
+    const container = document.getElementById('poi-list');
+    container.innerHTML = '';
+    if (features.length === 0) {
+      container.innerHTML = '<div style="padding:1rem; text-align:center; color:var(--text-muted);">Aucun point ne correspond à votre recherche.</div>';
+      return;
+    }
+    features.forEach(f => {
+      const { id, name, cat, emoji, color } = f.properties;
+      const div = document.createElement('div');
+      div.className = 'poi-item';
+      div.dataset.id = id;
+      div.innerHTML = `
+        <span class="poi-item-icon">${emoji}</span>
+        <div>
+          <div class="poi-item-name">${name}</div>
+          <div class="poi-item-sub" style="color:${color}">${CAT_LABELS[cat] || cat}</div>
+        </div>
+      `;
+      div.addEventListener('click', () => {
+        selectPOI(id, f.geometry.coordinates);
+      });
+      container.appendChild(div);
+    });
+  }
+
+  // ========================
+  // 7. Initialisation carte
+  // ========================
+  async function initMap() {
+    map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      center: [0.0730, 49.3590],
+      zoom: 14.2,
+      minZoom: 12,
+      maxZoom: 18,
+      attributionControl: false
+    });
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    map.addControl(new maplibregl.ScaleControl({ maxWidth: 100, unit: 'metric' }), 'bottom-right');
+
+    map.on('load', async () => {
+      map.addSource('poi', {
+        type: 'geojson',
+        data: { type: "FeatureCollection", features: [] }
+      });
+      map.addSource('buffer', {
+        type: 'geojson',
+        data: { type: "FeatureCollection", features: [] }
+      });
+
+      map.addLayer({
+        id: 'buffer-fill',
+        type: 'fill',
+        source: 'buffer',
+        paint: { 'fill-color': '#1B3A4B', 'fill-opacity': 0.08 }
+      });
+      map.addLayer({
+        id: 'buffer-line',
+        type: 'line',
+        source: 'buffer',
+        paint: { 'line-color': '#1B3A4B', 'line-width': 1.8, 'line-dasharray': [4, 3], 'line-opacity': 0.55 }
+      });
+      map.addLayer({
+        id: 'poi-halo',
+        type: 'circle',
+        source: 'poi',
+        filter: ['==', ['get', 'id'], -1],
+        paint: { 'circle-radius': 18, 'circle-color': '#1B3A4B', 'circle-opacity': 0.15, 'circle-stroke-width': 2, 'circle-stroke-color': '#1B3A4B', 'circle-stroke-opacity': 0.4 }
+      });
+      map.addLayer({
+        id: 'poi-circles',
+        type: 'circle',
+        source: 'poi',
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 6, 15, 9, 18, 13],
+          'circle-color': ['get', 'color'],
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#FFFFFF',
+          'circle-opacity': 1
+        }
+      });
+      map.addLayer({
+        id: 'poi-labels',
+        type: 'symbol',
+        source: 'poi',
+        layout: {
+          'text-field': ['get', 'emoji'],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 12, 10, 15, 14, 18, 18],
+          'text-offset': [0, -1.8],
+          'text-allow-overlap': false
+        }
+      });
+
+      map.on('click', 'poi-circles', (e) => {
+        const feat = e.features[0];
+        if (feat) selectPOI(feat.properties.id, feat.geometry.coordinates);
+        e.stopPropagation();
+      });
+      map.on('click', (e) => {
+        const feats = map.queryRenderedFeatures(e.point, { layers: ['poi-circles'] });
+        if (!feats.length) clearSelection();
+      });
+      map.on('mouseenter', 'poi-circles', () => map.getCanvas().style.cursor = 'pointer');
+      map.on('mouseleave', 'poi-circles', () => map.getCanvas().style.cursor = '');
+
+      const geojson = await loadOSMData();
+      currentPoiData = geojson;
+      // Appliquer les filtres initiaux
+      updateFiltersAndList();
+    });
+  }
+
+  // ========================
+  // 8. Fonctions de sélection, buffer, etc. (inchangées mais utilisent currentPoiData complet pour compter)
+  // ========================
+  function findFeatureById(id) {
+    // On cherche dans toutes les features (non filtrées) pour avoir l'objet complet
+    return currentPoiData.features.find(f => f.properties.id === id);
+  }
+
+  function drawBuffer(feat) {
+    const radiusKm = bufferRadius / 1000;
+    const buffered = turf.buffer(feat, radiusKm, { units: 'kilometers', steps: 64 });
+    map.getSource('buffer').setData({ type: 'FeatureCollection', features: [buffered] });
+  }
+
+  function countNearby(centerFeat, radiusM) {
+    const radiusKm = radiusM / 1000;
+    const buffered = turf.buffer(centerFeat, radiusKm, { units: 'kilometers' });
+    let count = 0;
+    // On compte dans toutes les features (non filtrées) mais on applique le filtre de catégorie actif
+    currentPoiData.features.forEach(f => {
+      if (f.properties.id === centerFeat.properties.id) return;
+      if (activeFilter !== 'all' && f.properties.cat !== activeFilter) return;
+      // Appliquer aussi la recherche textuelle pour le comptage ?
+      // Pour cohérence, on compte selon la même logique que l'affichage courant : on applique searchTerm
+      if (searchTerm.trim() !== '') {
+        const term = searchTerm.trim().toLowerCase();
+        if (!f.properties.name.toLowerCase().includes(term)) return;
+      }
+      if (turf.booleanPointInPolygon(f, buffered)) count++;
+    });
+    return count;
+  }
+
+  function selectPOI(id, coords) {
+    selectedId = id;
+    const feat = findFeatureById(id);
+    if (!feat) return;
+    const { name, cat, desc, emoji, website } = feat.properties;
+
+    map.setFilter('poi-halo', ['==', ['get', 'id'], id]);
+    map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 14.5), duration: 500 });
+    drawBuffer(feat);
+
+    if (popup) popup.remove();
+    let websiteHtml = website ? `<div class="popup-website">🔗 <a href="${website}" target="_blank" rel="noopener noreferrer">Site officiel</a></div>` : '';
+    popup = new maplibregl.Popup({ offset: 18, closeButton: true, closeOnClick: false })
+      .setLngLat(coords)
+      .setHTML(`
+        <div class="popup-cat">${emoji} ${CAT_LABELS[cat] || cat}</div>
+        <div class="popup-name">${name}</div>
+        <div class="popup-desc">${desc}</div>
+        ${websiteHtml}
+      `)
+      .addTo(map);
+
+    const nearby = countNearby(feat, bufferRadius);
+    const infoDiv = document.getElementById('poi-info');
+    infoDiv.classList.remove('empty');
+    infoDiv.innerHTML = `
+      <div class="poi-cat">${emoji} ${CAT_LABELS[cat] || cat}</div>
+      <h4>${name}</h4>
+      <p class="poi-desc">${desc}</p>
+      ${website ? `<p class="poi-desc" style="margin-top:0.2rem;">🌐 <a href="${website}" target="_blank">Site web</a></p>` : ''}
+      <p class="poi-nearby"><strong>${nearby}</strong> lieu${nearby > 1 ? 'x' : ''} dans un rayon de ${bufferRadius} m</p>
+    `;
+    document.querySelectorAll('.poi-item').forEach(el => {
+      el.classList.toggle('selected', parseInt(el.dataset.id) === id);
+    });
+  }
+
+  function clearSelection() {
+    selectedId = null;
+    map.setFilter('poi-halo', ['==', ['get', 'id'], -1]);
+    map.getSource('buffer').setData({ type: 'FeatureCollection', features: [] });
+    if (popup) { popup.remove(); popup = null; }
+    document.getElementById('poi-info').classList.add('empty');
+    document.getElementById('poi-info').innerHTML = '<p>Cliquez sur un point d\'intérêt<br>pour afficher les détails et calculer<br>les lieux à proximité.</p>';
+    document.querySelectorAll('.poi-item').forEach(el => el.classList.remove('selected'));
+  }
+
+  // ========================
+  // 9. Gestion des filtres UI (catégorie, buffer, recherche)
+  // ========================
+  function applyFilter(cat) {
+    activeFilter = cat;
+    clearSelection();
+    updateFiltersAndList();
+  }
+
+  function bindUI() {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.cat);
+      });
+    });
+
+    const rangeEl = document.getElementById('buffer-range');
+    const labelEl = document.getElementById('buffer-label');
+    rangeEl.addEventListener('input', () => {
+      bufferRadius = parseInt(rangeEl.value);
+      labelEl.textContent = bufferRadius + ' m';
+      if (selectedId !== null) {
+        const feat = findFeatureById(selectedId);
+        if (feat) {
+          drawBuffer(feat);
+          const nearby = countNearby(feat, bufferRadius);
+          const nearbyEl = document.querySelector('.poi-nearby');
+          if (nearbyEl) nearbyEl.innerHTML = `<strong>${nearby}</strong> lieu${nearby > 1 ? 'x' : ''} dans un rayon de ${bufferRadius} m`;
+        }
+      }
+    });
+
+    // Barre de recherche
+    const searchInput = document.getElementById('poi-search');
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      clearSelection(); // on efface la sélection pour éviter incohérence
+      updateFiltersAndList();
+    });
+  }
+
+  // ========================
+  // 10. Lancement
+  // ========================
+  initMap().then(() => {
+    bindUI();
+  }).catch(err => {
+    console.error("Erreur d'initialisation", err);
+    document.getElementById('poi-list').innerHTML = '<div style="padding:1rem;color:red;">Impossible de charger les données OSM. Vérifiez votre connexion.</div>';
+  });
+</script>
+</body>
+</html>
