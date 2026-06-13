@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deauville — Carte interactive OSM</title>
+  <title>Deauville — Carte interactive OSM - 3D</title>
 
   <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* Vos styles existants (conservés) */
+    /* Les styles existants (conservés) */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --sand:       #F2E8D5;
@@ -32,40 +32,101 @@
     }
     html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); overflow: hidden; }
     #app { display: flex; height: 100vh; width: 100vw; }
-    #panel { width: var(--panel-w); min-width: var(--panel-w); background: var(--sand); border-right: 1.5px solid var(--sand-dark); display: flex; flex-direction: column; overflow: hidden; z-index: 10; box-shadow: 2px 0 12px rgba(27,58,75,0.08); }
-    #panel-header { background: var(--navy); padding: 1.5rem 1.25rem 1.25rem; flex-shrink: 0; }
+    
+    /* ── PANEL LATÉRAL AVEC SCROLL PERSONNALISÉ ── */
+    #panel {
+      width: var(--panel-w);
+      min-width: var(--panel-w);
+      background: var(--sand);
+      border-right: 1.5px solid var(--sand-dark);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;   /* Permet le défilement vertical de tout le panneau */
+      z-index: 10;
+      box-shadow: 2px 0 12px rgba(27,58,75,0.08);
+      scrollbar-width: thin;
+      scrollbar-color: var(--sand-dark) var(--sand);
+    }
+    #panel::-webkit-scrollbar {
+      width: 6px;
+    }
+    #panel::-webkit-scrollbar-track {
+      background: var(--sand);
+    }
+    #panel::-webkit-scrollbar-thumb {
+      background: var(--sand-dark);
+      border-radius: 3px;
+    }
+    #panel-header {
+      background: var(--navy);
+      padding: 1.5rem 1.25rem 1.25rem;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
     .panel-eyebrow { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sea-light); margin-bottom: 0.4rem; }
     #panel-header h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--white); line-height: 1.1; margin-bottom: 0.3rem; }
     #panel-header p { font-size: 0.78rem; color: var(--sea-light); opacity: 0.85; line-height: 1.45; }
+
     #filters { padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid var(--sand-dark); flex-shrink: 0; }
     #filters h3 { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.65rem; }
     .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
-    .filter-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.65rem; border: 1.5px solid var(--sand-dark); border-radius: 6px; background: var(--white); cursor: pointer; font-size: 0.75rem; font-weight: 500; color: var(--text); transition: all 0.18s ease; white-space: nowrap; }
+    .filter-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.45rem 0.65rem; border: 1.5px solid var(--sand-dark);
+      border-radius: 6px; background: var(--white); cursor: pointer;
+      font-size: 0.75rem; font-weight: 500; color: var(--text);
+      transition: all 0.18s ease; white-space: nowrap;
+    }
     .filter-btn:hover { border-color: var(--navy-light); color: var(--navy); }
     .filter-btn.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
     .filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
     #buffer-ctrl { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--sand-dark); flex-shrink: 0; }
     #buffer-ctrl h3 { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.55rem; }
     .buffer-row { display: flex; align-items: center; gap: 0.75rem; }
     #buffer-range { flex: 1; -webkit-appearance: none; appearance: none; height: 4px; background: var(--sand-dark); border-radius: 2px; outline: none; cursor: pointer; }
     #buffer-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--navy); cursor: pointer; border: 2px solid var(--white); box-shadow: 0 1px 4px rgba(27,58,75,0.3); }
     #buffer-label { font-size: 0.8rem; font-weight: 600; color: var(--navy); min-width: 44px; text-align: right; }
+
     #routing-ctrl { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--sand-dark); flex-shrink: 0; }
     #routing-ctrl h3 { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.55rem; }
-    .routing-mode-btn { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem 0.75rem; border: 1.5px solid var(--sand-dark); border-radius: 6px; background: var(--white); cursor: pointer; font-size: 0.75rem; font-weight: 500; color: var(--text); transition: all 0.18s; margin-bottom: 0.5rem; }
+    .routing-mode-btn {
+      display: flex; align-items: center; gap: 0.5rem; width: 100%;
+      padding: 0.5rem 0.75rem; border: 1.5px solid var(--sand-dark);
+      border-radius: 6px; background: var(--white); cursor: pointer;
+      font-size: 0.75rem; font-weight: 500; color: var(--text);
+      transition: all 0.18s; margin-bottom: 0.5rem;
+    }
     .routing-mode-btn:hover { border-color: var(--route-blue); color: var(--route-blue); }
-    .routing-mode-btn.active { background: var(--route-blue); border-color: var(--route-blue); color: var(--white); }
     .routing-mode-btn.cancel { border-color: #dc2626; color: #dc2626; }
     .routing-mode-btn.cancel:hover { background: #dc2626; color: var(--white); }
-    #route-result { display: none; background: rgba(37,99,235,0.07); border: 1px solid rgba(37,99,235,0.2); border-radius: 8px; padding: 0.65rem 0.85rem; margin-top: 0.5rem; }
+
+    /* Bouton 3D */
+    #toggle3d-btn {
+      display: flex; align-items: center; gap: 0.5rem; width: 100%;
+      padding: 0.5rem 0.75rem; border: 1.5px solid var(--sand-dark);
+      border-radius: 6px; background: var(--white); cursor: pointer;
+      font-size: 0.75rem; font-weight: 500; color: var(--text);
+      transition: all 0.18s; margin-top: 0.5rem;
+    }
+    #toggle3d-btn:hover { border-color: var(--navy); color: var(--navy); }
+    #toggle3d-btn.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
+
+    #route-result {
+      display: none; background: rgba(37,99,235,0.07);
+      border: 1px solid rgba(37,99,235,0.2); border-radius: 8px;
+      padding: 0.65rem 0.85rem; margin-top: 0.5rem;
+    }
     #route-result .route-stat { font-size: 0.78rem; color: var(--navy); font-weight: 600; }
     #route-result .route-label { font-size: 0.68rem; color: var(--text-muted); }
     .route-steps { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.4rem; }
     .route-step-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--route-blue); }
     .route-step-dot.filled { background: var(--route-blue); }
     .route-step-line { flex: 1; height: 2px; background: var(--route-blue); opacity: 0.4; border-radius: 1px; }
-    .route-step-label { font-size: 0.65rem; color: var(--text-muted); }
-    #poi-info { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--sand-dark); min-height: 70px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; }
+
+    #poi-info { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--sand-dark); min-height: 70px; flex-shrink: 0; }
     #poi-info.empty p { font-size: 0.78rem; color: var(--text-muted); font-style: italic; line-height: 1.4; }
     #poi-info h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
     #poi-info .poi-cat { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.35rem; }
@@ -74,8 +135,12 @@
     .poi-meta { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.35rem 0; }
     .poi-meta-tag { font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 10px; background: rgba(27,58,75,0.08); color: var(--navy); font-weight: 500; }
     .stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.05em; }
-    #poi-list-wrap { flex: 1; overflow-y: auto; padding: 0.75rem 1.25rem; }
-    #poi-list-wrap h3 { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.55rem; position: sticky; top: 0; background: var(--sand); padding: 0.25rem 0; }
+
+    #poi-list-wrap { padding: 0.75rem 1.25rem; flex-shrink: 0; }
+    #poi-list-wrap h3 {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.55rem;
+    }
     .poi-item { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.65rem; border-radius: 7px; cursor: pointer; transition: background 0.15s; margin-bottom: 0.2rem; }
     .poi-item:hover { background: var(--sand-dark); }
     .poi-item.selected { background: rgba(27,58,75,0.08); }
@@ -83,14 +148,17 @@
     .poi-item-name { font-size: 0.8rem; font-weight: 500; color: var(--text); line-height: 1.3; }
     .poi-item-sub { font-size: 0.68rem; color: var(--text-muted); }
     .poi-item-stars { font-size: 0.65rem; color: var(--gold); }
+
     #panel-footer { padding: 0.6rem 1.25rem; border-top: 1px solid var(--sand-dark); font-size: 0.65rem; color: var(--text-muted); flex-shrink: 0; line-height: 1.5; }
     #panel-footer a { color: var(--sea); text-decoration: none; }
     #panel-footer a:hover { text-decoration: underline; }
+
     #map { flex: 1; height: 100%; position: relative; }
     #search-container { position: absolute; top: 1rem; right: 1rem; z-index: 20; pointer-events: none; left: 1rem; }
     #poi-search { width: 100%; max-width: 400px; padding: 0.7rem 1rem; border: 2px solid var(--sand-dark); border-radius: 50px; font-size: 0.88rem; font-family: 'Inter', sans-serif; background: var(--white); box-shadow: 0 4px 12px rgba(0,0,0,0.1); outline: none; transition: all 0.2s; pointer-events: auto; }
     #poi-search:focus { border-color: var(--navy); box-shadow: 0 4px 14px rgba(27,58,75,0.2); }
     #routing-toast { position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%); background: var(--route-blue); color: var(--white); padding: 0.55rem 1.25rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; box-shadow: 0 4px 14px rgba(37,99,235,0.35); z-index: 30; display: none; pointer-events: none; white-space: nowrap; }
+
     .maplibregl-ctrl-attrib { font-size: 0.6rem !important; }
     .maplibregl-popup-content { background: var(--white); border-radius: var(--radius) !important; padding: 0.85rem 1rem !important; box-shadow: 0 4px 20px rgba(27,58,75,0.18) !important; border-top: 3px solid var(--navy); min-width: 200px; max-width: 260px; font-family: 'Inter', sans-serif; }
     .maplibregl-popup-tip { border-top-color: var(--navy) !important; }
@@ -102,13 +170,13 @@
     .popup-desc { font-size: 0.75rem; color: var(--text); line-height: 1.4; }
     .popup-website { margin-top: 0.45rem; font-size: 0.7rem; }
     .popup-website a { color: var(--sea); text-decoration: none; font-weight: 500; }
-    .popup-website a:hover { text-decoration: underline; }
-    .popup-route-btn { display: block; width: 100%; margin-top: 0.6rem; padding: 0.4rem 0.75rem; border-radius: 6px; background: var(--route-blue); color: var(--white); font-size: 0.72rem; font-weight: 600; border: none; cursor: pointer; text-align: center; transition: background 0.15s; }
-    .popup-route-btn:hover { background: #1d4ed8; }
+    .popup-route-btn { display: block; width: 100%; margin-top: 0.6rem; padding: 0.4rem 0.75rem; border-radius: 6px; background: var(--route-blue); color: var(--white); font-size: 0.72rem; font-weight: 600; border: none; cursor: pointer; text-align: center; }
     .popup-route-btn.departure { background: var(--navy); }
     .popup-route-btn.departure:hover { background: var(--navy-light); }
+
     #tech-badge { position: absolute; bottom: 1.2rem; right: 1rem; display: flex; gap: 0.35rem; flex-wrap: wrap; justify-content: flex-end; z-index: 5; pointer-events: none; }
     .tech-pill { background: rgba(27,58,75,0.85); color: var(--sea-light); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; padding: 0.25rem 0.6rem; border-radius: 20px; backdrop-filter: blur(4px); }
+
     @media (max-width: 680px) {
       #panel { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; height: 45vh; border-right: none; border-top: 1.5px solid var(--sand-dark); z-index: 20; }
       #map { height: 55vh; }
@@ -116,9 +184,6 @@
       #panel-footer { display: none; }
       #tech-badge { bottom: 46vh; }
     }
-    #poi-list-wrap::-webkit-scrollbar { width: 4px; }
-    #poi-list-wrap::-webkit-scrollbar-track { background: transparent; }
-    #poi-list-wrap::-webkit-scrollbar-thumb { background: var(--sand-dark); border-radius: 2px; }
   </style>
 </head>
 <body>
@@ -162,19 +227,20 @@
         </div>
         <div id="route-names" style="margin-top:0.35rem; font-size:0.65rem; color:var(--text-muted);"></div>
       </div>
+      <!-- Bouton pour basculer la vue 3D -->
+      <button id="toggle3d-btn" class="active">🏔️ Désactiver la vue 3D</button>
     </div>
     <div id="poi-info" class="empty">
       <p>Cliquez sur un point d'intérêt<br>pour afficher les détails et calculer<br>les lieux à proximité.</p>
     </div>
     <div id="poi-list-wrap">
-      <h3>Points d'intérêt <span id="poi-count" style="font-weight:400; text-transform:none; letter-spacing:0;"></span></h3>
+      <h3>Points d'intérêt <span id="poi-count" style="font-weight:400; text-transform:none;"></span></h3>
       <div id="poi-list"><div style="text-align:center;padding:1rem;color:var(--text-muted);">Chargement des données OSM…</div></div>
     </div>
     <div id="panel-footer">
       Données : <a href="https://www.openstreetmap.org" target="_blank">© OpenStreetMap</a> via Overpass API ·
-      Fond : <a href="https://carto.com" target="_blank">CartoDB Positron</a><br>
-      Routing : <a href="http://project-osrm.org" target="_blank">OSRM</a> ·
-      Stack : MapLibre GL JS · Turf.js · OSM live
+      Fond : <a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> (3D)<br>
+      Routing : <a href="http://project-osrm.org" target="_blank">OSRM</a> · Clustering natif MapLibre
     </div>
   </aside>
 
@@ -188,8 +254,8 @@
     <span class="tech-pill">MapLibre GL JS</span>
     <span class="tech-pill">Turf.js</span>
     <span class="tech-pill">OSRM</span>
-    <span class="tech-pill">Overpass API</span>
-    <span class="tech-pill">OpenStreetMap</span>
+    <span class="tech-pill">Clustering</span>
+    <span class="tech-pill">3D Buildings</span>
   </div>
 </div>
 
@@ -219,7 +285,7 @@ const CUISINE_LABELS = {
   regional: "Cuisine régionale", international: "International", sushi: "Sushi"
 };
 
-// ======================== REQUÊTE OVERPASS ========================
+// Overpass requête (même zone)
 const OVERPASS_QUERY = `
 [out:json][timeout:30];
 (
@@ -245,19 +311,24 @@ const OVERPASS_QUERY = `
 out center;
 `;
 
-// ======================== ÉTAT GLOBAL ========================
+// Variables globales
 let map;
-let selectedId    = null;
-let activeFilter  = 'all';
-let bufferRadius  = 300;
-let popup         = null;
+let selectedId = null;
+let activeFilter = 'all';
+let bufferRadius = 300;
+let popup = null;
 let currentPoiData = { type: "FeatureCollection", features: [] };
-let searchTerm    = '';
-let routingMode   = false;
-let routePoints   = [];
-let routeMarkers  = [];
+let searchTerm = '';
+let routingMode = false;
+let routePoints = [];
+let routeMarkers = [];
 
-// ======================== HELPERS ========================
+// Variables pour le contrôle 3D
+let is3dEnabled = true;
+const defaultPitch = 45;
+const defaultBearing = -17.6;
+
+// ======================== UTILITAIRES ========================
 function renderStars(starsRaw) {
   const n = parseInt(starsRaw);
   if (!n || isNaN(n) || n < 1 || n > 5) return '';
@@ -271,14 +342,14 @@ function formatCuisine(raw) {
   }).join(' · ');
 }
 
-// ======================== CONVERSION OVERPASS -> GEOJSON ========================
+// Conversion Overpass → GeoJSON
 function convertOverpassToGeoJSON(data) {
   const features = [];
   if (!data.elements) return { type: "FeatureCollection", features: [] };
   for (const elem of data.elements) {
     let lon, lat;
     if (elem.type === 'node') { lon = elem.lon; lat = elem.lat; }
-    else if (elem.center)     { lon = elem.center.lon; lat = elem.center.lat; }
+    else if (elem.center) { lon = elem.center.lon; lat = elem.center.lat; }
     else continue;
     const tags = elem.tags || {};
     let cat = null;
@@ -314,7 +385,7 @@ function convertOverpassToGeoJSON(data) {
   return { type: "FeatureCollection", features };
 }
 
-// ======================== CHARGEMENT OSM ========================
+// Chargement Overpass
 async function loadOSMData() {
   try {
     const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(OVERPASS_QUERY)}`;
@@ -339,7 +410,7 @@ async function loadOSMData() {
   }
 }
 
-// ======================== FILTRES & LISTE ========================
+// Filtres et liste
 function getFilteredFeatures() {
   let f = currentPoiData.features;
   if (activeFilter !== 'all') f = f.filter(x => x.properties.cat === activeFilter);
@@ -382,16 +453,12 @@ function buildListFromFeatures(features) {
 function updateFiltersAndList() {
   const filtered = getFilteredFeatures();
   buildListFromFeatures(filtered);
-  // Mise à jour de la source pour le clustering natif
   if (map.getSource('poi')) {
-    map.getSource('poi').setData({
-      type: "FeatureCollection",
-      features: filtered
-    });
+    map.getSource('poi').setData({ type: "FeatureCollection", features: filtered });
   }
 }
 
-// ======================== SÉLECTION POI & BUFFER ========================
+// Buffer et sélection
 function findFeatureById(id) {
   return currentPoiData.features.find(f => f.properties.id === id);
 }
@@ -472,7 +539,7 @@ function clearSelection() {
   document.querySelectorAll('.poi-item').forEach(el => el.classList.remove('selected'));
 }
 
-// ======================== ROUTING OSRM ========================
+// ======================== ROUTING ========================
 function setRoutingMode(active) {
   routingMode = active;
   const btn = document.getElementById('routing-toggle');
@@ -571,142 +638,165 @@ function clearRouteMarkers() {
   routeMarkers = [];
 }
 
-// ======================== INITIALISATION CARTE (avec clustering natif) ========================
+// ======================== GESTION 3D ========================
+function toggle3D() {
+  is3dEnabled = !is3dEnabled;
+  const btn = document.getElementById('toggle3d-btn');
+  if (is3dEnabled) {
+    // Réactiver la 3D
+    map.setPitch(defaultPitch);
+    map.setBearing(defaultBearing);
+    if (map.getLayer('3d-buildings')) map.setLayoutProperty('3d-buildings', 'visibility', 'visible');
+    btn.textContent = '🏔️ Désactiver la vue 3D';
+    btn.classList.add('active');
+  } else {
+    // Désactiver : vue plate
+    map.setPitch(0);
+    map.setBearing(0);
+    if (map.getLayer('3d-buildings')) map.setLayoutProperty('3d-buildings', 'visibility', 'none');
+    btn.textContent = '🏔️ Activer la vue 3D';
+    btn.classList.remove('active');
+  }
+}
+
+// ======================== INITIALISATION CARTE ========================
 async function initMap() {
   map = new maplibregl.Map({
     container: 'map',
-    style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+    style: 'https://tiles.openfreemap.org/styles/bright',  // style compatible 3D
     center: [0.0730, 49.3590],
     zoom: 14.2,
-    minZoom: 12, maxZoom: 18,
-    attributionControl: false
+    pitch: defaultPitch,
+    bearing: defaultBearing,
+    minZoom: 12,
+    maxZoom: 18,
+    attributionControl: false,
+    canvasContextAttributes: { antialias: true }
   });
-  map.addControl(new maplibregl.AttributionControl({ compact:true }), 'bottom-right');
-  map.addControl(new maplibregl.NavigationControl({ showCompass:false }), 'top-right');
-  map.addControl(new maplibregl.ScaleControl({ maxWidth:100, unit:'metric' }), 'bottom-right');
+  map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+  map.addControl(new maplibregl.ScaleControl({ maxWidth: 100, unit: 'metric' }), 'bottom-right');
 
   map.on('load', async () => {
-    // Source avec clustering activé
+    // Source POI avec clustering natif
     map.addSource('poi', {
       type: 'geojson',
       data: { type: "FeatureCollection", features: [] },
       cluster: true,
-      clusterMaxZoom: 15,          // plus de clusters au-delà de zoom 14
-      clusterRadius: 60            // rayon de regroupement en pixels
+      clusterMaxZoom: 15,
+      clusterRadius: 60
     });
-    map.addSource('buffer', { type:'geojson', data:{ type:"FeatureCollection", features:[] } });
+    map.addSource('buffer', { type: 'geojson', data: { type: "FeatureCollection", features: [] } });
 
-    // Couche de remplissage du buffer
-    map.addLayer({ id:'buffer-fill', type:'fill', source:'buffer', paint:{ 'fill-color':'#1B3A4B', 'fill-opacity':0.07 } });
-    map.addLayer({ id:'buffer-line', type:'line', source:'buffer', paint:{ 'line-color':'#1B3A4B', 'line-width':1.8, 'line-dasharray':[4,3], 'line-opacity':0.5 } });
+    // Buffer layers
+    map.addLayer({ id: 'buffer-fill', type: 'fill', source: 'buffer', paint: { 'fill-color': '#1B3A4B', 'fill-opacity': 0.07 } });
+    map.addLayer({ id: 'buffer-line', type: 'line', source: 'buffer', paint: { 'line-color': '#1B3A4B', 'line-width': 1.8, 'line-dasharray': [4,3], 'line-opacity': 0.5 } });
 
-    // Halo du POI sélectionné (toujours présent, mais filtré)
+    // Halo de sélection
     map.addLayer({
-      id:'poi-halo', type:'circle', source:'poi',
-      filter:['==',['get','id'],-1],
-      paint:{ 'circle-radius':18,'circle-color':'#1B3A4B','circle-opacity':0.12,'circle-stroke-width':2,'circle-stroke-color':'#1B3A4B','circle-stroke-opacity':0.35 }
+      id: 'poi-halo', type: 'circle', source: 'poi',
+      filter: ['==', ['get', 'id'], -1],
+      paint: { 'circle-radius': 18, 'circle-color': '#1B3A4B', 'circle-opacity': 0.12, 'circle-stroke-width': 2, 'circle-stroke-color': '#1B3A4B', 'circle-stroke-opacity': 0.35 }
     });
 
-    // Couche des clusters (cercles)
+    // Clusters
     map.addLayer({
-      id: 'clusters',
-      type: 'circle',
-      source: 'poi',
-      filter: ['has', 'point_count'],
+      id: 'clusters', type: 'circle', source: 'poi', filter: ['has', 'point_count'],
       paint: {
-        'circle-color': '#2C3E50',   // couleur unique gris foncé pour tous les clusters
-        'circle-radius': [
-          'step',
-          ['get', 'point_count'],
-          20,    // taille pour 1 point (ne sera jamais utilisé car clusters ont au moins 2 points)
-          10,    // seuil
-          30,
-          30,
-          40
-        ],
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#fff'
+        'circle-color': '#2C3E50',
+        'circle-radius': ['step', ['get', 'point_count'], 20, 10, 30, 30, 40],
+        'circle-stroke-width': 2, 'circle-stroke-color': '#fff'
       }
     });
-
-    // Étiquettes du compteur de clusters
     map.addLayer({
-      id: 'cluster-count',
-      type: 'symbol',
-      source: 'poi',
-      filter: ['has', 'point_count'],
-      layout: {
-        'text-field': '{point_count_abbreviated}',
-        'text-font': ['Noto Sans Regular'],
-        'text-size': 12
-      },
+      id: 'cluster-count', type: 'symbol', source: 'poi', filter: ['has', 'point_count'],
+      layout: { 'text-field': '{point_count_abbreviated}', 'text-font': ['Noto Sans Regular'], 'text-size': 12 },
       paint: { 'text-color': '#fff' }
     });
 
-    // Points individuels (non regroupés) : cercles colorés par catégorie
+    // Points individuels (couleur par catégorie)
     map.addLayer({
-      id: 'unclustered-point',
-      type: 'circle',
-      source: 'poi',
-      filter: ['!', ['has', 'point_count']],
+      id: 'unclustered-point', type: 'circle', source: 'poi', filter: ['!', ['has', 'point_count']],
       paint: {
         'circle-color': ['get', 'color'],
-        'circle-radius': [
-          'interpolate', ['linear'], ['zoom'],
-          12, 6,
-          15, 9,
-          18, 13
-        ],
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#fff'
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 6, 15, 9, 18, 13],
+        'circle-stroke-width': 2, 'circle-stroke-color': '#fff'
       }
     });
-
-    // Étiquettes emoji pour points individuels
     map.addLayer({
-      id: 'unclustered-label',
-      type: 'symbol',
-      source: 'poi',
-      filter: ['!', ['has', 'point_count']],
+      id: 'unclustered-label', type: 'symbol', source: 'poi', filter: ['!', ['has', 'point_count']],
       layout: {
         'text-field': ['get', 'emoji'],
         'text-size': ['interpolate', ['linear'], ['zoom'], 12, 10, 15, 14, 18, 18],
-        'text-offset': [0, -1.5],
-        'text-allow-overlap': false
+        'text-offset': [0, -1.5], 'text-allow-overlap': false
       }
     });
 
-    // Interactions avec les clusters
+    // Interactions
     map.on('click', 'clusters', async (e) => {
       const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       if (!features.length) return;
       const clusterId = features[0].properties.cluster_id;
       const zoom = await map.getSource('poi').getClusterExpansionZoom(clusterId);
-      map.easeTo({
-        center: features[0].geometry.coordinates,
-        zoom: zoom
-      });
+      map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom });
     });
-
-    // Clic sur un point individuel
     map.on('click', 'unclustered-point', (e) => {
       const feature = e.features[0];
       selectPOI(feature.properties.id, feature.geometry.coordinates);
     });
-
-    // Survol pour changer le curseur
     map.on('mouseenter', 'clusters', () => map.getCanvas().style.cursor = 'pointer');
     map.on('mouseleave', 'clusters', () => map.getCanvas().style.cursor = '');
     map.on('mouseenter', 'unclustered-point', () => map.getCanvas().style.cursor = 'pointer');
     map.on('mouseleave', 'unclustered-point', () => map.getCanvas().style.cursor = '');
-
-    // Clic vide pour désélectionner (hors POI)
     map.on('click', (e) => {
       const feats = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
       if (!feats.length && !routingMode) clearSelection();
     });
 
-    // Chargement des données
+    // Ajout de la source OpenFreeMap pour les bâtiments 3D
+    map.addSource('openfreemap', {
+      type: 'vector',
+      url: 'https://tiles.openfreemap.org/planet'
+    });
+    // Trouver une couche de label pour insérer la 3D en dessous des POI
+    let labelLayerId = null;
+    const layers = map.getStyle().layers;
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
+        labelLayerId = layers[i].id;
+        break;
+      }
+    }
+    // Ajouter la couche 3D
+    map.addLayer({
+      'id': '3d-buildings',
+      'source': 'openfreemap',
+      'source-layer': 'building',
+      'type': 'fill-extrusion',
+      'minzoom': 15,
+      'filter': ['!=', ['get', 'hide_3d'], true],
+      'paint': {
+        'fill-extrusion-color': [
+          'interpolate', ['linear'], ['get', 'render_height'],
+          0, 'lightgray',
+          200, 'royalblue',
+          400, 'lightblue'
+        ],
+        'fill-extrusion-height': [
+          'interpolate', ['linear'], ['zoom'],
+          15, 0,
+          16, ['get', 'render_height']
+        ],
+        'fill-extrusion-base': [
+          'case',
+          ['>=', ['get', 'zoom'], 16],
+          ['get', 'render_min_height'],
+          0
+        ]
+      }
+    }, labelLayerId); // insère sous les étiquettes
+
+    // Chargement des données POI
     const geojson = await loadOSMData();
     currentPoiData = geojson;
     updateFiltersAndList();
@@ -749,6 +839,7 @@ function bindUI() {
     clearSelection();
     updateFiltersAndList();
   });
+  document.getElementById('toggle3d-btn').addEventListener('click', toggle3D);
 }
 
 // ======================== LANCEMENT ========================
