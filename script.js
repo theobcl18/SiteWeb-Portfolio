@@ -65,8 +65,8 @@
                 sub: "Stage d'observation",
                 dateStart: 2023,
                 dateEnd: 2023,
-                lat: 49.3594,
-                lng: 0.0744,
+                lat: 49.360291269760594,
+                lng: 0.07867651318912605,
                 popupHtml: `
                     <div class="popup-title">💼 Concept Intérieur</div>
                     <div class="popup-content">
@@ -84,8 +84,8 @@
                 sub: "Bac général",
                 dateStart: 2018,
                 dateEnd: 2021,
-                lat: 49.3594,
-                lng: 0.0744,
+                lat: 49.363811788276855,
+                lng: 0.07463947629130771,
                 popupHtml: `
                     <div class="popup-title">🎓 Lycée Andrès Maurois de Deauville</div>
                     <div class="popup-content">
@@ -105,8 +105,8 @@
                 sub: "Licence Géographie",
                 dateStart: 2021,
                 dateEnd: 2024,
-                lat: 49.1882,
-                lng: -0.3638,
+                lat: 49.18993756187686,
+                lng: -0.36364486657495393,
                 popupHtml: `
                     <div class="popup-title">🎓 Université de Caen Normandie</div>
                     <div class="popup-content">
@@ -132,8 +132,8 @@
                 sub: "Licence pro SIGDAT",
                 dateStart: 2024,
                 dateEnd: 2025,
-                lat: 49.1882,
-                lng: -0.3638,
+                lat: 49.18993756187686,
+                lng: -0.36364486657495393,
                 popupHtml: null,
                 sharedWith: 2   // index du point 2 (licence générale)
             },
@@ -144,8 +144,8 @@
                 sub: "Stage – BDD foncier",
                 dateStart: 2025,
                 dateEnd: 2025,
-                lat: 45.3397,
-                lng: 5.0531,
+                lat: 45.39795080987009,
+                lng: 4.778148157545114,
                 popupHtml: `
                     <div class="popup-title">💼 Communauté de Communes Entre Bièvre et Rhône</div>
                     <div class="popup-content">
@@ -169,8 +169,8 @@
                 sub: "Master SIGAT",
                 dateStart: 2025,
                 dateEnd: 2027,
-                lat: 48.1173,
-                lng: -1.6779,
+                lat: 48.11858739719634,
+                lng: -1.702628259333512,
                 popupHtml: `
                     <div class="popup-title">🎯 Université Rennes 2</div>
                     <div class="popup-content">
@@ -193,14 +193,17 @@
                 sub: "Stage – Réseaux AEP & ASS",
                 dateStart: 2026,
                 dateEnd: 2026,
-                lat: 48.1100,
-                lng: -1.6732,
+                lat: 48.11581211439854,
+                lng: -1.7102306453338298,
                 popupHtml: `
                     <div class="popup-title">💼 Veolia Eau – Rennes</div>
                     <div class="popup-content">
                         <strong>Stage :</strong> Intégration, gestion et automatisation de données réseaux d’eau potable et d’assainissement<br>
-                        <strong>Période :</strong> 2026<br>
-                        <strong>Lieu :</strong> 8 allée Adolphe Bobierre, Rennes
+                        <strong>Période :</strong> 3 mois - 2026 <br>
+                        <strong>Mission1 :</strong> Intégration de branchements neufs (Mapping FME et correctif topologique) <br>
+                        <strong>Mission2 :</strong> FME : Import de plans de récolement de Nantes Métropole au format compatible avec la BDD PostGIS de Veolia <br>
+                        <strong>Mission3 :</strong> SQL (DBeaver) : Mise en place de vues pour export suivant le CTTP du client <br>
+                        <strong>Mission4 :</strong> Model Builder QGIS / FME / SQL : Mise à jour des zones découpant le réseau d'AEP et d'ASS pour permettre aux cartographes mettre à jour de manière autonome et régulière leur périmètre. (Étage de sectorisation, de pression et bassin de collecte)
                     </div>
                 `
             }
@@ -276,7 +279,15 @@
                 div.addEventListener('click', () => {
                     const targetMarker = markerMap.get(idx);
                     if (targetMarker) {
-                        mapTimeline.flyTo([point.lat, point.lng], 12, { duration: 1.2 });
+                        // Calcul du centre décalé pour que le point soit en bas de la carte
+                        const zoom = 12;
+                        const pointPixel = mapTimeline.project([point.lat, point.lng], zoom);
+                        const mapHeight = mapTimeline.getSize().y;
+                        // Décaler de 40% de la hauteur vers le haut => point à 40% du bas
+                        const newPixel = L.point(pointPixel.x, pointPixel.y + mapHeight * -0.4);
+                        const newCenter = mapTimeline.unproject(newPixel, zoom);
+                        
+                        mapTimeline.flyTo(newCenter, zoom, { duration: 1.2 }); // Animation fluide
                         targetMarker.openPopup();
                     }
                 });
