@@ -913,6 +913,96 @@
         }
 
 
+
+        /* Frise chronologique */
+        #timeline-map {
+            position: relative;
+            margin-bottom: 0;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #timeline-bar {
+            background: rgba(36, 36, 39, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 0 0 15px 15px;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .timeline-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) rgba(255,255,255,0.2);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .timeline-container::-webkit-scrollbar {
+            height: 5px;
+        }
+        .timeline-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        .timeline-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .timeline-scroll {
+            display: inline-flex;
+            gap: 1.2rem;
+            padding: 0.2rem 0.2rem 0.5rem 0.2rem;
+        }
+
+        .timeline-item {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            min-width: 100px;
+            text-align: center;
+            padding: 0.3rem 0.5rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid transparent;
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.12);
+        }
+
+        .timeline-item.education {
+            border-left-color: #488ed4;
+        }
+        .timeline-item.internship {
+            border-left-color: #fe9b38;
+        }
+
+        .timeline-year {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #ccc;
+        }
+
+        .timeline-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 0.2rem;
+        }
+
+        .timeline-sub {
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+
+
+
     </style>
 </head>
 
@@ -1001,70 +1091,80 @@
         </div>
     </section>
 
-    <!------------------- SECTION CARTE INTERACTIVE LEAFLET --------------->
+
+    <!---------------------------- SECTION CARTE INTERACTIVE LEAFLET AVEC FRISE ----------------------------->
     <section id="map-section" class="py-5">
         <div class="container">
             <h2 class="section-title">Mon parcours scolaire et professionnel en carte</h2>
-            
+
             <div class="bg-section fade-in">
                 <div class="row">
-                    <div class="col-lg-16">
-                        <h4 class="mb-4"><i class="fas fa-map-marked-alt me-2 text-primary"></i> Mon parcours</h4>
+                            <div class="col-12">
+                                <h4 class="mb-4"><i class="fas fa-map-marked-alt me-2 text-primary"></i> Mon parcours</h4>
 
-                        <!-- Liste des lieux - Mise en côte à côte -->
-                        <div class="row">
+                                <!-- Bloc des lieux d'études et expériences (horizontal) -->
+                                <div class="row mb-4">
+                                    <!-- Colonne gauche : études -->
+                                    <div class="col-md-6">
+                                        <div class="location-list">
+                                            <h5 class="text-primary mb-3"><i class="fa-solid fa-graduation-cap"></i> Lieux d'études</h5>
+                                            <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Université Rennes 2</h6>
+                                                <small class="text">Master Géomatique - parcours SIGAT - 2025-2027</small>
+                                            </div>
+                                            <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Université de Caen Normandie</h6>
+                                                <small class="text">Licence professionnelle Cartographie, topographie et systèmes d'information géographique - parcours SIGDAT - 2024-2025</small>
+                                            </div>
+                                            <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Université de Caen Normandie</h6>
+                                                <small class="text">Licence géographie et aménagement du territoire - 2021-2024</small>
+                                            </div>
+                                            <div class="location-item education-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Lycée Andrès Maurois Deauville</h6>
+                                                <small class="text">Baccalauréat général - 2018-2021</small>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <!-- Lieux d'études -->
-                            <div class="col-md-6 col-lg-4">
-                                <div class="location-list mb-4">
-                                    <h5 class="text-primary mb-3"> <i class="fa-solid fa-graduation-cap"></i> Lieux d'études</h5>
-                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Université Rennes 2</h6>
-                                        <small class="text">Master Géomatique - parcours SIGAT - 2025-2027</small>
-                                    </div>
-                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Université de Caen Normandie</h6>
-                                        <small class="text">Licence professionnelle Cartographie, topographie et systèmes d'information géographique - parcours SIGDAT - 2024-2025</small>
-                                    </div>
-                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Université de Caen Normandie</h6>
-                                        <small class="text">Licence géographie et aménagement du territoire - 2021-2024</small>
-                                    </div>
-                                    <div class="location-item education-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Lycée Andrès Maurois Deauville</h6>
-                                        <small class="text">Baccalauréat général - 2018-2021</small>
+                                    <!-- Colonne droite : expériences professionnelles -->
+                                    <div class="col-md-6">
+                                        <div class="location-list">
+                                            <h5 class="text-primary mb-3"><i class="fa-solid fa-user-tie"></i> Expériences professionnelles</h5>
+                                            <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Veolia</h6>
+                                                <small class="text">Intégration, gestion et automatisation de données réseaux d’AEP & d’ASS - 2026</small>
+                                            </div>
+                                            <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Entre Bièvre et Rhônes</h6>
+                                                <small class="text">Mise en place d'une base de données du foncier - 2025</small>
+                                            </div>
+                                            <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
+                                                <h6 class="mb-1">Stage d'observation</h6>
+                                                <small class="text">Concept intérieur - 2017</small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        <!-- Lieux d'expériences professionnelles -->
-                            <div class="col-md-6 col-lg-4">
-                                <div class="location-list mb-4">
-                                    <h5 class="text-primary mb-3"> <i class="fa-solid fa-user-tie"></i> Expériences professionnelles</h5>
-                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Veolia</h6>
-                                        <small class="text">Intégration, gestion et automatisation de données réseaux d’AEP & d’ASS - 2026 </small>
-                                    </div>
-                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Entre Bièvre et Rhônes</h6>
-                                        <small class="text">Mise en place d'une base de données du foncier - 2025</small>
-                                    </div>
-                                    <div class="location-item internship-item mb-3 p-3 rounded bg-dark">
-                                        <h6 class="mb-1">Stage d'observation</h6>
-                                        <small class="text">Concept intérieur</small>
-                                    </div>
+
+                        <!-- Carte en pleine largeur -->
+                        <div id="timeline-map" style="height: 500px; width: 100%; border-radius: 15px; position: relative;"></div>
+                        
+                        <!-- Frise chronologique (fixe en bas de la carte) -->
+                        <div id="timeline-bar">
+                            <div class="timeline-container">
+                                <div class="timeline-scroll">
+                                    <!-- Généré dynamiquement -->
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!----------------  Taille de la carte Leaflet ----------------->
-                    <div class="col-lg-8">
-                        <div id="map" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
 
     <!-------------------------------------------------------------------->
     <!--------------------- SECTION DES PROJETS -------------------------->

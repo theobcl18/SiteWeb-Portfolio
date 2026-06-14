@@ -49,169 +49,253 @@
             });
         });
 
-// ========================================
-// CARTE INTERACTIVE
-// ========================================
-
-// Initialisation de la carte
-var map = L.map('map', {
-    center: [47.5, 0.5],
-    zoom: 6,
-    zoomControl: true
-});
-
-// Fonds de carte
-var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
-
-var dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd',
-    maxZoom: 19
-});
-
-var googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-    maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-});
-
-var googleSat = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-    maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-});
-
-// Fond par défaut
-osm.addTo(map);
-
-// Gestionnaire de couches — watercolor supprimé car non défini
-var baseMaps = {
-    "OpenStreetMap": osm,
-    "Sombre": dark,
-    "Google Street": googleStreets,
-    "Google Satellite": googleSat
-};
-
-L.control.layers(baseMaps, null, { collapsed: true }).addTo(map);
+// ========================================================================================
+// ============================== CARTE INTERACTIVE =======================================
 
 
+            (function() {
+        // --------------------------------------------------------------
+        // 1. Définition des points (ordre personnalisé + coordonnées exactes)
+        // --------------------------------------------------------------
+        const timelinePoints = [
+            // 1. Stage Concept Intérieur (Deauville)
+            {
+                type: "internship",
+                title: "Concept Intérieur",
+                sub: "Stage d'observation",
+                dateStart: 2023,
+                dateEnd: 2023,
+                lat: 49.3594,
+                lng: 0.0744,
+                popupHtml: `
+                    <div class="popup-title">💼 Concept Intérieur</div>
+                    <div class="popup-content">
+                        <strong>Stage :</strong> Stage d'observation<br>
+                        <strong>Période :</strong> 2023<br>
+                        <strong>Lieu :</strong> Deauville<br>
+                        <strong>Mission :</strong> Découverte du milieu professionnel
+                    </div>
+                `
+            },
+            // 2. Lycée André Maurois (Deauville)
+            {
+                type: "education",
+                title: "Lycée André Maurois",
+                sub: "Bac général",
+                dateStart: 2018,
+                dateEnd: 2021,
+                lat: 49.3594,
+                lng: 0.0744,
+                popupHtml: `
+                    <div class="popup-title">🎓 Lycée Andrès Maurois de Deauville</div>
+                    <div class="popup-content">
+                        <strong>Formation :</strong> Collège et Lycée <br>
+                        <strong>Période :</strong> 2015-2021<br>
+                        <strong>Statut :</strong> Baccalauréat général obtenu avec spécialité Mathématiques et Numériques Sciences Informatiques
+                    </div>
+                    <a href="#item5" class="popup-link" onclick="document.querySelector('.item5').scrollIntoView({behavior: 'smooth'});">
+                        📖 Voir les détails
+                    </a>
+                `
+            },
+            // 3. Licence générale (Université de Caen)
+            {
+                type: "education",
+                title: "Université de Caen",
+                sub: "Licence Géographie",
+                dateStart: 2021,
+                dateEnd: 2024,
+                lat: 49.1882,
+                lng: -0.3638,
+                popupHtml: `
+                    <div class="popup-title">🎓 Université de Caen Normandie</div>
+                    <div class="popup-content">
+                        <strong>Formation :</strong> 2 années de licence de Géographie et Aménagement du Territoire puis la licence professionnelle Systèmes d'Information Géographique et Diagnostic d'Aménagement du Territoire (SIGDAT)<br>
+                        <strong>Période :</strong> 2021-2025<br>
+                        <strong>Statut :</strong> Licence 2 obtenue & Licence professionnelle obtenue avec mention Bien
+                    </div>
+                    <a href="#item4" class="popup-link" onclick="document.querySelector('.item4').scrollIntoView({behavior: 'smooth'});">
+                        📖 Voir les détails
+                    </a>
+                    <a href="https://uniform.unicaen.fr/catalogue/formation/licences/5422-licence-geographie-et-amenagement?s=SEGGAT" target="_blank" class="popup-link">
+                        🌐 Site de la formation de licence géographie et aménagement du territoire
+                    </a>
+                    <a href="https://uniform.unicaen.fr/catalogue/formation/licences-pro/7184-licence-pro-cartographie--topographie-et-systemes-d-info.-geographique-p.-sig--diagnostic-et-amenagement-des-territoires?s=SEGGAT" target="_blank" class="popup-link">
+                        🌐 Site de la formation de licence professionnelle SIGDAT
+                    </a>
+                `
+            },
+            // 4. Licence professionnelle SIGDAT (même lieu, partage la même popup que le point 2)
+            {
+                type: "education",
+                title: "Université de Caen",
+                sub: "Licence pro SIGDAT",
+                dateStart: 2024,
+                dateEnd: 2025,
+                lat: 49.1882,
+                lng: -0.3638,
+                popupHtml: null,
+                sharedWith: 2   // index du point 2 (licence générale)
+            },
+            // 5. Stage Entre Bièvre et Rhônes
+            {
+                type: "internship",
+                title: "Entre Bièvre et Rhônes",
+                sub: "Stage – BDD foncier",
+                dateStart: 2025,
+                dateEnd: 2025,
+                lat: 45.3397,
+                lng: 5.0531,
+                popupHtml: `
+                    <div class="popup-title">💼 Communauté de Communes Entre Bièvre et Rhône</div>
+                    <div class="popup-content">
+                        <strong>Stage :</strong> Stage de Licence Professionnelle SIGDAT <br>
+                        <strong>Période :</strong> 4 mois et 1 semaine - 2025 <br>
+                        <strong>Mission1 :</strong> Mise en place d'une base de données spatiale du foncier <br>
+                        <strong>Mission2 :</strong> Réalisation d'un Atlas cartographique des Servitudes d'Utilités Publiques (SUP) pour le PLUi
+                    </div>
+                    <a href="./projects_list/Projet-stage-base-de-données-foncières.html" class="popup-link" target="_blank">
+                        🔍 Voir le projet
+                    </a>
+                    <a href="https://www.entre-bievreetrhone.fr/" target="_blank" class="popup-link">
+                        🔍 Voir le site de la Communauté de Communes
+                    </a>
+                `
+            },
+            // 6. Master SIGAT (Université Rennes 2)
+            {
+                type: "education",
+                title: "Université Rennes 2",
+                sub: "Master SIGAT",
+                dateStart: 2025,
+                dateEnd: 2027,
+                lat: 48.1173,
+                lng: -1.6779,
+                popupHtml: `
+                    <div class="popup-title">🎯 Université Rennes 2</div>
+                    <div class="popup-content">
+                        <strong>Formation :</strong> Master Géomatique SIGAT <br>
+                        <strong>Période :</strong> En cours<br>
+                        <strong>Spécialisation :</strong> Systèmes d'Information Géographique et Analyse des Territoires
+                    </div>
+                    <a href="#item1" class="popup-link" onclick="document.querySelector('.item1').scrollIntoView({behavior: 'smooth'});">
+                        🔍 Voir l'expérience
+                    </a>
+                    <a href="https://formations.univ-rennes2.fr/fr/formations/master-37/master-mention-geomatique-parcours-systeme-d-information-geographique-et-analyse-des-territoires-sigat-JEOC8L9A.html" target="_blank" class="popup-link">
+                        🌐 Site de l'université
+                    </a>
+                `
+            },
+            // 7. Stage Veolia Eau (Rennes)
+            {
+                type: "internship",
+                title: "Veolia Eau",
+                sub: "Stage – Réseaux AEP & ASS",
+                dateStart: 2026,
+                dateEnd: 2026,
+                lat: 48.1100,
+                lng: -1.6732,
+                popupHtml: `
+                    <div class="popup-title">💼 Veolia Eau – Rennes</div>
+                    <div class="popup-content">
+                        <strong>Stage :</strong> Intégration, gestion et automatisation de données réseaux d’eau potable et d’assainissement<br>
+                        <strong>Période :</strong> 2026<br>
+                        <strong>Lieu :</strong> 8 allée Adolphe Bobierre, Rennes
+                    </div>
+                `
+            }
+        ];
 
+        // --------------------------------------------------------------
+        // 2. Initialisation de la carte
+        // --------------------------------------------------------------
+        var mapTimeline = L.map('timeline-map').setView([46.5, 2.5], 5.8);
 
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(mapTimeline);
 
-        // Définition des icônes personnalisées
-        var LycéeIcon = L.divIcon({
-            html: '<div style="background-color: #3d658fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
-            className: 'custom-div-icon',
-            iconSize: [36, 36],
-            iconAnchor: [18, 18]
+        // --------------------------------------------------------------
+        // 3. Définition des icônes (celles que tu as fournies)
+        // --------------------------------------------------------------
+        var educationIcon = L.divIcon({
+            html: '<i class="fas fa-graduation-cap" style="font-size: 18px; color: #488ed4; text-shadow: 0 0 4px black;"></i>',
+            iconSize: [24, 24],
+            className: 'custom-marker-icon'
+        });
+        var internshipIcon = L.divIcon({
+            html: '<i class="fas fa-briefcase" style="font-size: 18px; color: #fe9b38; text-shadow: 0 0 4px black;"></i>',
+            iconSize: [24, 24],
+            className: 'custom-marker-icon'
         });
 
-        var universiteIcon = L.divIcon({
-            html: '<div style="background-color: #ea66df; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎓</span></div>',
-            className: 'custom-div-icon',
-            iconSize: [36, 36],
-            iconAnchor: [18, 18]
+        // --------------------------------------------------------------
+        // 4. Création des marqueurs (partage de la popup pour les deux licences)
+        // --------------------------------------------------------------
+        var markers = [];
+        var markerMap = new Map(); // associe l'index du point au marqueur
+
+        timelinePoints.forEach((point, idx) => {
+            // Si ce point partage la popup d'un précédent, on ne crée pas de nouveau marqueur
+            if (point.sharedWith !== undefined && point.sharedWith !== null) {
+                markerMap.set(idx, markerMap.get(point.sharedWith));
+                return;
+            }
+
+            // Choix de l'icône selon le type
+            const icon = (point.type === 'education') ? educationIcon : internshipIcon;
+
+            var marker = L.marker([point.lat, point.lng], { icon: icon }).addTo(mapTimeline);
+            if (point.popupHtml) {
+                marker.bindPopup(point.popupHtml, {
+                    className: 'custom-popup',
+                    maxWidth: 300
+                });
+            }
+            markers.push(marker);
+            markerMap.set(idx, marker);
         });
 
-        var stageIcon = L.divIcon({
-            html: '<div style="background-color: #e2d0e4ff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">💼</span></div>',
-            className: 'custom-div-icon',
-            iconSize: [36, 36],
-            iconAnchor: [18, 18]
-        });
+        // --------------------------------------------------------------
+        // 5. Génération de la frise chronologique (couleurs bleu/orange)
+        // --------------------------------------------------------------
+        const timelineContainer = document.querySelector('#timeline-bar .timeline-scroll');
+        if (timelineContainer) {
+            timelineContainer.innerHTML = '';
+            timelinePoints.forEach((point, idx) => {
+                const yearSpan = point.dateStart === point.dateEnd ? point.dateStart : `${point.dateStart} - ${point.dateEnd}`;
+                const div = document.createElement('div');
+                div.className = `timeline-item ${point.type}`;
+                div.innerHTML = `
+                    <div class="timeline-year">${yearSpan}</div>
+                    <div class="timeline-title">${point.title}</div>
+                    <div class="timeline-sub">${point.sub}</div>
+                `;
+                div.addEventListener('click', () => {
+                    const targetMarker = markerMap.get(idx);
+                    if (targetMarker) {
+                        mapTimeline.flyTo([point.lat, point.lng], 12, { duration: 1.2 });
+                        targetMarker.openPopup();
+                    }
+                });
+                timelineContainer.appendChild(div);
+            });
+        }
 
-        var masterIcon = L.divIcon({
-            html: '<div style="background-color: #4facfe; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"><span style="color: white; font-size: 16px; font-weight: bold;">🎯</span></div>',
-            className: 'custom-div-icon',
-            iconSize: [36, 36],
-            iconAnchor: [18, 18]
-        });
+        // --------------------------------------------------------------
+        // 6. Ajuster la vue pour voir tous les marqueurs uniques
+        // --------------------------------------------------------------
+        var uniqueMarkers = [...new Set(markerMap.values())];
+        var group = L.featureGroup(uniqueMarkers);
+        mapTimeline.fitBounds(group.getBounds().pad(0.2));
+    })();
 
-        // Marqueurs avec popups personnalisées
 
-        // 1. Lycée Andrés Maurois de Deauville
-        let deauvilleMarker = L.marker([49.3570, 0.0737], {icon: LycéeIcon}).addTo(map);
-        deauvilleMarker.bindPopup(`
-            <div class="popup-title">🎓 Lycée Andrès Maurois de Deauville</div>
-            <div class="popup-content">
-                <strong>Formation :</strong> Collège et Lycée <br>
-                <strong>Période :</strong> 2015-2021<br>
-                <strong>Statut :</strong> Baccalauréat général obtenu avec spécialité Mathématiques et Numériques Sciences Informatiques
-            </div>
-            <a href="#item5" class="popup-link" onclick="document.querySelector('.item5').scrollIntoView({behavior: 'smooth'});">
-                📖 Voir les détails
-            </a>
-        `, {
-            className: 'custom-popup',
-            maxWidth: 300
-        });
 
-        // 2. Université de Caen
-        let caenMarker = L.marker([49.1829, -0.3707], {icon: universiteIcon}).addTo(map);
-        caenMarker.bindPopup(`
-            <div class="popup-title">🎓 Université de Caen Normandie</div>
-            <div class="popup-content">
-                <strong>Formation :</strong> 2 année de licence de Géographie et Aménagement du Territoire puis la licence professionnelle Systèmes d'Information Géographique et Diagnostic d'Aménagement du Territoire (SIGDAT) <br>
-                <strong>Période :</strong> 2021-2025<br>
-                <strong>Statut :</strong> Licence 2 obtenue & Licence professionnelle obtenue avec mention Bien
-            </div>
-            <a href="#item4" class="popup-link" onclick="document.querySelector('.item4').scrollIntoView({behavior: 'smooth'});">
-                📖 Voir les détails
-            </a>
-            <a href="https://uniform.unicaen.fr/catalogue/formation/licences/5422-licence-geographie-et-amenagement?s=SEGGAT" target="_blank" class="popup-link">
-                🌐 Site de la formation de licence géographie et aménagement du territoire
-            </a>
-            <a href="https://uniform.unicaen.fr/catalogue/formation/licences-pro/7184-licence-pro-cartographie--topographie-et-systemes-d-info.-geographique-p.-sig--diagnostic-et-amenagement-des-territoires?s=SEGGAT" target="_blank" class="popup-link">
-                🌐 Site de la formation de licence professionnelle SIGDAT
-            </a>
-        `, {
-            className: 'custom-popup',
-            maxWidth: 300
-        });
-
-        // 3. Communauté de Communes Entre Bièvre et Rhône (Beaurepaire)
-        let biervreMarker = L.marker([45.3397, 5.0531], {icon: stageIcon}).addTo(map);
-        biervreMarker.bindPopup(`
-            <div class="popup-title">💼 Communauté de Communes Entre Bièvre et Rhône</div>
-            <div class="popup-content">
-                <strong>Stage :</strong> Stage de Licence Professionnelle SIGDAT <br>
-                <strong>Période :</strong> 4 mois et 1 semaine - 2025 <br>
-                <strong>Mission1 :</strong> Mise en place d'une base de données spatiale du foncier <br>
-                <strong>Mission2 :</strong> Réalisation d'un Atlas cartographique des Servitudes d'Utilités Publiques (SUP) pour le PLUi
-            </div>
-            <a href="./projects_list/Projet-stage-base-de-données-foncières.html" class="popup-link" onclick="document.querySelector('.item2').scrollIntoView({behavior: 'smooth'});">
-                🔍 Voir le projet
-            </a>
-            <a href="https://www.entre-bievreetrhone.fr/" target="_blank" class="popup-link">
-                🔍 Voir le site de la Communauté de Communes
-            </a>
-        `, {
-            className: 'custom-popup',
-            maxWidth: 300
-        });
-
-        // 4. Université Rennes 2
-        let rennesMarker = L.marker([48.119, -1.7013], {icon: masterIcon}).addTo(map);
-        rennesMarker.bindPopup(`
-            <div class="popup-title">🎯 Université Rennes 2</div>
-            <div class="popup-content">
-                <strong>Formation :</strong> Master Géomatique SIGAT <br>
-                <strong>Période :</strong> En cours<br>
-                <strong>Spécialisation :</strong> Systèmes d'Information Géographique et Analyse des Territoires
-            </div>
-            <a href="#item1" class="popup-link" onclick="document.querySelector('.item1').scrollIntoView({behavior: 'smooth'});">
-                🔍 Voir l'expérience
-            </a>
-            <a href="https://formations.univ-rennes2.fr/fr/formations/master-37/master-mention-geomatique-parcours-systeme-d-information-geographique-et-analyse-des-territoires-sigat-JEOC8L9A.html" target="_blank" class="popup-link">
-                🌐 Site de l'université
-            </a>
-        `, {
-            className: 'custom-popup',
-            maxWidth: 300
-        });
-
-// ============================================================
-// ==================== CARTOTHEQUE ===========================
+// =========================================================================================================
+// ============================================ CARTOTHEQUE ================================================
 
         (function () {
             const filterBtns = document.querySelectorAll('[data-carto-filter]');
