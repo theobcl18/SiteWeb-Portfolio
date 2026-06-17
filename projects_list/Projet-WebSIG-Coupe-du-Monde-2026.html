@@ -40,7 +40,7 @@
             backdrop-filter: blur(14px);
             border-radius: 20px; z-index: 20; padding: 0.9rem;
             border: 1px solid rgba(255,215,0,0.25);
-            max-height: calc(100% - 150px);
+            max-height: calc(100% - 200px);
             overflow-y: auto;
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
@@ -59,6 +59,21 @@
             color: #eab308; font-size: 0.65rem; font-weight: 700;
             padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(234,179,8,0.4);
         }
+
+        .search-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(234,179,8,0.25);
+            border-radius: 10px; padding: 7px 11px;
+            margin-bottom: 10px;
+        }
+        .search-bar i { color: #eab308; font-size: 0.8rem; flex-shrink: 0; }
+        .search-bar input {
+            background: none; border: none; outline: none;
+            color: #f0f4fa; font-size: 0.8rem; width: 100%;
+            font-family: inherit;
+        }
+        .search-bar input::placeholder { color: rgba(240,244,250,0.4); }
 
         /* Liste stades */
         .item-card {
@@ -200,7 +215,7 @@
 </div>
 
 <div class="logo-fifa">
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/ec/FIFA_World_Cup_2026.svg/1200px-FIFA_World_Cup_2026.svg.png" width="100%" alt="FIFA 2026">
+    <img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?&io=transform:fill&quality=75" width="100%" alt="FIFA 2026">
 </div>
 <div class="balloon-fifa" title="FIFA World Cup 2026"></div>
 
@@ -213,6 +228,10 @@
         <i id="sidebar-icon" class="fas fa-landmark"></i>
         <span id="sidebar-title">Stades hôtes</span>
         <span class="sidebar-count" id="sidebar-count">16</span>
+    </div>
+    <div class="search-bar">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" id="search-input" placeholder="Search…" autocomplete="off">
     </div>
     <div id="item-list"></div>
 </div>
@@ -528,6 +547,16 @@ function showStadiums() {
     // Centrer sur l'Amérique du Nord
     map.flyTo({ center: [-99, 35], zoom: 3.2, pitch: 45, bearing: 0, duration: 1200 });
 
+    // Filtre recherche
+    document.addEventListener('input', e => {
+        if (e.target.id !== 'search-input') return;
+        const q = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('.item-card').forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+    });
+
     // Construire liste sidebar
     const container = document.getElementById('item-list');
     container.innerHTML = '';
@@ -719,8 +748,8 @@ async function initMap() {
         antialias: true
     });
 
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
     map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
 
     map.on('style.load', () => {
         try { map.setProjection({ type: 'globe' }); } catch(e) {}
