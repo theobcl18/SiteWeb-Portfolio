@@ -38,10 +38,13 @@
             position: absolute; top: 110px; left: 20px; width: 272px;
             background: rgba(10,18,38,0.92);
             backdrop-filter: blur(14px);
-            border-radius: 20px; z-index: 20; padding: 0.9rem;
+            border-radius: 20px; z-index: 20; padding: 0.9rem; padding-bottom: 0rem;
             border: 1px solid rgba(255,215,0,0.25);
-            max-height: calc(100% - 200px);
-            overflow-y: auto;
+            max-height: calc(100% - 190px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;            /* empêche le scroll global */
+
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
         .sidebar::-webkit-scrollbar-track { background: transparent; }
@@ -52,6 +55,8 @@
             font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem;
             padding-bottom: 0.6rem;
             border-bottom: 2px solid rgba(234,179,8,0.5);
+            flex-shrink: 0;              /* empêche ces éléments de rétrécir */
+
         }
         .sidebar-header i { color: #eab308; }
         .sidebar-count {
@@ -74,6 +79,51 @@
             font-family: inherit;
         }
         .search-bar input::placeholder { color: rgba(240,244,250,0.4); }
+
+        .filter-chip {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(234,179,8,0.2);
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            flex-shrink: 0;              /* empêche ces éléments de rétrécir */
+
+        }
+        .filter-chip:hover { background: rgba(234,179,8,0.15); }
+        .filter-chip.active {
+            background: rgba(234,179,8,0.25);
+            border-color: #eab308;
+            color: #eab308;
+        }
+
+        #reset-view-btn {
+            flex-shrink: 0;              /* empêche ces éléments de rétrécir */
+            margin-top: 10px; margin-bottom: 0; 
+        }
+
+        .scrollable-list {
+            flex: 1;                     /* prend tout l'espace restant */
+            overflow-y: auto;            /* active le scroll vertical */
+            margin-top: 0.5rem;          /* petite marge de séparation */
+            padding-right: 2px;          /* éviter que la scrollbar chevauche le contenu */
+        }
+
+        .scrollable-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scrollable-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: rgba(234,179,8,0.4);
+            border-radius: 4px;
+        }
+
+
 
         /* Liste stades */
         .item-card {
@@ -233,7 +283,49 @@
         <i class="fas fa-magnifying-glass"></i>
         <input type="text" id="search-input" placeholder="Search…" autocomplete="off">
     </div>
-    <div id="item-list"></div>
+    <!-- Filtres -->
+    <div id="filter-container" style="display: none;">
+
+        <div id="stadium-filters">
+            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:8px 0 4px;">PAYS</div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                <button class="filter-chip active" data-filter="all" data-group="country">Tous</button>
+                <button class="filter-chip" data-filter="Canada" data-group="country">🇨🇦 Canada</button>
+                <button class="filter-chip" data-filter="Mexique" data-group="country">🇲🇽 Mexique</button>
+                <button class="filter-chip" data-filter="États-Unis" data-group="country">🇺🇸 États-Unis</button>
+            </div>
+            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:4px 0;">CAPACITÉ</div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                <button class="filter-chip active" data-filter="all" data-group="capacity">Toutes</button>
+                <button class="filter-chip" data-filter="60000" data-group="capacity">> 60 000</button>
+                <button class="filter-chip" data-filter="70000" data-group="capacity">> 70 000</button>
+                <button class="filter-chip" data-filter="80000" data-group="capacity">> 80 000</button>
+            </div>
+        </div>
+
+        <div id="team-filters" style="display: none;">
+            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:8px 0 4px;">CONFÉDÉRATION</div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                <button class="filter-chip active" data-filter="all" data-group="conf">Toutes</button>
+                <button class="filter-chip" data-filter="UEFA" data-group="conf">UEFA</button>
+                <button class="filter-chip" data-filter="CONMEBOL" data-group="conf">CONMEBOL</button>
+                <button class="filter-chip" data-filter="CAF" data-group="conf">CAF</button>
+                <button class="filter-chip" data-filter="AFC" data-group="conf">AFC</button>
+                <button class="filter-chip" data-filter="CONCACAF" data-group="conf">CONCACAF</button>
+                <button class="filter-chip" data-filter="OFC" data-group="conf">OFC</button>
+            </div>
+        </div>
+    </div>
+    <div class="scrollable-list">
+        <div id="item-list"></div>
+    </div>
+    <button id="reset-view-btn" style="
+        width:100%; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3);
+        border-radius:10px; padding:7px; color:#eab308; font-weight:600; font-size:0.75rem;
+        cursor:pointer; margin-bottom:10px; transition:all 0.2s;
+        " onmouseover="this.style.background='rgba(234,179,8,0.25)'" onmouseout="this.style.background='rgba(234,179,8,0.15)'">
+        <i class="fas fa-undo-alt"></i> Vue d'ensemble
+    </button>
 </div>
 
 <div class="legend" id="legend">
@@ -433,6 +525,14 @@ const TEAMS = [
     { id:'t_nzl', name:"Nouvelle-Zélande", code:"NZL", conf:"OFC", group:"D", wcWins:0, coach:"Darren Bazeley", flag:"https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg", icon:"🇳🇿", teamImg:"https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg", lat:-41.3, lng:174.8 }
 ];
 
+// Classement FIFA (juin 2026)
+const FIFA_RANKINGS = {
+    'ARG': 1, 'ESP': 3, 'FRA': 2, 'ENG': 4, 'POR': 5, 'BRA': 6, 'MAR': 7,
+    'NED': 8, 'BEL': 9, 'GER': 10, 'MEX': 14, 'SEN': 15, 'URU': 16, 'USA': 17,
+    'JPN': 18, 'IRN': 20, 'KOR': 25, 'AUS': 27, 'UZB': 50
+    // Ajoute les autres équipes si tu trouves leurs classements
+};
+
 // Mapping code ISO 3166-1 alpha-3 → code FIFA ou nom
 // Utilisé pour filtrer les polygones du GeoJSON Eurostat
 const PARTICIPANT_ISO3 = new Set([
@@ -453,12 +553,14 @@ const PARTICIPANT_NAME_EN = new Set([
     "New Zealand"
 ]);
 
+
 // ======================== ÉTAT ========================
 let map, currentMode = 'stadiums';
 let hoverPopup = null, activePopup = null;
 let stadiumMarkers = [], teamMarkers = [];
 let activeCard = null;
 let countriesGeoJSONLoaded = false;
+let filterState = { country: 'all', capacity: 'all', conf: 'all' };
 
 // ======================== SVG MARQUEUR STADE ========================
 function createStadiumMarkerEl() {
@@ -494,10 +596,14 @@ function buildStadiumPopup(s) {
 
 function buildTeamPopup(t) {
     const winsStr = t.wcWins > 0 ? `🏆 ${t.wcWins} titre${t.wcWins>1?'s':''}` : 'Aucun titre';
+    const rank = FIFA_RANKINGS[t.code] || '—';
+    const rankStr = rank !== '—' ? `#${rank}` : 'Non classé';
+    
     return `
         <img class="popup-flag" src="${t.flag}" alt="${t.name}" onerror="this.style.display='none'">
         <div class="popup-title">${t.icon} ${t.name} (${t.code})</div>
         <div class="popup-row"><i class="fas fa-trophy"></i> ${winsStr}</div>
+        <div class="popup-row"><i class="fas fa-ranking-star"></i> Classement FIFA : ${rankStr}</div>
         <div class="popup-row"><i class="fas fa-person-chalkboard"></i> ${t.coach}</div>
         <div class="popup-row"><i class="fas fa-layer-group"></i> Groupe ${t.group}</div>
         <div class="popup-row"><i class="fas fa-earth-americas"></i> ${t.conf}</div>
@@ -531,6 +637,17 @@ function setActiveCard(id) {
     activeCard = id;
 }
 
+// ======================== RESET VIEW ========================
+document.getElementById('reset-view-btn').addEventListener('click', () => {
+    if (currentMode === 'stadiums') {
+        map.flyTo({ center: [-99, 35], zoom: 3.2, pitch: 45, duration: 1200 });
+    } else {
+        map.flyTo({ center: [10, 20], zoom: 2.0, pitch: 30, duration: 1300 });
+    }
+    if (activePopup) { activePopup.remove(); activePopup = null; }
+    document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
+});
+
 // ======================== MODE STADES ========================
 function showStadiums() {
     clearAll();
@@ -540,6 +657,9 @@ function showStadiums() {
     document.getElementById('sidebar-count').textContent = '16';
     document.getElementById('switch-view').innerHTML = '<i class="fas fa-globe-americas"></i> Voir les Nations participantes';
     document.getElementById('legend').classList.remove('visible');
+    document.getElementById('stadium-filters').style.display = 'block';
+    document.getElementById('team-filters').style.display = 'none';
+    document.getElementById('filter-container').style.display = 'block';
 
     if (map.getLayer('country-fill')) map.setLayoutProperty('country-fill', 'visibility', 'none');
     if (map.getLayer('country-outline')) map.setLayoutProperty('country-outline', 'visibility', 'none');
@@ -556,6 +676,11 @@ function showStadiums() {
             card.style.display = (!q || text.includes(q)) ? '' : 'none';
         });
     });
+
+    // Réinitialiser les filtres
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.filter-chip[data-filter="all"]').forEach(c => c.classList.add('active'));
+    filterState = { country: 'all', capacity: 'all', conf: 'all' };
 
     // Construire liste sidebar
     const container = document.getElementById('item-list');
@@ -608,6 +733,9 @@ async function showTeams() {
     document.getElementById('sidebar-count').textContent = '48';
     document.getElementById('switch-view').innerHTML = '<i class="fas fa-landmark"></i> Voir les Stades hôtes';
     document.getElementById('legend').classList.add('visible');
+    document.getElementById('stadium-filters').style.display = 'none';
+    document.getElementById('team-filters').style.display = 'block';
+    document.getElementById('filter-container').style.display = 'block';
 
     map.flyTo({ center: [10, 20], zoom: 2.0, pitch: 30, bearing: 0, duration: 1300 });
 
@@ -623,12 +751,16 @@ async function showTeams() {
         const div = document.createElement('div');
         div.className = 'item-card';
         div.id = 'card-' + t.id;
+        const rank = FIFA_RANKINGS[t.code] || '—'; // Récupère le classement FIFA pour l'équipe, ou '—' si non disponible
+        const rankStr = rank !== '—' ? `🏅#${rank}` : ''; 
+
         div.innerHTML = `
             <img src="${t.flag}" style="width:28px; height:19px; object-fit:cover; border-radius:3px; flex-shrink:0;" onerror="this.style.display='none'" alt="">
             <div style="flex:1; min-width:0;">
                 <div class="item-name">${t.name} (${t.code})</div>
-                <div class="item-sub">Groupe ${t.group} · ${t.wcWins > 0 ? '🏆 '.repeat(Math.min(t.wcWins,3)) + t.wcWins + ' titre(s)' : t.conf}</div>
-            </div>`;
+                <div class="item-sub">Groupe ${t.group} · ${t.conf} ${rankStr ? '· FIFA '+rankStr : ''}</div>
+            </div>
+        `;
         div.addEventListener('click', () => {
             setActiveCard(t.id);
             openPopup([t.lng, t.lat], buildTeamPopup(t));
@@ -736,6 +868,49 @@ async function ensureCountryLayer() {
     }
 }
 
+
+// FONCTION DE FILTRAGE
+
+function filterItems() {
+    const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.item-card');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const id = card.id.replace('card-', '');
+        let show = true;
+
+        // Filtre recherche
+        const text = card.innerText.toLowerCase();
+        if (searchQuery && !text.includes(searchQuery)) show = false;
+
+        if (show && currentMode === 'stadiums') {
+            const stadium = STADIUMS.find(s => s.id === id);
+            if (!stadium) show = false;
+            else {
+                // Filtre pays
+                if (filterState.country !== 'all' && stadium.country !== filterState.country) show = false;
+                // Filtre capacité
+                if (filterState.capacity !== 'all') {
+                    const cap = parseInt(stadium.capacity.replace(/[^0-9]/g, ''));
+                    if (isNaN(cap) || cap < parseInt(filterState.capacity)) show = false;
+                }
+            }
+        }
+
+        if (show && currentMode === 'teams') {
+            const team = TEAMS.find(t => t.id === id);
+            if (!team) show = false;
+            else if (filterState.conf !== 'all' && team.conf !== filterState.conf) show = false;
+        }
+
+        card.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+    });
+
+    document.getElementById('sidebar-count').textContent = visibleCount;
+}
+
 // ======================== INIT CARTE ========================
 async function initMap() {
     map = new maplibregl.Map({
@@ -764,6 +939,22 @@ async function initMap() {
         if (activePopup && !activePopup._content) { activePopup.remove(); activePopup = null; }
     });
 }
+
+// Gestion des filtres
+document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+        const group = this.dataset.group;
+        const value = this.dataset.filter;
+        // Désactiver les autres chips du même groupe
+        document.querySelectorAll(`.filter-chip[data-group="${group}"]`).forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        // Mettre à jour l'état
+        if (group === 'country') filterState.country = value;
+        else if (group === 'capacity') filterState.capacity = value;
+        else if (group === 'conf') filterState.conf = value;
+        filterItems();
+    });
+});
 
 // Bouton bascule
 document.getElementById('switch-view').addEventListener('click', () => {
