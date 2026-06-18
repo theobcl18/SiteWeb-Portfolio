@@ -245,7 +245,7 @@
 
         /* Legend nations */
         .legend {
-            position: fixed; bottom: 80px; right: 28px; z-index: 25;
+            position: fixed; bottom: 80px; right: 100px; z-index: 25;
             background: rgba(10,18,38,0.88);
             backdrop-filter: blur(10px);
             border-radius: 12px; padding: 10px 14px;
@@ -335,8 +335,8 @@
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
                 <button class="filter-chip active" data-filter="all" data-group="country">All</button>
                 <button class="filter-chip" data-filter="Canada" data-group="country">🇨🇦 Canada</button>
-                <button class="filter-chip" data-filter="Mexique" data-group="country">🇲🇽 Mexique</button>
-                <button class="filter-chip" data-filter="États-Unis" data-group="country">🇺🇸 États-Unis</button>
+                <button class="filter-chip" data-filter="Mexique" data-group="country">🇲🇽 Mexico</button>
+                <button class="filter-chip" data-filter="États-Unis" data-group="country">🇺🇸 United States</button>
             </div>
             <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:4px 0;">CAPACITÉ</div>
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
@@ -557,7 +557,7 @@ const TEAMS = [
     { id:'t_fra', name:"France", code:"FRA", conf:"UEFA", group:"I", wcWins:2, coach:"Didier Deschamps", flag:"https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg", icon:"🇫🇷", teamImg:"https://fff.twic.pics/https://media.fff.fr/uploads/images/26288091cd32b7af0e869225ca46bcc9.jpg?twic=v1/max=690", lat:46.2, lng:2.2 },
     { id:'t_ger', name:"Allemagne", code:"GER", conf:"UEFA", group:"E", wcWins:4, coach:"Julian Nagelsmann", flag:"https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg", icon:"🇩🇪", teamImg:"https://media.gettyimages.com/id/2280906996/fr/photo/winston-salem-north-carolina-team-germany-pose-for-the-official-team-picture-at-w-dennie-spry.jpg?s=594x594&w=gi&k=20&c=YLGvfJm4ggqma0nZwl8f1eoI1r4QjwUPDlruLJlSuV0=", lat:51.2, lng:10.5 },
     { id:'t_esp', name:"Espagne", code:"ESP", conf:"UEFA", group:"H", wcWins:1, coach:"Luis de la Fuente", flag:"https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg", icon:"🇪🇸", teamImg:"https://www.footyheadlines.com/static/img/post/2026/06/04/anmhAP5lteLoUVS/official-spain-2026-world-cup-squad-photo-eqt-jacket.jpg", lat:40.4, lng:-3.7 },
-    { id:'t_eng', name:"Angleterre", code:"ENG", conf:"UEFA", group:"J", wcWins:1, coach:"Thomas Tuchel", flag:"https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg", icon:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", teamImg:"https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg", lat:52.5, lng:-1.5 },
+    { id:'t_eng', name:"Angleterre", code:"ENG", conf:"UEFA", group:"J", wcWins:1, coach:"Thomas Tuchel", flag:"https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg", icon:"🇬🇧", teamImg:"https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg", lat:52.5, lng:-1.5 },
     { id:'t_por', name:"Portugal", code:"POR", conf:"UEFA", group:"G", wcWins:0, coach:"Roberto Martínez", flag:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg", icon:"🇵🇹", teamImg:"https://www.portugalresident.com/wp-content/uploads/2026/06/Portugal-World-Cup-2026-squad-FPF-1536x1024.jpg", lat:39.4, lng:-8.2 },
     { id:'t_ned', name:"Pays-Bas", code:"NED", conf:"UEFA", group:"F", wcWins:0, coach:"Ronald Koeman", flag:"https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg", icon:"🇳🇱", teamImg:"https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg", lat:52.3, lng:5.3 },
     { id:'t_cro', name:"Croatie", code:"CRO", conf:"UEFA", group:"L", wcWins:0, coach:"Zlatko Dalić", flag:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg", icon:"🇭🇷", teamImg:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg", lat:45.1, lng:15.2 },
@@ -567,7 +567,7 @@ const TEAMS = [
     { id:'t_bih', name:"Bosnie-Herzégovine", code:"BIH", conf:"UEFA", group:"A", wcWins:0, coach:"Sergej Barbarez", flag:"https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg", icon:"🇧🇦", teamImg:"https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg", lat:44.2, lng:17.6 },
     { id:'t_cze', name:"Tchéquie", code:"CZE", conf:"UEFA", group:"A", wcWins:0, coach:"Ivan Hašek", flag:"https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg", icon:"🇨🇿", teamImg:"https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg", lat:49.8, lng:15.5 },
     { id:'t_nor', name:"Norvège", code:"NOR", conf:"UEFA", group:"B", wcWins:0, coach:"Ståle Solbakken", flag:"https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg", icon:"🇳🇴", teamImg:"https://www.thickaccent.com/wp-content/uploads/2026/06/HKThqRFWgAAJyBo-768x512.jpeg", lat:64.5, lng:17.9 },
-    { id:'t_sco', name:"Écosse", code:"SCO", conf:"UEFA", group:"D", wcWins:0, coach:"Steve Clarke", flag:"https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg", icon:"🏴󠁧󠁢󠁳󠁣󠁴󠁿", teamImg:"https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg", lat:57.0, lng:-4.0 },
+    { id:'t_sco', name:"Écosse", code:"SCO", conf:"UEFA", group:"D", wcWins:0, coach:"Steve Clarke", flag:"https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg", icon:"🇬🇧", teamImg:"https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg", lat:57.0, lng:-4.0 },
     { id:'t_swe', name:"Suède", code:"SWE", conf:"UEFA", group:"K", wcWins:0, coach:"Jon Dahl Tomasson", flag:"https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg", icon:"🇸🇪", teamImg:"https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg", lat:60.5, lng:15.5 },
     { id:'t_tur', name:"Türkiye", code:"TUR", conf:"UEFA", group:"C", wcWins:0, coach:"Vincenzo Montella", flag:"https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg", icon:"🇹🇷", teamImg:"https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg", lat:39.0, lng:35.2 },
     // AFC
@@ -662,7 +662,7 @@ const PARTICIPANT_ISO3 = new Set([
 ]);
 // Certains codes ne sont pas standard ISO3 dans l'Eurostat, on mappe aussi par nom anglais
 const PARTICIPANT_NAME_EN = new Set([
-    "Mexico","Canada","United States","Panama","Haiti","Curaçao","Curaçao",
+    "Mexico","Canada","United States","United States of America","Panama","Haiti","Curaçao","Curaçao",
     "Brazil","Argentina","Colombia","Uruguay","Ecuador","Paraguay",
     "France","Germany","Spain","England","United Kingdom","Portugal","Netherlands","Croatia","Belgium","Switzerland","Austria","Bosnia and Herzegovina","Czechia","Czech Republic","Norway","Scotland","Sweden","Turkey","Türkiye",
     "Japan","South Korea","Korea Republic","Republic of Korea","Australia","Iran","Islamic Republic of Iran","Saudi Arabia","Qatar","Iraq","Jordan","Uzbekistan",
@@ -1009,7 +1009,7 @@ async function showTeams() {
     TEAMS.forEach(t => {
         const el = document.createElement('div');
         el.className = 'team-marker';
-        el.innerHTML = t.icon;
+        el.innerHTML = `<img src="${t.flag}" style="width:22px;height:14px;object-fit:cover;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">`;
         el.title = t.name;
         el.addEventListener('mouseenter', () => {
             if (hoverPopup) hoverPopup.remove();
