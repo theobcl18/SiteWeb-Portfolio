@@ -807,21 +807,24 @@ function updateStats() {
 
 
 const FD_KEY = 'c12fcd1126684d25aee089fd67957f18'; // ← remplace par ta vraie clé
-const WC2026_ID = 2000;       // ID de la compétition FIFA WC sur football-data.org
+const WC2026_ID = 'WC';       // ID de la compétition FIFA WC sur football-data.org
 
 let matchCache = null; // cache pour éviter de re-fetcher à chaque popup
 
 async function fetchMatches() {
     if (matchCache) return matchCache;
     try {
-        const r = await fetch(`https://api.football-data.org/v4/competitions/${WC2026_ID}/matches`, {
+        const proxyUrl = 'https://corsproxy.io/?';
+        const targetUrl = `https://api.football-data.org/v4/competitions/${WC2026_ID}/matches`;
+        const r = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
             headers: { 'X-Auth-Token': FD_KEY }
         });
         const data = await r.json();
+        console.log('✅ Matches chargés:', data.matches?.length, data.matches?.[0]);
         matchCache = data.matches || [];
         return matchCache;
     } catch(e) {
-        console.warn('football-data.org unavailable:', e);
+        console.warn('❌ football-data.org unavailable:', e);
         return [];
     }
 }
@@ -840,8 +843,8 @@ function renderMatchesForTeam(matches, teamCode) {
         const scoreH = m.score?.fullTime?.home ?? '–';
         const scoreA = m.score?.fullTime?.away ?? '–';
         const result = m.status === 'IN_PLAY' ? '🟢 LIVE' :
-            (isHome ? (scoreH > scoreA ? '✅' : scoreH < scoreA ? '❌' : '🟡') :
-                      (scoreA > scoreH ? '✅' : scoreA < scoreH ? '❌' : '🟡'));
+            (isHome ? (scoreH > scoreA ? '✅+3pt' : scoreH < scoreA ? '❌' : '🟡+1pt') :
+                      (scoreA > scoreH ? '✅+3pt' : scoreA < scoreH ? '❌' : '🟡+1pt'));
         const score = `${scoreH} – ${scoreA}`;
         return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
             <span style="font-size:0.68rem;opacity:0.8;">${result} vs ${opponent}</span>
