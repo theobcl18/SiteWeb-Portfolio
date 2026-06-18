@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Coupe du Monde 2026 - Globe 3D (Stades & Nations)</title>
+    <title>Coupe du Monde 2026 - Globe 3D (Stadiums & Nations)</title>
     <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
+
+        
         body {
             font-family: 'Segoe UI', 'Inter', sans-serif;
             background: #0b1120;
@@ -16,6 +19,12 @@
             overflow: hidden;
             color: #f0f4fa;
         }
+
+        @keyframes splashLogo {
+            from { transform: scale(0.7); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
         #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #030712; }
 
         /* HEADER */
@@ -108,6 +117,7 @@
         .scrollable-list {
             flex: 1;                     /* prend tout l'espace restant */
             overflow-y: auto;            /* active le scroll vertical */
+            overflow-x: hidden;   /* ← ajoute cette ligne */
             margin-top: 0.5rem;          /* petite marge de séparation */
             padding-right: 2px;          /* éviter que la scrollbar chevauche le contenu */
         }
@@ -125,7 +135,7 @@
 
 
 
-        /* Liste stades */
+        /* Liste Stadiums */
         .item-card {
             display: flex; align-items: center; gap: 10px;
             padding: 9px 11px; margin-bottom: 6px;
@@ -217,7 +227,7 @@
         }
         .popup-flag { width: 44px; border-radius: 6px; margin-bottom: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 
-        /* Marqueur stade SVG */
+        /* Marqueur Stadium SVG */
         .stadium-marker {
             cursor: pointer;
             transition: transform 0.12s;
@@ -233,7 +243,7 @@
         }
         .team-marker:hover { transform: scale(1.3) translateY(-2px); }
 
-        /* Légende nations */
+        /* Legend nations */
         .legend {
             position: fixed; bottom: 80px; right: 28px; z-index: 25;
             background: rgba(10,18,38,0.88);
@@ -254,14 +264,49 @@
             .balloon-fifa { width: 50px; height: 50px; bottom: 14px; right: 14px; }
             .switch-btn { padding: 9px 16px; font-size: 0.75rem; }
         }
+
+        .stat-item { text-align:center; width:100%; }
+        .stat-val  { font-size:1.05rem; font-weight:900; color:#eab308; line-height:1; }
+        .stat-lbl  { font-size:0.52rem; color:rgba(240,244,250,0.5); margin-top:3px;
+                    text-transform:uppercase; letter-spacing:0.4px; line-height:1.25; }
+
     </style>
 </head>
 <body>
+<div id="splash" style="
+    position:fixed; inset:0; z-index:1000;
+    background: linear-gradient(135deg, #030712 0%, #0b1120 50%, #0f1f3d 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:24px; transition: opacity 0.8s ease;
+">
+    <img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?&io=transform:fill&quality=75"
+         style="width:140px; filter:drop-shadow(0 0 30px rgba(234,179,8,0.5)); animation: splashLogo 1s ease-out;">
+    <div style="text-align:center;">
+        <div style="font-size:1.9rem; font-weight:900; letter-spacing:-0.5px; color:#f0f4fa;">
+            FIFA World Cup 2026™
+        </div>
+        <div style="font-size:0.85rem; color:rgba(240,244,250,0.6); margin-top:6px;">
+            🇨🇦 Canada &nbsp;·&nbsp; 🇲🇽 Mexico &nbsp;·&nbsp; 🇺🇸 United States
+        </div>
+    </div>
+    <div style="
+        background: rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.4);
+        border-radius:16px; padding:16px 32px; text-align:center;
+    ">
+        <div id="splash-days" style="font-size:3rem; font-weight:900; color:#eab308; line-height:1;"></div>
+        <div style="font-size:0.75rem; color:rgba(240,244,250,0.55); margin-top:4px; letter-spacing:1px; text-transform:uppercase;">
+            days until the Final · July 19, 2026
+        </div>
+    </div>
+    <div style="font-size:0.7rem; color:rgba(240,244,250,0.3); margin-top:8px; letter-spacing:2px; text-transform:uppercase;">
+        Loading interactive globe…
+    </div>
+</div>
 <div id="map"></div>
 
 <div class="header">
-    <h1><i class="fas fa-futbol"></i> Coupe du Monde 2026 de la FIFA</h1>
-    <p>🇨🇦🇲🇽🇺🇸 16 stades officiels &nbsp;·&nbsp; 48 nations &nbsp;·&nbsp; Globe 3D interactif</p>
+    <h1><i class="fas fa-futbol"></i> FIFA World Cup 2026</h1>
+    <p> 16 official stadiums &nbsp;·&nbsp; 48 nations &nbsp;·&nbsp; Interactive 3D Globe</p>
 </div>
 
 <div class="logo-fifa">
@@ -270,13 +315,13 @@
 <div class="balloon-fifa" title="FIFA World Cup 2026"></div>
 
 <button class="switch-btn" id="switch-view">
-    <i class="fas fa-globe-americas"></i> Voir les Nations participantes
+    <i class="fas fa-globe-americas"></i> View Participating Nations
 </button>
 
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <i id="sidebar-icon" class="fas fa-landmark"></i>
-        <span id="sidebar-title">Stades hôtes</span>
+        <span id="sidebar-title">Host Stadiums</span>
         <span class="sidebar-count" id="sidebar-count">16</span>
     </div>
     <div class="search-bar">
@@ -285,28 +330,26 @@
     </div>
     <!-- Filtres -->
     <div id="filter-container" style="display: none;">
-
         <div id="stadium-filters">
-            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:8px 0 4px;">PAYS</div>
+            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:8px 0 4px;">COUNTRY</div>
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
-                <button class="filter-chip active" data-filter="all" data-group="country">Tous</button>
+                <button class="filter-chip active" data-filter="all" data-group="country">All</button>
                 <button class="filter-chip" data-filter="Canada" data-group="country">🇨🇦 Canada</button>
                 <button class="filter-chip" data-filter="Mexique" data-group="country">🇲🇽 Mexique</button>
                 <button class="filter-chip" data-filter="États-Unis" data-group="country">🇺🇸 États-Unis</button>
             </div>
             <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:4px 0;">CAPACITÉ</div>
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
-                <button class="filter-chip active" data-filter="all" data-group="capacity">Toutes</button>
+                <button class="filter-chip active" data-filter="all" data-group="capacity">All</button>
                 <button class="filter-chip" data-filter="60000" data-group="capacity">> 60 000</button>
                 <button class="filter-chip" data-filter="70000" data-group="capacity">> 70 000</button>
                 <button class="filter-chip" data-filter="80000" data-group="capacity">> 80 000</button>
             </div>
         </div>
-
         <div id="team-filters" style="display: none;">
-            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:8px 0 4px;">CONFÉDÉRATION</div>
+            <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:8px 0 4px;">CONFEDERATION</div>
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
-                <button class="filter-chip active" data-filter="all" data-group="conf">Toutes</button>
+                <button class="filter-chip active" data-filter="all" data-group="conf">All</button>
                 <button class="filter-chip" data-filter="UEFA" data-group="conf">UEFA</button>
                 <button class="filter-chip" data-filter="CONMEBOL" data-group="conf">CONMEBOL</button>
                 <button class="filter-chip" data-filter="CAF" data-group="conf">CAF</button>
@@ -323,114 +366,141 @@
         width:100%; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3);
         border-radius:10px; padding:7px; color:#eab308; font-weight:600; font-size:0.75rem;
         cursor:pointer; margin-bottom:10px; transition:all 0.2s;
-        " onmouseover="this.style.background='rgba(234,179,8,0.25)'" onmouseout="this.style.background='rgba(234,179,8,0.15)'">
-        <i class="fas fa-undo-alt"></i> Vue d'ensemble
+        "onmouseover="this.style.background='rgba(234,179,8,0.25)'" onmouseout="this.style.background='rgba(234,179,8,0.15)'">
+        <i class="fas fa-undo-alt"></i> Default Overview
     </button>
 </div>
 
 <div class="legend" id="legend">
-    <div style="font-weight:700; font-size:0.75rem; margin-bottom:7px; color:#eab308;">Légende</div>
-    <div class="legend-row"><div class="legend-color" style="background:#16a34a;"></div>Nations qualifiées (48)</div>
-    <div class="legend-row"><div class="legend-color" style="background:rgba(148,163,184,0.25);"></div>Autres pays</div>
+    <div style="font-weight:700; font-size:0.75rem; margin-bottom:7px; color:#eab308;">Legend</div>
+    <div class="legend-row"><div class="legend-color" style="background:#16a34a;"></div>Qualified nations (48)</div>
+    <div class="legend-row"><div class="legend-color" style="background:rgba(148,163,184,0.25);"></div>Other countries</div>
+</div>
+
+<div id="stats-panel" style="
+    position:fixed; top: 150px; right: 20px; z-index:28;
+    background: rgba(10,18,38,0.88); backdrop-filter:blur(12px);
+    border:1px solid rgba(234,179,8,0.25); border-radius:16px;
+    padding:10px 12px; display:flex; flex-direction:column; gap:0; width:88px;
+">
+    <div class="stat-item" id="stat1" style="padding:8px 0;"></div>
+    <div style="height:1px; background:rgba(234,179,8,0.2); margin:0 4px;"></div>
+    <div class="stat-item" id="stat2" style="padding:8px 0;"></div>
+    <div style="height:1px; background:rgba(234,179,8,0.2); margin:0 4px;"></div>
+    <div class="stat-item" id="stat3" style="padding:8px 0;"></div>
 </div>
 
 <script>
-// ======================== DONNÉES STADES ========================
+
+// Splash screen
+(function() {
+    const final = new Date('2026-07-19T00:00:00');
+    const now = new Date();
+    const days = Math.max(0, Math.ceil((final - now) / 86400000));
+    document.getElementById('splash-days').textContent = days;
+    setTimeout(() => {
+        const s = document.getElementById('splash');
+        s.style.opacity = '0';
+        setTimeout(() => s.style.display = 'none', 800);
+    }, 2800);
+})();
+
+// ======================== DONNÉES StadiumS ========================
 const STADIUMS = [
     {
-        id: 's1', name: "Stade de Toronto (BMO Field)", city: "Toronto", country: "Canada",
+        id: 's1', name: "Stadium de Toronto (BMO Field)", city: "Toronto", country: "Canada",
         capacity: "45 000", opened: "2007", resident: "Toronto FC (MLS)",
-        matches: "Cérémonie d'ouverture Canada · Phase de groupes",
+        matches: "Opening Ceremony Canada · Group Stage",
         lat: 43.6328, lng: -79.4183,
-        image: "https://digitalhub.fifa.com/transform/9a58e219-7f81-4523-a201-2d3527eec509/plan-your-visit_text-image_toronto-stadium?&io=transform:fill,aspectratio:16x9,width=640&quality=75",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/BMO_Field_in_2016.png/330px-BMO_Field_in_2016.png",
         flag: "🇨🇦"
     },
     {
         id: 's2', name: "BC Place", city: "Vancouver", country: "Canada",
         capacity: "52 497", opened: "1983", resident: "Vancouver Whitecaps (MLS)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 49.2768, lng: -123.1116,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/BC_Place_interior_2.jpg/800px-BC_Place_interior_2.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BC_Place_2015_Women%27s_FIFA_World_Cup.jpg/500px-BC_Place_2015_Women%27s_FIFA_World_Cup.jpg",
         flag: "🇨🇦"
     },
     {
         id: 's3', name: "Estadio Azteca", city: "Mexico", country: "Mexique",
         capacity: "87 500", opened: "1966", resident: "Club América (Liga MX)",
-        matches: "Match d'ouverture (11 juin) · Quarts de finale",
+        matches: "Match d'ouverture (11 juin) · Quarter-final",
         lat: 19.3030, lng: -99.1506,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Estadio_Azteca_2.jpg/800px-Estadio_Azteca_2.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Estadio_Azteca_Octubre_de_2021.jpg/1280px-Estadio_Azteca_Octubre_de_2021.jpg",
         flag: "🇲🇽"
     },
     {
         id: 's4', name: "Estadio Akron (Guadalajara)", city: "Zapopan", country: "Mexique",
         capacity: "45 664", opened: "2010", resident: "CD Guadalajara (Liga MX)",
-        matches: "Phase de groupes",
+        matches: "Group Stage",
         lat: 20.6738, lng: -103.3962,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Estadio_Omnilife_2011.jpg/800px-Estadio_Omnilife_2011.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Omnilife_Stadium.png/250px-Omnilife_Stadium.png",
         flag: "🇲🇽"
     },
     {
         id: 's5', name: "Estadio BBVA (Monterrey)", city: "Guadalupe", country: "Mexique",
         capacity: "51 243", opened: "2015", resident: "CF Monterrey (Liga MX)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 25.6690, lng: -100.2421,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Estadio_BBVA_Bancomer_interior.jpg/800px-Estadio_BBVA_Bancomer_interior.jpg",
+        image: "https://cdn.prod.website-files.com/695d4cbe47ec38c4302fcdd8/698e1f2a8a40c5465d62de7f_RAYADOS%20VS%20INTER%20DE%20MIAMI%2014-p-800.webp",
         flag: "🇲🇽"
     },
     {
         id: 's6', name: "Mercedes-Benz Stadium (Atlanta)", city: "Atlanta", country: "États-Unis",
         capacity: "75 000", opened: "2017", resident: "Atlanta United (MLS) / Atlanta Falcons (NFL)",
-        matches: "Demi-finale (15 juillet)",
+        matches: "Semi-final (15 juillet)",
         lat: 33.7553, lng: -84.4006,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Mercedes-Benz_Stadium_Atlanta.jpg/800px-Mercedes-Benz_Stadium_Atlanta.jpg",
+        image: "https://img.ctykit.com/cdn/ga-atlanta/images/tr:w-900/mb-stadium-finished.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's7', name: "Gillette Stadium (Boston)", city: "Foxborough", country: "États-Unis",
         capacity: "64 146", opened: "2002", resident: "New England Revolution (MLS) / Patriots (NFL)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 42.0909, lng: -71.2643,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Gillette_Stadium_2022.jpg/800px-Gillette_Stadium_2022.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Gillette_Stadium02.jpg/500px-Gillette_Stadium02.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's8', name: "AT&T Stadium (Dallas)", city: "Arlington", country: "États-Unis",
         capacity: "94 000", opened: "2009", resident: "Dallas Cowboys (NFL)",
-        matches: "Demi-finale (14 juillet) · 9 matchs au total",
+        matches: "Semi-final (14 juillet) · 9 matches total",
         lat: 32.7473, lng: -97.0945,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/ATTStadium_exterior.jpg/800px-ATTStadium_exterior.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Cowboys_Stadium_full_view.jpg/500px-Cowboys_Stadium_full_view.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's9', name: "NRG Stadium (Houston)", city: "Houston", country: "États-Unis",
         capacity: "68 777", opened: "2002", resident: "Houston Dynamo (MLS) / Texans (NFL)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 29.6847, lng: -95.4107,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/NRG_Stadium.jpg/800px-NRG_Stadium.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Germany_vs_Cura%C3%A7ao_2026_FIFA_World_Cup.jpg/500px-Germany_vs_Cura%C3%A7ao_2026_FIFA_World_Cup.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's10', name: "Arrowhead Stadium (Kansas City)", city: "Kansas City", country: "États-Unis",
         capacity: "69 045", opened: "1972", resident: "Kansas City Chiefs (NFL)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 39.1239, lng: -94.4839,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Arrowhead_Stadium_2022.jpg/800px-Arrowhead_Stadium_2022.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Arrowhead_Stadium_%28October_27%2C_2019_-_7%29.jpg/500px-Arrowhead_Stadium_%28October_27%2C_2019_-_7%29.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's11', name: "SoFi Stadium (Los Angeles)", city: "Inglewood", country: "États-Unis",
         capacity: "70 240", opened: "2020", resident: "LA Rams & Chargers (NFL)",
-        matches: "Cérémonie d'ouverture USA · Quarts de finale",
+        matches: "Opening Ceremony USA · Quarter-final",
         lat: 33.9535, lng: -118.3392,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/SoFi_Stadium_2022.jpg/800px-SoFi_Stadium_2022.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/SoFi_Stadium_interior_2021.jpg/500px-SoFi_Stadium_interior_2021.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's12', name: "Hard Rock Stadium (Miami)", city: "Miami Gardens", country: "États-Unis",
         capacity: "64 767", opened: "1987", resident: "Miami Dolphins (NFL)",
-        matches: "Match pour la 3e place · Phase de groupes",
+        matches: "Third-place match · Group Stage",
         lat: 25.9580, lng: -80.2389,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hard_Rock_Stadium_2022.jpg/800px-Hard_Rock_Stadium_2022.jpg",
+        image: "https://img1.10bestmedia.com/Images/Photos/425274/Hard-Rock-Stadium_54_990x660.jpg?auto=webp&width=3840&quality=75",
         flag: "🇺🇸"
     },
     {
@@ -438,31 +508,31 @@ const STADIUMS = [
         capacity: "82 500", opened: "2010", resident: "NY Giants & Jets (NFL)",
         matches: "FINALE (19 juillet)",
         lat: 40.8135, lng: -74.0745,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/MetLife_Stadium_2022.jpg/800px-MetLife_Stadium_2022.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/New_Meadowlands_Stadium_Mezz_Corner.jpg/960px-New_Meadowlands_Stadium_Mezz_Corner.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's14', name: "Lincoln Financial Field (Philadelphie)", city: "Philadelphie", country: "États-Unis",
         capacity: "68 532", opened: "2003", resident: "Philadelphia Eagles (NFL)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 39.9012, lng: -75.1675,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Lincoln_Financial_Field_2022.jpg/800px-Lincoln_Financial_Field_2022.jpg",
+        image: "https://www.stadiumsofprofootball.com/wp-content/uploads/2016/07/linc16_top.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's15', name: "Levi's Stadium (San Francisco Bay Area)", city: "Santa Clara", country: "États-Unis",
         capacity: "68 827", opened: "2014", resident: "San Francisco 49ers (NFL)",
-        matches: "Phase de groupes · Quarts de finale",
+        matches: "Group Stage · Quarter-final",
         lat: 37.4032, lng: -121.9698,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Levi%27s_Stadium_2022.jpg/800px-Levi%27s_Stadium_2022.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Broncos_vs_49ers_preseason_game_at_Levi%27s_Stadium.jpg/1280px-Broncos_vs_49ers_preseason_game_at_Levi%27s_Stadium.jpg",
         flag: "🇺🇸"
     },
     {
         id: 's16', name: "Lumen Field (Seattle)", city: "Seattle", country: "États-Unis",
         capacity: "69 000", opened: "2002", resident: "Seattle Seahawks (NFL) / Sounders (MLS)",
-        matches: "Phase de groupes · Huitièmes de finale",
+        matches: "Group Stage · Round of 16",
         lat: 47.5952, lng: -122.3316,
-        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Lumen_Field_2022.jpg/800px-Lumen_Field_2022.jpg",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Seattle_Sounders_FC_vs._Minnesota_United_FC_-_June_15%2C_2024_-_tifo_display.jpg/1280px-Seattle_Sounders_FC_vs._Minnesota_United_FC_-_June_15%2C_2024_-_tifo_display.jpg",
         flag: "🇺🇸"
     }
 ];
@@ -484,19 +554,19 @@ const TEAMS = [
     { id:'t_ecu', name:"Équateur", code:"ECU", conf:"CONMEBOL", group:"F", wcWins:0, coach:"Sebastián Beccacece", flag:"https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg", icon:"🇪🇨", teamImg:"https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg", lat:-1.8, lng:-78.2 },
     { id:'t_par', name:"Paraguay", code:"PAR", conf:"CONMEBOL", group:"L", wcWins:0, coach:"Gustavo Alfaro", flag:"https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg", icon:"🇵🇾", teamImg:"https://upload.wikimedia.org/wikipedia/commons/2/27/Flag_of_Paraguay.svg", lat:-23.2, lng:-58.4 },
     // UEFA
-    { id:'t_fra', name:"France", code:"FRA", conf:"UEFA", group:"I", wcWins:2, coach:"Didier Deschamps", flag:"https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg", icon:"🇫🇷", teamImg:"https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg", lat:46.2, lng:2.2 },
-    { id:'t_ger', name:"Allemagne", code:"GER", conf:"UEFA", group:"E", wcWins:4, coach:"Julian Nagelsmann", flag:"https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg", icon:"🇩🇪", teamImg:"https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg", lat:51.2, lng:10.5 },
-    { id:'t_esp', name:"Espagne", code:"ESP", conf:"UEFA", group:"H", wcWins:1, coach:"Luis de la Fuente", flag:"https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg", icon:"🇪🇸", teamImg:"https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg", lat:40.4, lng:-3.7 },
+    { id:'t_fra', name:"France", code:"FRA", conf:"UEFA", group:"I", wcWins:2, coach:"Didier Deschamps", flag:"https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg", icon:"🇫🇷", teamImg:"https://fff.twic.pics/https://media.fff.fr/uploads/images/26288091cd32b7af0e869225ca46bcc9.jpg?twic=v1/max=690", lat:46.2, lng:2.2 },
+    { id:'t_ger', name:"Allemagne", code:"GER", conf:"UEFA", group:"E", wcWins:4, coach:"Julian Nagelsmann", flag:"https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg", icon:"🇩🇪", teamImg:"https://media.gettyimages.com/id/2280906996/fr/photo/winston-salem-north-carolina-team-germany-pose-for-the-official-team-picture-at-w-dennie-spry.jpg?s=594x594&w=gi&k=20&c=YLGvfJm4ggqma0nZwl8f1eoI1r4QjwUPDlruLJlSuV0=", lat:51.2, lng:10.5 },
+    { id:'t_esp', name:"Espagne", code:"ESP", conf:"UEFA", group:"H", wcWins:1, coach:"Luis de la Fuente", flag:"https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg", icon:"🇪🇸", teamImg:"https://www.footyheadlines.com/static/img/post/2026/06/04/anmhAP5lteLoUVS/official-spain-2026-world-cup-squad-photo-eqt-jacket.jpg", lat:40.4, lng:-3.7 },
     { id:'t_eng', name:"Angleterre", code:"ENG", conf:"UEFA", group:"J", wcWins:1, coach:"Thomas Tuchel", flag:"https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg", icon:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", teamImg:"https://upload.wikimedia.org/wikipedia/en/b/be/Flag_of_England.svg", lat:52.5, lng:-1.5 },
-    { id:'t_por', name:"Portugal", code:"POR", conf:"UEFA", group:"G", wcWins:0, coach:"Roberto Martínez", flag:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg", icon:"🇵🇹", teamImg:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg", lat:39.4, lng:-8.2 },
+    { id:'t_por', name:"Portugal", code:"POR", conf:"UEFA", group:"G", wcWins:0, coach:"Roberto Martínez", flag:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Portugal.svg", icon:"🇵🇹", teamImg:"https://www.portugalresident.com/wp-content/uploads/2026/06/Portugal-World-Cup-2026-squad-FPF-1536x1024.jpg", lat:39.4, lng:-8.2 },
     { id:'t_ned', name:"Pays-Bas", code:"NED", conf:"UEFA", group:"F", wcWins:0, coach:"Ronald Koeman", flag:"https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg", icon:"🇳🇱", teamImg:"https://upload.wikimedia.org/wikipedia/commons/2/20/Flag_of_the_Netherlands.svg", lat:52.3, lng:5.3 },
     { id:'t_cro', name:"Croatie", code:"CRO", conf:"UEFA", group:"L", wcWins:0, coach:"Zlatko Dalić", flag:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg", icon:"🇭🇷", teamImg:"https://upload.wikimedia.org/wikipedia/commons/1/1b/Flag_of_Croatia.svg", lat:45.1, lng:15.2 },
-    { id:'t_bel', name:"Belgique", code:"BEL", conf:"UEFA", group:"G", wcWins:0, coach:"Domenico Tedesco", flag:"https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Belgium.svg", icon:"🇧🇪", teamImg:"https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Belgium.svg", lat:50.8, lng:4.4 },
+    { id:'t_bel', name:"Belgique", code:"BEL", conf:"UEFA", group:"G", wcWins:0, coach:"Domenico Tedesco", flag:"https://upload.wikimedia.org/wikipedia/commons/6/65/Flag_of_Belgium.svg", icon:"🇧🇪", teamImg:"", lat:50.8, lng:4.4 },
     { id:'t_sui', name:"Suisse", code:"SUI", conf:"UEFA", group:"B", wcWins:0, coach:"Murat Yakin", flag:"https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg", icon:"🇨🇭", teamImg:"https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Switzerland.svg", lat:46.8, lng:8.2 },
     { id:'t_aut', name:"Autriche", code:"AUT", conf:"UEFA", group:"J", wcWins:0, coach:"Ralf Rangnick", flag:"https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg", icon:"🇦🇹", teamImg:"https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg", lat:47.5, lng:14.6 },
     { id:'t_bih', name:"Bosnie-Herzégovine", code:"BIH", conf:"UEFA", group:"A", wcWins:0, coach:"Sergej Barbarez", flag:"https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg", icon:"🇧🇦", teamImg:"https://upload.wikimedia.org/wikipedia/commons/b/bf/Flag_of_Bosnia_and_Herzegovina.svg", lat:44.2, lng:17.6 },
     { id:'t_cze', name:"Tchéquie", code:"CZE", conf:"UEFA", group:"A", wcWins:0, coach:"Ivan Hašek", flag:"https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg", icon:"🇨🇿", teamImg:"https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_Czech_Republic.svg", lat:49.8, lng:15.5 },
-    { id:'t_nor', name:"Norvège", code:"NOR", conf:"UEFA", group:"B", wcWins:0, coach:"Ståle Solbakken", flag:"https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg", icon:"🇳🇴", teamImg:"https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg", lat:64.5, lng:17.9 },
+    { id:'t_nor', name:"Norvège", code:"NOR", conf:"UEFA", group:"B", wcWins:0, coach:"Ståle Solbakken", flag:"https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Norway.svg", icon:"🇳🇴", teamImg:"https://www.thickaccent.com/wp-content/uploads/2026/06/HKThqRFWgAAJyBo-768x512.jpeg", lat:64.5, lng:17.9 },
     { id:'t_sco', name:"Écosse", code:"SCO", conf:"UEFA", group:"D", wcWins:0, coach:"Steve Clarke", flag:"https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg", icon:"🏴󠁧󠁢󠁳󠁣󠁴󠁿", teamImg:"https://upload.wikimedia.org/wikipedia/commons/1/10/Flag_of_Scotland.svg", lat:57.0, lng:-4.0 },
     { id:'t_swe', name:"Suède", code:"SWE", conf:"UEFA", group:"K", wcWins:0, coach:"Jon Dahl Tomasson", flag:"https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg", icon:"🇸🇪", teamImg:"https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg", lat:60.5, lng:15.5 },
     { id:'t_tur', name:"Türkiye", code:"TUR", conf:"UEFA", group:"C", wcWins:0, coach:"Vincenzo Montella", flag:"https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg", icon:"🇹🇷", teamImg:"https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg", lat:39.0, lng:35.2 },
@@ -527,11 +597,58 @@ const TEAMS = [
 
 // Classement FIFA (juin 2026)
 const FIFA_RANKINGS = {
-    'ARG': 1, 'ESP': 3, 'FRA': 2, 'ENG': 4, 'POR': 5, 'BRA': 6, 'MAR': 7,
-    'NED': 8, 'BEL': 9, 'GER': 10, 'MEX': 14, 'SEN': 15, 'URU': 16, 'USA': 17,
-    'JPN': 18, 'IRN': 20, 'KOR': 25, 'AUS': 27, 'UZB': 50
-    // Ajoute les autres équipes si tu trouves leurs classements
+    'ARG': 1,   // Argentine
+    'FRA': 2,   // France
+    'ESP': 3,   // Espagne
+    'ENG': 4,   // Angleterre
+    'POR': 5,   // Portugal
+    'BRA': 6,   // Brésil
+    'MAR': 7,   // Maroc
+    'NED': 8,   // Pays-Bas
+    'BEL': 9,   // Belgique
+    'GER': 10,  // Allemagne
+    'CRO': 11,  // Croatie
+    'COL': 12,  // Colombie
+    'SUI': 13,  // Suisse
+    'MEX': 14,  // Mexique
+    'SEN': 15,  // Sénégal
+    'URU': 16,  // Uruguay
+    'USA': 17,  // États-Unis
+    'JPN': 18,  // Japon
+    'SWE': 19,  // Suède
+    'IRN': 20,  // Iran
+    'AUT': 21,  // Autriche
+    'ECU': 22,  // Équateur
+    'EGY': 23,  // Égypte
+    // 24 est libre
+    'KOR': 25,  // Corée du Sud
+    'TUN': 26,  // Tunisie
+    'AUS': 27,  // Australie
+    'ALG': 28,  // Algérie
+    'SCO': 29,  // Écosse
+    'TUR': 30,  // Turquie
+    'PAR': 31,  // Paraguay
+    'CIV': 32,  // Côte d'Ivoire
+    'KSA': 33,  // Arabie Saoudite
+    'QAT': 34,  // Qatar
+    'CZE': 35,  // Tchéquie
+    'BIH': 36,  // Bosnie-Herzégovine
+    'NOR': 37,  // Norvège
+    'RSA': 38,  // Afrique du Sud
+    'GHA': 39,  // Ghana
+    'IRQ': 40,  // Irak
+    'JOR': 41,  // Jordanie
+    'PAN': 42,  // Panama
+    'CPV': 43,  // Cap-Vert
+    'COD': 44,  // RD Congo
+    'HAI': 45,  // Haïti
+    'CAN': 46,  // Canada
+    'CUW': 47,  // Curaçao
+    'NZL': 48,  // Nouvelle-Zélande
+    // 49 est libre
+    'UZB': 50   // Ouzbékistan
 };
+// Ajoute les autres équipes si tu trouves leurs classements
 
 // Mapping code ISO 3166-1 alpha-3 → code FIFA ou nom
 // Utilisé pour filtrer les polygones du GeoJSON Eurostat
@@ -562,7 +679,7 @@ let activeCard = null;
 let countriesGeoJSONLoaded = false;
 let filterState = { country: 'all', capacity: 'all', conf: 'all' };
 
-// ======================== SVG MARQUEUR STADE ========================
+// ======================== SVG MARQUEUR Stadium ========================
 function createStadiumMarkerEl() {
     const el = document.createElement('div');
     el.className = 'stadium-marker';
@@ -579,36 +696,39 @@ function createStadiumMarkerEl() {
 }
 
 // ======================== POPUPS ========================
-function buildStadiumPopup(s) {
-    const isSpecial = s.matches.includes('FINALE') || s.matches.includes('ouverture') || s.matches.includes('Demi');
-    const badge = isSpecial ? `<span class="popup-badge"><i class="fas fa-star"></i> MATCH CLÉ</span>` : '';
-    return `
+async function openStadiumPopup(s, lngLat) {
+    const matches = FD_KEY ? await fetchMatches() : [];
+    const resultsHtml = renderMatchesForStadium(matches, s.name);
+    const isSpecial = s.matches.includes('FINALE') || s.matches.includes('Opening') || s.matches.includes('Semi');
+    const badge = isSpecial ? `<span class="popup-badge"><i class="fas fa-star"></i> KEY MATCH</span>` : '';
+    const html = `
         <div class="popup-title">${s.flag} ${s.name}</div>
         <img class="popup-img" src="${s.image}" onerror="this.src='https://upload.wikimedia.org/wikipedia/en/thumb/e/ec/FIFA_World_Cup_2026.svg/1200px-FIFA_World_Cup_2026.svg.png'" alt="${s.name}">
         <div class="popup-row"><i class="fas fa-map-marker-alt"></i> ${s.city}, ${s.country}</div>
-        <div class="popup-row"><i class="fas fa-users"></i> Capacité : ${s.capacity} places</div>
-        <div class="popup-row"><i class="fas fa-calendar"></i> Ouverture : ${s.opened}</div>
-        <div class="popup-row"><i class="fas fa-shield-halved"></i> Résident : ${s.resident}</div>
+        <div class="popup-row"><i class="fas fa-users"></i> Capacity: ${s.capacity} seats</div>
+        <div class="popup-row"><i class="fas fa-calendar"></i> Opened: ${s.opened}</div>
+        <div class="popup-row"><i class="fas fa-shield-halved"></i> Home team: ${s.resident}</div>
         <div class="popup-row"><i class="fas fa-futbol"></i> ${s.matches}</div>
-        ${badge}
-    `;
+        ${badge}${resultsHtml}`;
+    openPopup(lngLat, html);
 }
 
-function buildTeamPopup(t) {
-    const winsStr = t.wcWins > 0 ? `🏆 ${t.wcWins} titre${t.wcWins>1?'s':''}` : 'Aucun titre';
+async function openTeamPopup(t, lngLat) {
+    const matches = FD_KEY ? await fetchMatches() : [];
+    const resultsHtml = renderMatchesForTeam(matches, t.code);
+    const winsStr = t.wcWins > 0 ? `🏆 ${t.wcWins} title${t.wcWins>1?'s':''}` : 'No titles';
     const rank = FIFA_RANKINGS[t.code] || '—';
-    const rankStr = rank !== '—' ? `#${rank}` : 'Non classé';
-    
-    return `
+    const html = `
         <img class="popup-flag" src="${t.flag}" alt="${t.name}" onerror="this.style.display='none'">
         <div class="popup-title">${t.icon} ${t.name} (${t.code})</div>
         <div class="popup-row"><i class="fas fa-trophy"></i> ${winsStr}</div>
-        <div class="popup-row"><i class="fas fa-ranking-star"></i> Classement FIFA : ${rankStr}</div>
+        <div class="popup-row"><i class="fas fa-ranking-star"></i> FIFA Ranking: ${rank !== '—' ? '#'+rank : 'N/A'}</div>
         <div class="popup-row"><i class="fas fa-person-chalkboard"></i> ${t.coach}</div>
-        <div class="popup-row"><i class="fas fa-layer-group"></i> Groupe ${t.group}</div>
+        <div class="popup-row"><i class="fas fa-layer-group"></i> Group ${t.group}</div>
         <div class="popup-row"><i class="fas fa-earth-americas"></i> ${t.conf}</div>
-        <span class="popup-badge">FIFA World Cup 2026™</span>
-    `;
+        ${resultsHtml}
+        <span class="popup-badge">FIFA World Cup 2026™</span>`;
+    openPopup(lngLat, html);
 }
 
 function openPopup(lngLat, html) {
@@ -648,14 +768,126 @@ document.getElementById('reset-view-btn').addEventListener('click', () => {
     document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
 });
 
-// ======================== MODE STADES ========================
+// ======================== STATS ========================
+function updateStats() {
+    if (currentMode === 'stadiums') {
+        const totalCap = STADIUMS.reduce((acc, s) => {
+            return acc + parseInt(s.capacity.replace(/[^0-9]/g, ''));
+        }, 0);
+        const biggest = STADIUMS.reduce((a, b) =>
+            parseInt(a.capacity.replace(/[^0-9]/g,'')) > parseInt(b.capacity.replace(/[^0-9]/g,'')) ? a : b
+        );
+        const northernmost = STADIUMS.reduce((a, b) => a.lat > b.lat ? a : b);
+
+        document.getElementById('stat1').innerHTML = `
+            <div class="stat-val">${(totalCap/1000).toFixed(0)}K</div>
+            <div class="stat-lbl">Total capacity</div>`;
+        document.getElementById('stat2').innerHTML = `
+            <div class="stat-val" style="font-size:0.72rem; font-weight:800;">${biggest.city}</div>
+            <div class="stat-lbl">Largest stadium<br>${biggest.capacity} seats</div>`;
+        document.getElementById('stat3').innerHTML = `
+            <div class="stat-val" style="font-size:0.72rem; font-weight:800;">${northernmost.city}</div>
+            <div class="stat-lbl">Northernmost<br>venue</div>`;
+    } else {
+        const confs = [...new Set(TEAMS.map(t => t.conf))].length;
+        const debutants = ['t_cpv','t_cur','t_jor','t_uzb'];
+        const topWins = TEAMS.reduce((a, b) => a.wcWins > b.wcWins ? a : b);
+
+        document.getElementById('stat1').innerHTML = `
+            <div class="stat-val">${confs}</div>
+            <div class="stat-lbl">Confederations<br>represented</div>`;
+        document.getElementById('stat2').innerHTML = `
+            <div class="stat-val">${debutants.length}</div>
+            <div class="stat-lbl">First-time<br>nations</div>`;
+        document.getElementById('stat3').innerHTML = `
+            <div class="stat-val">${topWins.icon}</div>
+            <div class="stat-lbl">${topWins.name}<br>${topWins.wcWins} titles 🏆</div>`;
+    }
+}
+
+
+const FD_KEY = 'c12fcd1126684d25aee089fd67957f18'; // ← remplace par ta vraie clé
+const WC2026_ID = 2000;       // ID de la compétition FIFA WC sur football-data.org
+
+let matchCache = null; // cache pour éviter de re-fetcher à chaque popup
+
+async function fetchMatches() {
+    if (matchCache) return matchCache;
+    try {
+        const r = await fetch(`https://api.football-data.org/v4/competitions/${WC2026_ID}/matches`, {
+            headers: { 'X-Auth-Token': FD_KEY }
+        });
+        const data = await r.json();
+        matchCache = data.matches || [];
+        return matchCache;
+    } catch(e) {
+        console.warn('football-data.org unavailable:', e);
+        return [];
+    }
+}
+
+function renderMatchesForTeam(matches, teamCode) {
+    // Cherche les matchs de cette équipe (finis ou en cours)
+    const relevant = matches.filter(m =>
+        (m.status === 'FINISHED' || m.status === 'IN_PLAY') &&
+        (m.homeTeam?.tla === teamCode || m.awayTeam?.tla === teamCode)
+    );
+    if (!relevant.length) return '';
+
+    const rows = relevant.map(m => {
+        const isHome = m.homeTeam?.tla === teamCode;
+        const opponent = isHome ? m.awayTeam?.name : m.homeTeam?.name;
+        const scoreH = m.score?.fullTime?.home ?? '–';
+        const scoreA = m.score?.fullTime?.away ?? '–';
+        const result = m.status === 'IN_PLAY' ? '🟢 LIVE' :
+            (isHome ? (scoreH > scoreA ? '✅' : scoreH < scoreA ? '❌' : '🟡') :
+                      (scoreA > scoreH ? '✅' : scoreA < scoreH ? '❌' : '🟡'));
+        const score = `${scoreH} – ${scoreA}`;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:0.68rem;opacity:0.8;">${result} vs ${opponent}</span>
+            <span style="font-size:0.72rem;font-weight:700;color:#eab308;">${score}</span>
+        </div>`;
+    }).join('');
+
+    return `<div style="margin-top:8px;">
+        <div style="font-size:0.65rem;font-weight:700;color:#eab308;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Results</div>
+        ${rows}
+    </div>`;
+}
+
+function renderMatchesForStadium(matches, stadiumName) {
+    // Cherche les matchs joués dans ce stade (finis)
+    const relevant = matches.filter(m =>
+        m.status === 'FINISHED' &&
+        m.venue && stadiumName && m.venue.toLowerCase().includes(stadiumName.split('(')[0].trim().toLowerCase().slice(0,8))
+    );
+    if (!relevant.length) return '';
+
+    const rows = relevant.slice(0, 4).map(m => {
+        const scoreH = m.score?.fullTime?.home ?? '–';
+        const scoreA = m.score?.fullTime?.away ?? '–';
+        return `<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:0.65rem;opacity:0.8;">${m.homeTeam?.name} vs ${m.awayTeam?.name}</span>
+            <span style="font-size:0.7rem;font-weight:700;color:#eab308;">${scoreH}–${scoreA}</span>
+        </div>`;
+    }).join('');
+
+    return `<div style="margin-top:8px;">
+        <div style="font-size:0.65rem;font-weight:700;color:#eab308;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Matches played here</div>
+        ${rows}
+    </div>`;
+}
+
+
+
+// ======================== MODE StadiumS ========================
 function showStadiums() {
     clearAll();
     currentMode = 'stadiums';
     document.getElementById('sidebar-icon').className = 'fas fa-landmark';
-    document.getElementById('sidebar-title').textContent = 'Stades hôtes';
+    document.getElementById('sidebar-title').textContent = 'Host Stadiums';
     document.getElementById('sidebar-count').textContent = '16';
-    document.getElementById('switch-view').innerHTML = '<i class="fas fa-globe-americas"></i> Voir les Nations participantes';
+    document.getElementById('switch-view').innerHTML = '<i class="fas fa-globe-americas"></i> View Participating Nations';
     document.getElementById('legend').classList.remove('visible');
     document.getElementById('stadium-filters').style.display = 'block';
     document.getElementById('team-filters').style.display = 'none';
@@ -692,11 +924,11 @@ function showStadiums() {
         div.innerHTML = `
             <div style="flex:1; min-width:0;">
                 <div class="item-name">${s.flag} ${s.name}</div>
-                <div class="item-sub">${s.city} · ${s.capacity} places</div>
+                <div class="item-sub">${s.city} · ${s.capacity} seats</div>
             </div>`;
         div.addEventListener('click', () => {
             setActiveCard(s.id);
-            openPopup([s.lng, s.lat], buildStadiumPopup(s));
+            openStadiumPopup(s, [s.lng, s.lat]);               // ← nouvelle fonction async
             map.flyTo({ center: [s.lng, s.lat], zoom: 13, pitch: 55, duration: 1100 });
         });
         container.appendChild(div);
@@ -716,12 +948,13 @@ function showStadiums() {
         el.addEventListener('click', e => {
             e.stopPropagation();
             setActiveCard(s.id);
-            openPopup([s.lng, s.lat], buildStadiumPopup(s));
+            openStadiumPopup(s, [s.lng, s.lat]);
             map.flyTo({ center: [s.lng, s.lat], zoom: 13, pitch: 55, duration: 1100 });
         });
         const marker = new maplibregl.Marker({ element: el }).setLngLat([s.lng, s.lat]).addTo(map);
         stadiumMarkers.push(marker);
     });
+    updateStats();
 }
 
 // ======================== MODE NATIONS ========================
@@ -729,9 +962,9 @@ async function showTeams() {
     clearAll();
     currentMode = 'teams';
     document.getElementById('sidebar-icon').className = 'fas fa-globe-americas';
-    document.getElementById('sidebar-title').textContent = 'Nations participantes';
+    document.getElementById('sidebar-title').textContent = 'Participating Nations';
     document.getElementById('sidebar-count').textContent = '48';
-    document.getElementById('switch-view').innerHTML = '<i class="fas fa-landmark"></i> Voir les Stades hôtes';
+    document.getElementById('switch-view').innerHTML = '<i class="fas fa-landmark"></i> View Host Stadiums';
     document.getElementById('legend').classList.add('visible');
     document.getElementById('stadium-filters').style.display = 'none';
     document.getElementById('team-filters').style.display = 'block';
@@ -739,7 +972,7 @@ async function showTeams() {
 
     map.flyTo({ center: [10, 20], zoom: 2.0, pitch: 30, bearing: 0, duration: 1300 });
 
-    // Charger et afficher pays colorés
+    // Charger et afficher COUNTRY colorés
     await ensureCountryLayer();
     if (map.getLayer('country-fill')) map.setLayoutProperty('country-fill', 'visibility', 'visible');
     if (map.getLayer('country-outline')) map.setLayoutProperty('country-outline', 'visibility', 'visible');
@@ -758,12 +991,12 @@ async function showTeams() {
             <img src="${t.flag}" style="width:28px; height:19px; object-fit:cover; border-radius:3px; flex-shrink:0;" onerror="this.style.display='none'" alt="">
             <div style="flex:1; min-width:0;">
                 <div class="item-name">${t.name} (${t.code})</div>
-                <div class="item-sub">Groupe ${t.group} · ${t.conf} ${rankStr ? '· FIFA '+rankStr : ''}</div>
+                <div class="item-sub">Group ${t.group} · ${t.conf} ${rankStr ? '· FIFA '+rankStr : ''}</div>
             </div>
         `;
         div.addEventListener('click', () => {
             setActiveCard(t.id);
-            openPopup([t.lng, t.lat], buildTeamPopup(t));
+            openTeamPopup(t, [t.lng, t.lat]);
             map.flyTo({ center: [t.lng, t.lat], zoom: 3.8, pitch: 30, duration: 1100 });
         });
         container.appendChild(div);
@@ -779,22 +1012,23 @@ async function showTeams() {
             if (hoverPopup) hoverPopup.remove();
             hoverPopup = new maplibregl.Popup({ offset: 18, closeButton: false, closeOnClick: false, className: 'custom-popup' })
                 .setLngLat([t.lng, t.lat])
-                .setHTML(`<div style="display:flex;align-items:center;gap:8px;"><img src="${t.flag}" style="width:26px;border-radius:3px;" onerror="this.style.display='none'"><div><div style="font-weight:700;font-size:0.85rem;">${t.name}</div><div style="font-size:0.68rem;opacity:0.75;">Groupe ${t.group} · ${t.conf}</div></div></div>`)
+                .setHTML(`<div style="display:flex;align-items:center;gap:8px;"><img src="${t.flag}" style="width:26px;border-radius:3px;" onerror="this.style.display='none'"><div><div style="font-weight:700;font-size:0.85rem;">${t.name}</div><div style="font-size:0.68rem;opacity:0.75;">Group ${t.group} · ${t.conf}</div></div></div>`)
                 .addTo(map);
         });
         el.addEventListener('mouseleave', () => { if (hoverPopup) { hoverPopup.remove(); hoverPopup = null; } });
         el.addEventListener('click', e => {
             e.stopPropagation();
             setActiveCard(t.id);
-            openPopup([t.lng, t.lat], buildTeamPopup(t));
+            openTeamPopup(t, [t.lng, t.lat]);
             map.flyTo({ center: [t.lng, t.lat], zoom: 3.8, pitch: 30, duration: 1100 });
         });
         const marker = new maplibregl.Marker({ element: el }).setLngLat([t.lng, t.lat]).addTo(map);
         teamMarkers.push(marker);
     });
+    updateStats();
 }
 
-// ======================== COUCHE PAYS ========================
+// ======================== COUCHE COUNTRY ========================
 async function ensureCountryLayer() {
     if (countriesGeoJSONLoaded) return;
     try {
@@ -802,7 +1036,7 @@ async function ensureCountryLayer() {
         const resp = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
         const data = await resp.json();
 
-        // Marquer les pays participants
+        // Marquer les COUNTRY participants
         data.features.forEach(f => {
             const iso3 = f.properties.ISO_A3 || '';
             const nameEn = (f.properties.ADMIN || f.properties.name || '').trim();
@@ -831,7 +1065,7 @@ async function ensureCountryLayer() {
             }
         });
 
-        // Clic sur un pays participant → ouvre popup équipe correspondante
+        // Clic sur un COUNTRY participant → ouvre popup équipe correspondante
         map.on('click', 'country-fill', e => {
             if (currentMode !== 'teams') return;
             const nameEn = (e.features[0].properties.ADMIN || e.features[0].properties.name || '').trim();
@@ -853,7 +1087,7 @@ async function ensureCountryLayer() {
             });
             if (team) {
                 setActiveCard(team.id);
-                openPopup([e.lngLat.lng, e.lngLat.lat], buildTeamPopup(team));
+                openTeamPopup(team, [e.lngLat.lng, e.lngLat.lat]);
             }
         });
 
@@ -864,7 +1098,7 @@ async function ensureCountryLayer() {
 
         countriesGeoJSONLoaded = true;
     } catch(err) {
-        console.warn('Impossible de charger le GeoJSON des pays:', err);
+        console.warn('Impossible de charger le GeoJSON des COUNTRY:', err);
     }
 }
 
@@ -888,7 +1122,7 @@ function filterItems() {
             const stadium = STADIUMS.find(s => s.id === id);
             if (!stadium) show = false;
             else {
-                // Filtre pays
+                // Filtre COUNTRY
                 if (filterState.country !== 'all' && stadium.country !== filterState.country) show = false;
                 // Filtre capacité
                 if (filterState.capacity !== 'all') {
@@ -945,7 +1179,7 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
         const group = this.dataset.group;
         const value = this.dataset.filter;
-        // Désactiver les autres chips du même groupe
+        // Désactiver les autres chips du même Group
         document.querySelectorAll(`.filter-chip[data-group="${group}"]`).forEach(c => c.classList.remove('active'));
         this.classList.add('active');
         // Mettre à jour l'état
