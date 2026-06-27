@@ -314,13 +314,6 @@
     </div>
     <div id="routing-toast">📍 Cliquez sur un 1er point d'intérêt — Départ</div>
   </div>
-  <div id="tech-badge">
-    <span class="tech-pill">MapLibre GL JS</span>
-    <span class="tech-pill">Turf.js</span>
-    <span class="tech-pill">OSRM</span>
-    <span class="tech-pill">Overpass API</span>
-    <span class="tech-pill">OpenStreetMap</span>
-  </div>
 </div>
 
 <script>
@@ -711,23 +704,25 @@ function clearRouteMarkers() {
 function toggle3D() {
   is3dEnabled = !is3dEnabled;
   const btn = document.getElementById('toggle-3d-btn');
+
   if (is3dEnabled) {
-    // Réactiver la 3D
     map.setPitch(defaultPitch);
     map.setBearing(defaultBearing);
-    if (map.getLayer('3d-buildings')) map.setLayoutProperty('3d-buildings', 'visibility', 'visible');
+    ['buildings-base-3d', 'buildings-body-3d'].forEach(id => {
+      if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'visible');
+    });
     btn.textContent = '🏢 Désactiver la vue 3D';
     btn.classList.add('active');
   } else {
-    // Désactiver : vue plate
     map.setPitch(0);
     map.setBearing(0);
-    if (map.getLayer('3d-buildings')) map.setLayoutProperty('3d-buildings', 'visibility', 'none');
+    ['buildings-base-3d', 'buildings-body-3d'].forEach(id => {
+      if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
+    });
     btn.textContent = '🏢 Activer la vue 3D';
     btn.classList.remove('active');
   }
 }
-
 
 // ======================== INITIALISATION CARTE  ========================
 async function initMap() {
@@ -748,6 +743,77 @@ async function initMap() {
   map.addControl(new maplibregl.ScaleControl({ maxWidth:100, unit:'metric' }), 'bottom-right');
 
   map.on('load', async () => {
+
+    // Ajout de la source OpenFreeMap pour les bâtiments 3D
+    map.addSource('openfreemap', {
+      type: 'vector',
+      tiles: ['https://tiles.openfreemap.org/planet/{z}/{x}/{y}.pbf'],
+      minzoom: 14,
+      maxzoom: 14
+    });
+// Et supprime le champ 'url', garde seulement 'tiles'
+    // Trouver une couche de label pour insérer la 3D en dessous des POI
+    let labelLayerId = null;
+    const layers = map.getStyle().layers;
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
+        labelLayerId = layers[i].id;
+        break;
+      }
+    }
+    // Ajouter la couche 3D
+    // Socle sombre : faux contact-shadow au pied (0 → min 4m)
+    map.addLayer({
+      id: 'buildings-base-3d',
+      source: 'openfreemap',
+      'source-layer': 'building',
+      type: 'fill-extrusion',
+      minzoom: 14,
+      filter: ['!=', ['get', 'hide_3d'], true],
+      paint: {
+        'fill-extrusion-color': '#7e879a',
+        'fill-extrusion-base': 0,
+        'fill-extrusion-height': ['min', 4, ['coalesce', ['get', 'render_height'], 4]],
+        'fill-extrusion-opacity': [
+          'interpolate', ['linear'], ['zoom'], 14, 0, 15, 0.95
+        ]
+      }
+    }, labelLayerId);  // garde ton insertion sous les labels
+
+    // Corps clair : volume principal avec gradient vertical
+    map.addLayer({
+      id: 'buildings-body-3d',
+      source: 'openfreemap',
+      'source-layer': 'building',
+      type: 'fill-extrusion',
+      minzoom: 14,
+      filter: ['!=', ['get', 'hide_3d'], true],
+      paint: {
+        'fill-extrusion-color': [
+          'interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 6],
+          0,  '#e8e4dc',
+          15, '#d4cfc7',
+          40, '#b8d4e8',
+          80, '#8fbfdc'
+        ],
+        'fill-extrusion-base': ['min', 4, ['coalesce', ['get', 'render_height'], 4]],
+        'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
+        'fill-extrusion-vertical-gradient': true,
+        'fill-extrusion-opacity': [
+          'interpolate', ['linear'], ['zoom'], 14, 0, 15, 0.92
+        ]
+      }
+    }, labelLayerId);
+
+    try {
+      map.setLight({
+        anchor: 'map',
+        position: [1.5, 210, 40],  // azimuth 210° = soleil SW, polar 40°
+        color: '#fff8f0',
+        intensity: 0.35
+      });
+    } catch(e) { console.warn('setLight:', e.message); }
+
     // Source avec clustering activé
     map.addSource('poi', {
       type: 'geojson',
@@ -867,50 +933,6 @@ async function initMap() {
       const feats = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
       if (!feats.length && !routingMode) clearSelection();
     });
-
-
-    // Ajout de la source OpenFreeMap pour les bâtiments 3D
-    map.addSource('openfreemap', {
-      type: 'vector',
-      url: 'https://tiles.openfreemap.org/planet'
-    });
-    // Trouver une couche de label pour insérer la 3D en dessous des POI
-    let labelLayerId = null;
-    const layers = map.getStyle().layers;
-    for (let i = 0; i < layers.length; i++) {
-      if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
-        labelLayerId = layers[i].id;
-        break;
-      }
-    }
-    // Ajouter la couche 3D
-    map.addLayer({
-      'id': '3d-buildings',
-      'source': 'openfreemap',
-      'source-layer': 'building',
-      'type': 'fill-extrusion',
-      'minzoom': 15,
-      'filter': ['!=', ['get', 'hide_3d'], true],
-      'paint': {
-        'fill-extrusion-color': [
-          'interpolate', ['linear'], ['get', 'render_height'],
-          0, 'lightgray',
-          200, 'royalblue',
-          400, 'lightblue'
-        ],
-        'fill-extrusion-height': [
-          'interpolate', ['linear'], ['zoom'],
-          15, 0,
-          16, ['get', 'render_height']
-        ],
-        'fill-extrusion-base': [
-          'case',
-          ['>=', ['get', 'zoom'], 16],
-          ['get', 'render_min_height'],
-          0
-        ]
-      }
-    }, labelLayerId); // insère sous les étiquettes
 
 
     // Chargement des données POI
