@@ -335,8 +335,8 @@
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
                 <button class="filter-chip active" data-filter="all" data-group="country">All</button>
                 <button class="filter-chip" data-filter="Canada" data-group="country">🇨🇦 Canada</button>
-                <button class="filter-chip" data-filter="Mexique" data-group="country">🇲🇽 Mexico</button>
-                <button class="filter-chip" data-filter="États-Unis" data-group="country">🇺🇸 United States</button>
+                <button class="filter-chip" data-filter="Mexico" data-group="country">🇲🇽 Mexico</button>
+                <button class="filter-chip" data-filter="United States" data-group="country">🇺🇸 United States</button>
             </div>
             <div style="font-size:0.7rem; font-weight:600; color:#eab308; margin:4px 0;">CAPACITÉ</div>
             <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
@@ -431,7 +431,7 @@ const STADIUMS = [
         flag: "🇨🇦"
     },
     {
-        id: 's3', name: "Estadio Azteca", city: "Mexico", country: "Mexique",
+        id: 's3', name: "Estadio Azteca", city: "Mexico", country: "Mexico",
         capacity: "87 500", opened: "1966", resident: "Club América (Liga MX)",
         matches: "Match d'ouverture (11 juin) · Quarter-final",
         lat: 19.3030, lng: -99.1506,
@@ -439,7 +439,7 @@ const STADIUMS = [
         flag: "🇲🇽"
     },
     {
-        id: 's4', name: "Estadio Akron (Guadalajara)", city: "Zapopan", country: "Mexique",
+        id: 's4', name: "Estadio Akron (Guadalajara)", city: "Zapopan", country: "Mexico",
         capacity: "45 664", opened: "2010", resident: "CD Guadalajara (Liga MX)",
         matches: "Group Stage",
         lat: 20.6738, lng: -103.3962,
@@ -447,7 +447,7 @@ const STADIUMS = [
         flag: "🇲🇽"
     },
     {
-        id: 's5', name: "Estadio BBVA (Monterrey)", city: "Guadalupe", country: "Mexique",
+        id: 's5', name: "Estadio BBVA (Monterrey)", city: "Guadalupe", country: "Mexico",
         capacity: "51 243", opened: "2015", resident: "CF Monterrey (Liga MX)",
         matches: "Group Stage · Round of 16",
         lat: 25.6690, lng: -100.2421,
@@ -455,7 +455,7 @@ const STADIUMS = [
         flag: "🇲🇽"
     },
     {
-        id: 's6', name: "Mercedes-Benz Stadium (Atlanta)", city: "Atlanta", country: "États-Unis",
+        id: 's6', name: "Mercedes-Benz Stadium (Atlanta)", city: "Atlanta", country: "United States",
         capacity: "75 000", opened: "2017", resident: "Atlanta United (MLS) / Atlanta Falcons (NFL)",
         matches: "Semi-final (15 juillet)",
         lat: 33.7553, lng: -84.4006,
@@ -463,7 +463,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's7', name: "Gillette Stadium (Boston)", city: "Foxborough", country: "États-Unis",
+        id: 's7', name: "Gillette Stadium (Boston)", city: "Foxborough", country: "United States",
         capacity: "64 146", opened: "2002", resident: "New England Revolution (MLS) / Patriots (NFL)",
         matches: "Group Stage · Round of 16",
         lat: 42.0909, lng: -71.2643,
@@ -471,7 +471,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's8', name: "AT&T Stadium (Dallas)", city: "Arlington", country: "États-Unis",
+        id: 's8', name: "AT&T Stadium (Dallas)", city: "Arlington", country: "United States",
         capacity: "94 000", opened: "2009", resident: "Dallas Cowboys (NFL)",
         matches: "Semi-final (14 juillet) · 9 matches total",
         lat: 32.7473, lng: -97.0945,
@@ -479,7 +479,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's9', name: "NRG Stadium (Houston)", city: "Houston", country: "États-Unis",
+        id: 's9', name: "NRG Stadium (Houston)", city: "Houston", country: "United States",
         capacity: "68 777", opened: "2002", resident: "Houston Dynamo (MLS) / Texans (NFL)",
         matches: "Group Stage · Round of 16",
         lat: 29.6847, lng: -95.4107,
@@ -487,7 +487,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's10', name: "Arrowhead Stadium (Kansas City)", city: "Kansas City", country: "États-Unis",
+        id: 's10', name: "Arrowhead Stadium (Kansas City)", city: "Kansas City", country: "United States",
         capacity: "69 045", opened: "1972", resident: "Kansas City Chiefs (NFL)",
         matches: "Group Stage · Round of 16",
         lat: 39.1239, lng: -94.4839,
@@ -495,7 +495,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's11', name: "SoFi Stadium (Los Angeles)", city: "Inglewood", country: "États-Unis",
+        id: 's11', name: "SoFi Stadium (Los Angeles)", city: "Inglewood", country: "United States",
         capacity: "70 240", opened: "2020", resident: "LA Rams & Chargers (NFL)",
         matches: "Opening Ceremony USA · Quarter-final",
         lat: 33.9535, lng: -118.3392,
@@ -503,7 +503,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's12', name: "Hard Rock Stadium (Miami)", city: "Miami Gardens", country: "États-Unis",
+        id: 's12', name: "Hard Rock Stadium (Miami)", city: "Miami Gardens", country: "United States",
         capacity: "64 767", opened: "1987", resident: "Miami Dolphins (NFL)",
         matches: "Third-place match · Group Stage",
         lat: 25.9580, lng: -80.2389,
@@ -511,7 +511,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's13', name: "MetLife Stadium (New York/New Jersey)", city: "East Rutherford", country: "États-Unis",
+        id: 's13', name: "MetLife Stadium (New York/New Jersey)", city: "East Rutherford", country: "United States",
         capacity: "82 500", opened: "2010", resident: "NY Giants & Jets (NFL)",
         matches: "FINALE (19 juillet)",
         lat: 40.8135, lng: -74.0745,
@@ -519,7 +519,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's14', name: "Lincoln Financial Field (Philadelphie)", city: "Philadelphie", country: "États-Unis",
+        id: 's14', name: "Lincoln Financial Field (Philadelphie)", city: "Philadelphie", country: "United States",
         capacity: "68 532", opened: "2003", resident: "Philadelphia Eagles (NFL)",
         matches: "Group Stage · Round of 16",
         lat: 39.9012, lng: -75.1675,
@@ -527,7 +527,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's15', name: "Levi's Stadium (San Francisco Bay Area)", city: "Santa Clara", country: "États-Unis",
+        id: 's15', name: "Levi's Stadium (San Francisco Bay Area)", city: "Santa Clara", country: "United States",
         capacity: "68 827", opened: "2014", resident: "San Francisco 49ers (NFL)",
         matches: "Group Stage · Quarter-final",
         lat: 37.4032, lng: -121.9698,
@@ -535,7 +535,7 @@ const STADIUMS = [
         flag: "🇺🇸"
     },
     {
-        id: 's16', name: "Lumen Field (Seattle)", city: "Seattle", country: "États-Unis",
+        id: 's16', name: "Lumen Field (Seattle)", city: "Seattle", country: "United States",
         capacity: "69 000", opened: "2002", resident: "Seattle Seahawks (NFL) / Sounders (MLS)",
         matches: "Group Stage · Round of 16",
         lat: 47.5952, lng: -122.3316,
@@ -550,9 +550,9 @@ const STADIUMS = [
 
 const TEAMS = [
     // CONCACAF (hôtes)
-    { id:'t_mex', name:"Mexique", code:"MEX", conf:"CONCACAF", group:"A", wcWins:0, coach:"Javier Aguirre", flag:"https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg", icon:"🇲🇽", teamImg:"https://digitalhub.fifa.com/transform/1d5fddae-7547-4bb2-adc3-c49dae1e6a34/mex?io=transform:fill,aspectratio:16x9,width=640", lat:23.5, lng:-102.5 },
+    { id:'t_mex', name:"Mexico", code:"MEX", conf:"CONCACAF", group:"A", wcWins:0, coach:"Javier Aguirre", flag:"https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg", icon:"🇲🇽", teamImg:"https://digitalhub.fifa.com/transform/1d5fddae-7547-4bb2-adc3-c49dae1e6a34/mex?io=transform:fill,aspectratio:16x9,width=640", lat:23.5, lng:-102.5 },
     { id:'t_can', name:"Canada", code:"CAN", conf:"CONCACAF", group:"B", wcWins:0, coach:"Jesse Marsch", flag:"https://upload.wikimedia.org/wikipedia/commons/d/d9/Flag_of_Canada_%28Pantone%29.svg", icon:"🇨🇦", teamImg:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/800px-Flag_of_Canada_%28Pantone%29.svg.png", lat:60.0, lng:-96.8 },
-    { id:'t_usa', name:"États-Unis", code:"USA", conf:"CONCACAF", group:"C", wcWins:0, coach:"Mauricio Pochettino", flag:"https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg", icon:"🇺🇸", teamImg:"https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg", lat:39.5, lng:-98.0 },
+    { id:'t_usa', name:"United States", code:"USA", conf:"CONCACAF", group:"C", wcWins:0, coach:"Mauricio Pochettino", flag:"https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg", icon:"🇺🇸", teamImg:"https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg", lat:39.5, lng:-98.0 },
     { id:'t_pan', name:"Panama", code:"PAN", conf:"CONCACAF", group:"D", wcWins:0, coach:"Thomas Christiansen", flag:"https://upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg", icon:"🇵🇦", teamImg:"https://upload.wikimedia.org/wikipedia/commons/a/ab/Flag_of_Panama.svg", lat:8.5, lng:-80.0 },
     { id:'t_hai', name:"Haïti", code:"HAI", conf:"CONCACAF", group:"E", wcWins:0, coach:"Marc Collat", flag:"https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Haiti.svg", icon:"🇭🇹", teamImg:"https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Haiti.svg", lat:19.0, lng:-72.3 },
     { id:'t_cur', name:"Curaçao", code:"CUW", conf:"CONCACAF", group:"F", wcWins:0, coach:"Remko Bicentini", flag:"https://upload.wikimedia.org/wikipedia/commons/b/b1/Flag_of_Cura%C3%A7ao.svg", icon:"🇨🇼", teamImg:"https://upload.wikimedia.org/wikipedia/commons/b/b1/Flag_of_Cura%C3%A7ao.svg", lat:12.2, lng:-69.0 },
@@ -621,10 +621,10 @@ const FIFA_RANKINGS = {
     'CRO': 11,  // Croatie
     'COL': 12,  // Colombie
     'SUI': 13,  // Suisse
-    'MEX': 14,  // Mexique
+    'MEX': 14,  // Mexico
     'SEN': 15,  // Sénégal
     'URU': 16,  // Uruguay
-    'USA': 17,  // États-Unis
+    'USA': 17,  // United States
     'JPN': 18,  // Japon
     'SWE': 19,  // Suède
     'IRN': 20,  // Iran
@@ -699,9 +699,10 @@ let filterState = { country: 'all', capacity: 'all', conf: 'all' }; // `filterSt
 function createStadiumMarkerEl() {
     const el = document.createElement('div');
     el.className = 'stadium-marker';
+    const filterId = 'sh-' + Math.random().toString(36).substr(2, 9); // ID unique
     el.innerHTML = `<svg width="38" height="42" viewBox="0 0 38 42" xmlns="http://www.w3.org/2000/svg">
-        <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/></filter>
-        <g filter="url(#sh)">
+        <defs><filter id="${filterId}"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/></filter></defs>
+        <g filter="url(#${filterId})">
             <ellipse cx="19" cy="34" rx="10" ry="4" fill="rgba(0,0,0,0.3)"/>
             <path d="M19 2 C10 2 3 9 3 18 C3 28 19 40 19 40 C19 40 35 28 35 18 C35 9 28 2 19 2Z" fill="#eab308"/>
             <path d="M19 5 C12 5 6 11 6 18 C6 26 19 37 19 37 C19 37 32 26 32 18 C32 11 26 5 19 5Z" fill="#0f172a"/>
@@ -1104,16 +1105,6 @@ function showStadiums() {
     // Recentre la carte
     map.flyTo({ center: [-99, 35], zoom: 3.2, pitch: 45, bearing: 0, duration: 1200 });
 
-    // Filtre recherche
-    document.addEventListener('input', e => {
-        if (e.target.id !== 'search-input') return;
-        const q = e.target.value.toLowerCase().trim();
-        document.querySelectorAll('.item-card').forEach(card => {
-            const text = card.innerText.toLowerCase();
-            card.style.display = (!q || text.includes(q)) ? '' : 'none';
-        });
-    });
-
     // Réinitialise les filtres
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.filter-chip[data-filter="all"]').forEach(c => c.classList.add('active'));
@@ -1160,8 +1151,10 @@ function showStadiums() {
             map.flyTo({ center: [s.lng, s.lat], zoom: 13, pitch: 55, duration: 1100 });
         });
         const marker = new maplibregl.Marker({ element: el }).setLngLat([s.lng, s.lat]).addTo(map);
+        marker.getElement().dataset.stadiumId = s.id;   // ← stocke l'identifiant
         stadiumMarkers.push(marker);
     });
+    filterItems();
     updateStats();
 }
 
@@ -1236,8 +1229,10 @@ async function showTeams() {
             map.flyTo({ center: [t.lng, t.lat], zoom: 3.8, pitch: 30, duration: 1100 });
         });
         const marker = new maplibregl.Marker({ element: el }).setLngLat([t.lng, t.lat]).addTo(map);
+        marker.getElement().dataset.teamId = t.id;       // ← stocke l'identifiant
         teamMarkers.push(marker);
     });
+    filterItems();
     updateStats();
 }
 
@@ -1327,13 +1322,12 @@ function filterItems() {
     const cards = document.querySelectorAll('.item-card');
     let visibleCount = 0;
 
+    // --- Filtrage des cartes dans la sidebar ---
     cards.forEach(card => {
         const id = card.id.replace('card-', '');
         let show = true;
-
         const text = card.innerText.toLowerCase();
         if (searchQuery && !text.includes(searchQuery)) show = false;
-
         if (show && currentMode === 'stadiums') {
             const stadium = STADIUMS.find(s => s.id === id);
             if (!stadium) show = false;
@@ -1351,30 +1345,81 @@ function filterItems() {
             if (!team) show = false;
             else if (filterState.conf !== 'all' && team.conf !== filterState.conf) show = false;
         }
-
         card.style.display = show ? '' : 'none';
         if (show) visibleCount++;
     });
 
+    // --- Filtrage des marqueurs sur la carte ---
     if (currentMode === 'stadiums') {
-        stadiumMarkers.forEach((marker, index) => {
-            const s = STADIUMS[index];
-            if (!s) return;
+        stadiumMarkers.forEach(marker => {
+            const el = marker.getElement();
+            const sid = el.dataset.stadiumId;          // récupère l'ID stocké
+            const s = STADIUMS.find(st => st.id === sid);
+            if (!s) {
+                // Si on ne trouve pas le stade, on cache le marqueur par sécurité
+                el.style.display = 'none';
+                return;
+            }
             let show = true;
-
-            if (searchQuery && !(s.name + s.city + s.country).toLowerCase().includes(searchQuery)) show = false;
-            if (show && filterState.country !== 'all' && s.country !== filterState.country) show = false;
+            // Filtre par texte (recherche)
+            if (searchQuery && !(s.name + ' ' + s.city + ' ' + s.country).toLowerCase().includes(searchQuery)) {
+                show = false;
+            }
+            // Filtre par pays
+            if (show && filterState.country !== 'all' && s.country !== filterState.country) {
+                show = false;
+            }
+            // Filtre par capacité
             if (show && filterState.capacity !== 'all') {
                 const cap = parseInt(s.capacity.replace(/[^0-9]/g, ''), 10);
-                if (isNaN(cap) || cap < parseInt(filterState.capacity, 10)) show = false;
+                if (isNaN(cap) || cap < parseInt(filterState.capacity, 10)) {
+                    show = false;
+                }
             }
-
-            marker.getElement().style.display = show ? '' : 'none';
+            el.style.display = show ? '' : 'none';
         });
     }
 
+    if (currentMode === 'teams') {
+        teamMarkers.forEach(marker => {
+            const el = marker.getElement();
+            const tid = el.dataset.teamId;
+            const t = TEAMS.find(team => team.id === tid);
+            if (!t) {
+                el.style.display = 'none';
+                return;
+            }
+            let show = true;
+            // Filtre par texte (recherche)
+            if (searchQuery && !(t.name + ' ' + t.code + ' ' + t.conf).toLowerCase().includes(searchQuery)) {
+                show = false;
+            }
+            // Filtre par confédération
+            if (show && filterState.conf !== 'all' && t.conf !== filterState.conf) {
+                show = false;
+            }
+            el.style.display = show ? '' : 'none';
+        });
+
+        // 🆕 RECENTRAGE AUTOMATIQUE SI UNE CONFÉDÉRATION EST SÉLECTIONNÉE
+        if (filterState.conf !== 'all') {
+            const visible = teamMarkers.filter(m => m.getElement().style.display !== 'none');
+            if (visible.length) {
+                const bounds = new maplibregl.LngLatBounds();
+                visible.forEach(m => bounds.extend(m.getLngLat()));
+                map.fitBounds(bounds, { padding: 100, maxZoom: 5, duration: 800 });
+            }
+        }
+    }
+    
+    // Mise à jour du compteur dans l'en-tête de la sidebar
     document.getElementById('sidebar-count').textContent = visibleCount;
 }
+
+// Écouteur de la barre de recherche (une seule fois)
+document.getElementById('search-input').addEventListener('input', () => {
+    filterItems();
+});
 
 // ======================== INITIALISATION DE LA CARTE ========================
 async function initMap() {
