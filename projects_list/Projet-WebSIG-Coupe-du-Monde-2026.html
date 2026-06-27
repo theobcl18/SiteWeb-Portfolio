@@ -392,20 +392,27 @@
 
 <script>
 
-// Splash screen
+// ============================================================
+// ÉCRAN DE DÉMARRAGE (SPLASH SCREEN)
+// ============================================================
+// Cette fonction s'exécute immédiatement pour afficher le compte à rebours jusqu'à la finale et masquer le splash.
+
 (function() {
-    const final = new Date('2026-07-19T00:00:00');
-    const now = new Date();
-    const days = Math.max(0, Math.ceil((final - now) / 86400000));
-    document.getElementById('splash-days').textContent = days;
+    const final = new Date('2026-07-19T00:00:00');                  // Date de la finale (19 juillet 2026)
+    const now = new Date();                                         // Différence en jours (minimum 0)
+    const days = Math.max(0, Math.ceil((final - now) / 86400000));  // Affiche le nombre de jours dans le splash
+    document.getElementById('splash-days').textContent = days;      // Après 2,8 secondes, on fait disparaître le splash
     setTimeout(() => {
         const s = document.getElementById('splash');
-        s.style.opacity = '0';
-        setTimeout(() => s.style.display = 'none', 800);
+        s.style.opacity = '0'; // transition vers du transparent
+        setTimeout(() => s.style.display = 'none', 800); // On supprime complètement l'élément après la transition (0,8s)
     }, 2800);
 })();
 
-// ======================== DONNÉES StadiumS ========================
+// ======================== DONNÉES DES STADES ========================
+// Chaque objet contient les informations d'un stade officiel.
+// Les coordonnées (lat, lng) serviront à placer les marqueurs.
+
 const STADIUMS = [
     {
         id: 's1', name: "Stadium de Toronto (BMO Field)", city: "Toronto", country: "Canada",
@@ -537,7 +544,10 @@ const STADIUMS = [
     }
 ];
 
-// ======================== DONNÉES ÉQUIPES (48 nations) ========================
+// ======================== DONNÉES DES ÉQUIPES (48 nations) ========================
+// Chaque équipe a un id, nom, code FIFA, confédération, groupe, etc.
+// `teamImg` peut contenir une URL vers une photo d'équipe.
+
 const TEAMS = [
     // CONCACAF (hôtes)
     { id:'t_mex', name:"Mexique", code:"MEX", conf:"CONCACAF", group:"A", wcWins:0, coach:"Javier Aguirre", flag:"https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg", icon:"🇲🇽", teamImg:"https://digitalhub.fifa.com/transform/1d5fddae-7547-4bb2-adc3-c49dae1e6a34/mex?io=transform:fill,aspectratio:16x9,width=640", lat:23.5, lng:-102.5 },
@@ -595,7 +605,8 @@ const TEAMS = [
     { id:'t_nzl', name:"Nouvelle-Zélande", code:"NZL", conf:"OFC", group:"D", wcWins:0, coach:"Darren Bazeley", flag:"https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg", icon:"🇳🇿", teamImg:"https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg", lat:-41.3, lng:174.8 }
 ];
 
-// Classement FIFA (juin 2026)
+// ======================== CLASSEMENT FIFA ========================
+// Associé à chaque code FIFA (3 lettres) son rang mondial (simulé juin 2026).
 const FIFA_RANKINGS = {
     'ARG': 1,   // Argentine
     'FRA': 2,   // France
@@ -648,8 +659,9 @@ const FIFA_RANKINGS = {
     // 49 est libre
     'UZB': 50   // Ouzbékistan
 };
-// Ajoute les autres équipes si tu trouves leurs classements
 
+// ======================== MAPPING PAYS PARTICIPANTS ========================
+// Ces ensembles servent à colorier les pays qualifiés sur la carte.
 // Mapping code ISO 3166-1 alpha-3 → code FIFA ou nom
 // Utilisé pour filtrer les polygones du GeoJSON Eurostat
 const PARTICIPANT_ISO3 = new Set([
@@ -671,15 +683,19 @@ const PARTICIPANT_NAME_EN = new Set([
 ]);
 
 
-// ======================== ÉTAT ========================
-let map, currentMode = 'stadiums';
-let hoverPopup = null, activePopup = null;
-let stadiumMarkers = [], teamMarkers = [];
-let activeCard = null;
-let countriesGeoJSONLoaded = false;
-let filterState = { country: 'all', capacity: 'all', conf: 'all' };
+// ======================== ÉTAT GLOBAL DE L'APPLICATION ========================
 
-// ======================== SVG MARQUEUR Stadium ========================
+let map, currentMode = 'stadiums';                                  // `map` : l'objet MapLibre GL JS  `currentMode` : 'stadiums' ou 'teams'
+let hoverPopup = null, activePopup = null;                          // `hoverPopup`, `activePopup` : références aux popups (survol / clic)
+let stadiumMarkers = [], teamMarkers = [];                          // `stadiumMarkers`, `teamMarkers` : tableaux des marqueurs affichés
+let activeCard = null;                                              // `activeCard` : id de la carte sélectionnée dans la sidebar
+let countriesGeoJSONLoaded = false;                                 // `countriesGeoJSONLoaded` : évite de recharger le GeoJSON des pays
+let filterState = { country: 'all', capacity: 'all', conf: 'all' }; // `filterState` : état des filtres (pays, capacité, confédération)
+
+
+// ======================== CRÉATION DU MARQUEUR STADE ========================
+// Renvoie un élément HTML contenant un SVG de stade (icône doré).
+// On l'utilisera comme marqueur personnalisé sur la carte.
 function createStadiumMarkerEl() {
     const el = document.createElement('div');
     el.className = 'stadium-marker';
@@ -695,12 +711,15 @@ function createStadiumMarkerEl() {
     return el;
 }
 
-// ======================== POPUPS ========================
-async function openStadiumPopup(s, lngLat) {
-    const matches = FD_KEY ? await fetchMatches() : [];
-    const resultsHtml = renderMatchesForStadium(matches, s.name);
+// ======================== GESTION DES POPUPS ========================
+// `openStadiumPopup(s, lngLat)` : construit le contenu HTML d'un popup stade,
+// appelle l'API football-data.org pour afficher les résultats récents,
+// puis ouvre le popup.
+async function openStadiumPopup(s, lngLat) {                       // Récupère les matchs (depuis le cache ou l'API)
+    const matches = FD_KEY ? await fetchMatches() : [];            // Génère le HTML des matchs joués dans ce stade
+    const resultsHtml = renderMatchesForStadium(matches, s.name);  // Badge spécial si le stade accueille un match clé
     const isSpecial = s.matches.includes('FINALE') || s.matches.includes('Opening') || s.matches.includes('Semi');
-    const badge = isSpecial ? `<span class="popup-badge"><i class="fas fa-star"></i> KEY MATCH</span>` : '';
+    const badge = isSpecial ? `<span class="popup-badge"><i class="fas fa-star"></i> KEY MATCH</span>` : '';  // Assemblage du popup
     const html = `
         <div class="popup-title">${s.flag} ${s.name}</div>
         <img class="popup-img" src="${s.image}" onerror="this.src='https://upload.wikimedia.org/wikipedia/en/thumb/e/ec/FIFA_World_Cup_2026.svg/1200px-FIFA_World_Cup_2026.svg.png'" alt="${s.name}">
@@ -713,33 +732,95 @@ async function openStadiumPopup(s, lngLat) {
     openPopup(lngLat, html);
 }
 
+// `openTeamPopup(t, lngLat)` : construit un popup pour une équipe nationale.
+// Récupère les résultats et met à jour les statistiques en direct.
 async function openTeamPopup(t, lngLat) {
     const matches = FD_KEY ? await fetchMatches() : [];
     const resultsHtml = renderMatchesForTeam(matches, t.code);
-    const winsStr = t.wcWins > 0 ? `🏆 ${t.wcWins} title${t.wcWins>1?'s':''}` : 'No titles';
+    updateStatsForTeam(t.code, matches);
+
+    // 🆕 STATUT CORRIGÉ
+    let statusHtml = '';
+
+    // Tous les matchs SCHEDULED ou LIVE de la compétition
+    const allUpcoming = matches.filter(m => m.status === 'SCHEDULED' || m.status === 'IN_PLAY' || m.status === 'PAUSED');
+    const upcoming = allUpcoming.filter(m => m.homeTeam?.tla === t.code || m.awayTeam?.tla === t.code);
+    upcoming.sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+    const nextMatch = upcoming[0];
+
+    // Matchs terminés de l'équipe
+    const finished = matches.filter(m => m.status === 'FINISHED' && (m.homeTeam?.tla === t.code || m.awayTeam?.tla === t.code));
+
+    // Nombre total de matchs de groupe (72 pour 2026, 12 groupes × 6 matchs)
+    const TOTAL_GROUP_MATCHES = 72;
+    const finishedGroupMatches = matches.filter(m => m.status === 'FINISHED' && m.stage === 'GROUP_STAGE').length;
+    const groupStageFinished = finishedGroupMatches >= TOTAL_GROUP_MATCHES;
+
+    if (nextMatch) {
+        const date = new Date(nextMatch.utcDate);
+        const formattedDate = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const opponent = nextMatch.homeTeam?.tla === t.code ? nextMatch.awayTeam?.name : nextMatch.homeTeam?.name;
+        statusHtml = `<div class="popup-row"><i class="fas fa-clock"></i> Prochain match : vs ${opponent} le ${formattedDate}</div>`;
+    } else {
+        // Aucun match à venir
+        if (finished.length === 0) {
+            // L'équipe n'a pas encore joué
+            statusHtml = `<div class="popup-row"><i class="fas fa-hourglass-start"></i> En attente du 1er match</div>`;
+        } else if (!groupStageFinished) {
+            // La phase de poule n'est pas encore terminée
+            // L'équipe a déjà joué ses matchs de groupe et n'a pas de prochain match ? 
+            // Normalement les matchs de groupe restants apparaîtraient, mais si ce n'est pas le cas,
+            // on considère qu'elle est en attente des phases finales (car elle peut être qualifiée).
+            const lastMatch = finished[finished.length - 1];
+            if (lastMatch.stage === 'GROUP_STAGE') {
+                statusHtml = `<div class="popup-row"><i class="fas fa-spinner"></i> En attente des phases finales</div>`;
+            } else {
+                // Cas rare (match de phase finale déjà joué)
+                statusHtml = `<div class="popup-row"><i class="fas fa-times-circle"></i> Éliminée</div>`;
+            }
+        } else {
+            // Phase de groupes terminée, l'équipe n'a plus de match → elle n'est pas en phase finale
+            statusHtml = `<div class="popup-row"><i class="fas fa-times-circle"></i> Éliminée</div>`;
+        }
+    }
+
+    const winsStr = t.wcWins > 0 ? `🏆 ${t.wcWins} titre${t.wcWins>1?'s':''}` : 'Aucun titre';
     const rank = FIFA_RANKINGS[t.code] || '—';
+
+    let imageHtml = '';
+    if (t.code === 'FRA' && t.teamImg) {
+        imageHtml = `<img class="popup-img" src="${t.teamImg}" alt="Équipe de France" onerror="this.style.display='none'">`;
+    }
+
     const html = `
         <img class="popup-flag" src="${t.flag}" alt="${t.name}" onerror="this.style.display='none'">
         <div class="popup-title">${t.icon} ${t.name} (${t.code})</div>
+        ${imageHtml}
         <div class="popup-row"><i class="fas fa-trophy"></i> ${winsStr}</div>
-        <div class="popup-row"><i class="fas fa-ranking-star"></i> FIFA Ranking: ${rank !== '—' ? '#'+rank : 'N/A'}</div>
+        <div class="popup-row"><i class="fas fa-ranking-star"></i> Classement FIFA : ${rank !== '—' ? '#'+rank : 'N/A'}</div>
         <div class="popup-row"><i class="fas fa-person-chalkboard"></i> ${t.coach}</div>
-        <div class="popup-row"><i class="fas fa-layer-group"></i> Group ${t.group}</div>
+        <div class="popup-row"><i class="fas fa-layer-group"></i> Groupe ${t.group}</div>
         <div class="popup-row"><i class="fas fa-earth-americas"></i> ${t.conf}</div>
-        ${resultsHtml}
-        <span class="popup-badge">FIFA World Cup 2026™</span>`;
+        ${statusHtml}
+        ${resultsHtml}`;
+
     openPopup(lngLat, html);
 }
 
+// `openPopup(lngLat, html)` : crée un popup MapLibre avec le contenu donné.
+// Ferme tout popup précédent.
 function openPopup(lngLat, html) {
+    if (hoverPopup) { hoverPopup.remove(); hoverPopup = null; }
     if (activePopup) activePopup.remove();
     activePopup = new maplibregl.Popup({ offset: 25, closeButton: true, closeOnClick: false, className: 'custom-popup' })
         .setLngLat(lngLat)
         .setHTML(html)
         .addTo(map);
+    activePopup.on('close', () => { activePopup = null; });
 }
 
-// ======================== MARQUEURS ========================
+// ======================== NETTOYAGE DES MARQUEURS ========================
+// Supprime tous les marqueurs et popups, réinitialise la sélection.
 function clearAll() {
     stadiumMarkers.forEach(m => m.remove());
     teamMarkers.forEach(m => m.remove());
@@ -750,6 +831,7 @@ function clearAll() {
     activeCard = null;
 }
 
+// ======================== SÉLECTION D'UNE CARTE DANS LA SIDEBAR ========================
 function setActiveCard(id) {
     document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
     const el = document.getElementById('card-' + id);
@@ -757,7 +839,9 @@ function setActiveCard(id) {
     activeCard = id;
 }
 
-// ======================== RESET VIEW ========================
+// ======================== BOUTON "RESET VIEW" ========================
+// Remet la carte à sa position initiale selon le mode (stades : Amérique du Nord,
+// nations : vue mondiale).
 document.getElementById('reset-view-btn').addEventListener('click', () => {
     if (currentMode === 'stadiums') {
         map.flyTo({ center: [-99, 35], zoom: 3.2, pitch: 45, duration: 1200 });
@@ -766,9 +850,13 @@ document.getElementById('reset-view-btn').addEventListener('click', () => {
     }
     if (activePopup) { activePopup.remove(); activePopup = null; }
     document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
+    updateStats();
 });
 
-// ======================== STATS ========================
+// ======================== PANNEAU DE STATISTIQUES (MODE STADES / NATIONS) ========================
+// `updateStats()` rafraîchit les 3 stats affichées en haut à droite.
+// En mode stades : capacité totale, plus grand stade, stade le plus au nord.
+// En mode nations : nombre de confédérations, nombre de débutants, équipe la plus titrée.
 function updateStats() {
     if (currentMode === 'stadiums') {
         const totalCap = STADIUMS.reduce((acc, s) => {
@@ -805,12 +893,121 @@ function updateStats() {
     }
 }
 
+// `updateStatsForStadium(s)` : affiche des statistiques spécifiques au stade cliqué
+// (dernier match, nombre de matchs joués, équipe à domicile).
+async function updateStatsForStadium(s) {
+    const matches = FD_KEY ? await fetchMatches() : [];
+    
+    // Cherche le dernier match joué dans ce stade (même logique que renderMatchesForStadium)
+    const stadeKey = s.name.split('(')[0].trim().toLowerCase().slice(0, 8);
+    const played = matches.filter(m =>
+        m.status === 'FINISHED' &&
+        m.venue && m.venue.toLowerCase().includes(stadeKey)
+    );
 
-const FD_KEY = 'c12fcd1126684d25aee089fd67957f18'; // ← remplace par ta vraie clé
-const WC2026_ID = 'WC';       // ID de la compétition FIFA WC sur football-data.org
+    if (!played.length) {
+        // Pas encore de match joué dans ce stade : on garde les stats globales
+        updateStats();
+        return;
+    }
 
-let matchCache = null; // cache pour éviter de re-fetcher à chaque popup
+    const last = played[played.length - 1];
+    const scoreH = last.score?.fullTime?.home ?? '–';
+    const scoreA = last.score?.fullTime?.away ?? '–';
+    const dateStr = last.utcDate ? new Date(last.utcDate).toLocaleDateString('fr-FR', { day:'2-digit', month:'short' }) : '';
 
+    document.getElementById('stat1').innerHTML = `
+        <div class="stat-val" style="font-size:0.65rem; line-height:1.3;">${last.homeTeam?.tla} ${scoreH}–${scoreA} ${last.awayTeam?.tla}</div>
+        <div class="stat-lbl">Last match<br>${dateStr}</div>`;
+    document.getElementById('stat2').innerHTML = `
+        <div class="stat-val">${played.length}</div>
+        <div class="stat-lbl">Matches<br>played here</div>`;
+    document.getElementById('stat3').innerHTML = `
+        <div class="stat-val" style="font-size:0.65rem;">${last.homeTeam?.name?.split(' ')[0] ?? '—'}</div>
+        <div class="stat-lbl">Home side<br>last match</div>`;
+}
+
+// ======================== STATISTIQUES DYNAMIQUES POUR UNE ÉQUIPE ========================
+// Calcule le total de buts marqués, le meilleur buteur (via l'API scorers) et le dernier résultat.
+async function updateStatsForTeam(teamCode, matches) {
+    // Filtrer les matchs terminés de l'équipe
+    const teamMatches = matches.filter(m =>
+        m.status === 'FINISHED' &&
+        (m.homeTeam?.tla === teamCode || m.awayTeam?.tla === teamCode)
+    );
+
+    // Total de buts marqués par l'équipe
+    let totalGoals = 0;
+    teamMatches.forEach(m => {
+        const isHome = m.homeTeam?.tla === teamCode;
+        totalGoals += isHome
+            ? (m.score?.fullTime?.home ?? 0)
+            : (m.score?.fullTime?.away ?? 0);
+    });
+
+    // Meilleur buteur via scorers (nécessite un appel séparé — voir Étape B)
+    // Pour l'instant on affiche ce qu'on peut calculer directement
+
+    // Dernier match
+    const lastMatch = teamMatches[teamMatches.length - 1];
+    let lastMatchHtml = '—';
+    if (lastMatch) {
+        const isHome = lastMatch.homeTeam?.tla === teamCode;
+        const opponent = isHome ? lastMatch.awayTeam?.name : lastMatch.homeTeam?.name;
+        const scoreH = lastMatch.score?.fullTime?.home ?? '–';
+        const scoreA = lastMatch.score?.fullTime?.away ?? '–';
+        lastMatchHtml = `${scoreH}–${scoreA}<br><span style="font-size:0.48rem;">vs ${opponent}</span>`;
+    }
+
+    // Fetch scorers
+    const scorers = await fetchScorers();
+    const teamScorers = scorers.filter(s => s.team?.tla === teamCode);
+    const topScorer = teamScorers[0]; // déjà trié par goals desc par l'API
+
+    const topScorerHtml = topScorer
+        ? `${topScorer.player?.name?.split(' ').pop()}<br><span style="font-size:0.48rem;">${topScorer.goals ?? 0} goals</span>`
+        : '—';
+
+    // Mise à jour du panneau
+    document.getElementById('stat1').innerHTML = `
+        <div class="stat-val">${totalGoals}</div>
+        <div class="stat-lbl">Goals scored<br>in tournament</div>`;
+    document.getElementById('stat2').innerHTML = `
+        <div class="stat-val" style="font-size:0.68rem; line-height:1.2;">${topScorerHtml}</div>
+        <div class="stat-lbl">Top scorer</div>`;
+    document.getElementById('stat3').innerHTML = `
+        <div class="stat-val" style="font-size:0.75rem;">${lastMatchHtml}</div>
+        <div class="stat-lbl">Last match</div>`;
+}
+
+// ======================== CACHE POUR LES BUTEURS ========================
+let scorersCache = null;
+
+async function fetchScorers() {
+    if (scorersCache) return scorersCache;
+    try {
+        const proxyUrl = 'https://corsproxy.io/?';
+        const targetUrl = `https://api.football-data.org/v4/competitions/${WC2026_ID}/scorers?limit=20`;
+        const r = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
+            headers: { 'X-Auth-Token': FD_KEY }
+        });
+        const data = await r.json();
+        scorersCache = data.scorers || [];
+        return scorersCache;
+    } catch(e) {
+        console.warn('Scorers unavailable:', e);
+        return [];
+    }
+}
+
+
+// ======================== CONFIGURATION API FOOTBALL-DATA.ORG ========================
+const FD_KEY = 'c12fcd1126684d25aee089fd67957f18';  // clé d'API (à garder secrète en production)
+const WC2026_ID = 'WC';                             // identifiant de la compétition Coupe du Monde
+
+let matchCache = null;  // cache pour les matchs
+
+// Récupère la liste des matchs de la compétition (avec mise en cache)
 async function fetchMatches() {
     if (matchCache) return matchCache;
     try {
@@ -829,6 +1026,8 @@ async function fetchMatches() {
     }
 }
 
+// ======================== RENDU DES RÉSULTATS DANS LES POPUPS ========================
+// `renderMatchesForTeam` : affiche les derniers résultats de l'équipe.
 function renderMatchesForTeam(matches, teamCode) {
     // Cherche les matchs de cette équipe (finis ou en cours)
     const relevant = matches.filter(m =>
@@ -858,6 +1057,7 @@ function renderMatchesForTeam(matches, teamCode) {
     </div>`;
 }
 
+// `renderMatchesForStadium` : affiche les 4 derniers matchs joués dans le stade.
 function renderMatchesForStadium(matches, stadiumName) {
     // Cherche les matchs joués dans ce stade (finis)
     const relevant = matches.filter(m =>
@@ -881,12 +1081,12 @@ function renderMatchesForStadium(matches, stadiumName) {
     </div>`;
 }
 
-
-
-// ======================== MODE StadiumS ========================
+// ======================== MODE STADES ========================
+// Affiche la carte centrée sur l'Amérique du Nord, les marqueurs des stades,
+// la sidebar avec la liste des stades et les filtres appropriés.
 function showStadiums() {
     clearAll();
-    currentMode = 'stadiums';
+    currentMode = 'stadiums';       // Met à jour l'interface (icônes, titres, bouton de bascule)
     document.getElementById('sidebar-icon').className = 'fas fa-landmark';
     document.getElementById('sidebar-title').textContent = 'Host Stadiums';
     document.getElementById('sidebar-count').textContent = '16';
@@ -896,10 +1096,12 @@ function showStadiums() {
     document.getElementById('team-filters').style.display = 'none';
     document.getElementById('filter-container').style.display = 'block';
 
-    if (map.getLayer('country-fill')) map.setLayoutProperty('country-fill', 'visibility', 'none');
+    document.getElementById('stats-panel').style.display = 'none';     // Cache le panneau de stats (car on est en mode stades)
+
+    if (map.getLayer('country-fill')) map.setLayoutProperty('country-fill', 'visibility', 'none');     // Cache la couche des pays colorés
     if (map.getLayer('country-outline')) map.setLayoutProperty('country-outline', 'visibility', 'none');
 
-    // Centrer sur l'Amérique du Nord
+    // Recentre la carte
     map.flyTo({ center: [-99, 35], zoom: 3.2, pitch: 45, bearing: 0, duration: 1200 });
 
     // Filtre recherche
@@ -912,12 +1114,12 @@ function showStadiums() {
         });
     });
 
-    // Réinitialiser les filtres
+    // Réinitialise les filtres
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.filter-chip[data-filter="all"]').forEach(c => c.classList.add('active'));
     filterState = { country: 'all', capacity: 'all', conf: 'all' };
 
-    // Construire liste sidebar
+    // Construit la liste des stades dans la sidebar
     const container = document.getElementById('item-list');
     container.innerHTML = '';
     STADIUMS.forEach(s => {
@@ -932,26 +1134,29 @@ function showStadiums() {
         div.addEventListener('click', () => {
             setActiveCard(s.id);
             openStadiumPopup(s, [s.lng, s.lat]);               // ← nouvelle fonction async
+            updateStatsForStadium(s);
             map.flyTo({ center: [s.lng, s.lat], zoom: 13, pitch: 55, duration: 1100 });
         });
         container.appendChild(div);
     });
 
-    // Créer marqueurs
+    // Crée les marqueurs sur la carte
     STADIUMS.forEach(s => {
         const el = createStadiumMarkerEl();
         el.addEventListener('mouseenter', () => {
+            if (activePopup) return; // bloque si popup clic ouverte
             if (hoverPopup) hoverPopup.remove();
             hoverPopup = new maplibregl.Popup({ offset: 18, closeButton: false, closeOnClick: false, className: 'custom-popup' })
                 .setLngLat([s.lng, s.lat])
                 .setHTML(`<div style="font-weight:700; font-size:0.85rem;">${s.flag} ${s.name}</div><div style="font-size:0.7rem; opacity:0.75;">${s.city} · ${s.capacity}</div>`)
                 .addTo(map);
         });
-        el.addEventListener('mouseleave', () => { if (hoverPopup) { hoverPopup.remove(); hoverPopup = null; } });
-        el.addEventListener('click', e => {
+        el.addEventListener('mouseleave', () => { if (hoverPopup) { hoverPopup.remove(); hoverPopup = null; } }); 
+        el.addEventListener('click', e => {        // Clic : ouvre le popup détaillé
             e.stopPropagation();
             setActiveCard(s.id);
             openStadiumPopup(s, [s.lng, s.lat]);
+            updateStatsForStadium(s);
             map.flyTo({ center: [s.lng, s.lat], zoom: 13, pitch: 55, duration: 1100 });
         });
         const marker = new maplibregl.Marker({ element: el }).setLngLat([s.lng, s.lat]).addTo(map);
@@ -961,6 +1166,8 @@ function showStadiums() {
 }
 
 // ======================== MODE NATIONS ========================
+// Affiche la carte en vue monde, colore les pays qualifiés, affiche les marqueurs
+// des équipes et la sidebar avec la liste des nations.
 async function showTeams() {
     clearAll();
     currentMode = 'teams';
@@ -973,17 +1180,19 @@ async function showTeams() {
     document.getElementById('team-filters').style.display = 'block';
     document.getElementById('filter-container').style.display = 'block';
 
-    map.flyTo({ center: [10, 20], zoom: 2.0, pitch: 30, bearing: 0, duration: 1300 });
+    document.getElementById('stats-panel').style.display = 'flex';     // Affiche le panneau de stats
 
-    // Charger et afficher COUNTRY colorés
+    map.flyTo({ center: [10, 20], zoom: 2.0, pitch: 30, bearing: 0, duration: 1300 });     // Recentre la carte
+
+    // Charge ou affiche la couche des pays
     await ensureCountryLayer();
     if (map.getLayer('country-fill')) map.setLayoutProperty('country-fill', 'visibility', 'visible');
     if (map.getLayer('country-outline')) map.setLayoutProperty('country-outline', 'visibility', 'visible');
 
-    // Sidebar
+    // Construit la liste des équipes dans la sidebar
     const container = document.getElementById('item-list');
     container.innerHTML = '';
-    TEAMS.forEach(t => {
+    TEAMS.forEach(t => {     // Marqueurs des équipes (petits drapeaux)
         const div = document.createElement('div');
         div.className = 'item-card';
         div.id = 'card-' + t.id;
@@ -1012,6 +1221,7 @@ async function showTeams() {
         el.innerHTML = `<img src="${t.flag}" style="width:22px;height:14px;object-fit:cover;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">`;
         el.title = t.name;
         el.addEventListener('mouseenter', () => {
+            if (activePopup) return; // bloque si popup clic ouverte
             if (hoverPopup) hoverPopup.remove();
             hoverPopup = new maplibregl.Popup({ offset: 18, closeButton: false, closeOnClick: false, className: 'custom-popup' })
                 .setLngLat([t.lng, t.lat])
@@ -1031,7 +1241,9 @@ async function showTeams() {
     updateStats();
 }
 
-// ======================== COUCHE COUNTRY ========================
+
+// ======================== COUCHE DES PAYS (GEOJSON) ========================
+// Charge un GeoJSON mondial, marque les pays participants et ajoute les couches de remplissage et de contour. Ajoute aussi les événements de clic.
 async function ensureCountryLayer() {
     if (countriesGeoJSONLoaded) return;
     try {
@@ -1106,7 +1318,9 @@ async function ensureCountryLayer() {
 }
 
 
-// FONCTION DE FILTRAGE
+// ======================== FONCTION DE FILTRAGE ========================
+// Applique les filtres de la barre de recherche et des chips (pays, capacité, confédération)
+// sur les cartes de la sidebar ET sur les marqueurs visibles.
 
 function filterItems() {
     const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
@@ -1117,7 +1331,6 @@ function filterItems() {
         const id = card.id.replace('card-', '');
         let show = true;
 
-        // Filtre recherche
         const text = card.innerText.toLowerCase();
         if (searchQuery && !text.includes(searchQuery)) show = false;
 
@@ -1125,12 +1338,10 @@ function filterItems() {
             const stadium = STADIUMS.find(s => s.id === id);
             if (!stadium) show = false;
             else {
-                // Filtre COUNTRY
                 if (filterState.country !== 'all' && stadium.country !== filterState.country) show = false;
-                // Filtre capacité
                 if (filterState.capacity !== 'all') {
-                    const cap = parseInt(stadium.capacity.replace(/[^0-9]/g, ''));
-                    if (isNaN(cap) || cap < parseInt(filterState.capacity)) show = false;
+                    const cap = parseInt(stadium.capacity.replace(/[^0-9]/g, ''), 10);
+                    if (isNaN(cap) || cap < parseInt(filterState.capacity, 10)) show = false;
                 }
             }
         }
@@ -1145,10 +1356,27 @@ function filterItems() {
         if (show) visibleCount++;
     });
 
+    if (currentMode === 'stadiums') {
+        stadiumMarkers.forEach((marker, index) => {
+            const s = STADIUMS[index];
+            if (!s) return;
+            let show = true;
+
+            if (searchQuery && !(s.name + s.city + s.country).toLowerCase().includes(searchQuery)) show = false;
+            if (show && filterState.country !== 'all' && s.country !== filterState.country) show = false;
+            if (show && filterState.capacity !== 'all') {
+                const cap = parseInt(s.capacity.replace(/[^0-9]/g, ''), 10);
+                if (isNaN(cap) || cap < parseInt(filterState.capacity, 10)) show = false;
+            }
+
+            marker.getElement().style.display = show ? '' : 'none';
+        });
+    }
+
     document.getElementById('sidebar-count').textContent = visibleCount;
 }
 
-// ======================== INIT CARTE ========================
+// ======================== INITIALISATION DE LA CARTE ========================
 async function initMap() {
     map = new maplibregl.Map({
         container: 'map',
@@ -1177,7 +1405,7 @@ async function initMap() {
     });
 }
 
-// Gestion des filtres
+// ======================== GESTION DES FILTRES (CHIPS) ========================
 document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
         const group = this.dataset.group;
@@ -1193,12 +1421,13 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
     });
 });
 
-// Bouton bascule
+// ======================== BOUTON DE BASCULE STADES / NATIONS ========================
 document.getElementById('switch-view').addEventListener('click', () => {
     if (currentMode === 'stadiums') showTeams();
     else showStadiums();
 });
 
+// Lancement de l'application
 initMap();
 </script>
 </body>
