@@ -689,6 +689,7 @@ let map, currentMode = 'stadiums';                                  // `map` : l
 let hoverPopup = null, activePopup = null;                          // `hoverPopup`, `activePopup` : références aux popups (survol / clic)
 let stadiumMarkers = [], teamMarkers = [];                          // `stadiumMarkers`, `teamMarkers` : tableaux des marqueurs affichés
 let activeCard = null;                                              // `activeCard` : id de la carte sélectionnée dans la sidebar
+let activePopupItemId = null;                                       // identifiant du stade (s1..s16) ou de l'équipe (t_mex..t_nzl) affiché dans la popup active
 let countriesGeoJSONLoaded = false;                                 // `countriesGeoJSONLoaded` : évite de recharger le GeoJSON des pays
 let filterState = { country: 'all', capacity: 'all', conf: 'all' }; // `filterState` : état des filtres (pays, capacité, confédération)
 
@@ -713,6 +714,7 @@ function createStadiumMarkerEl() {
 }
 
 // ======================== GESTION DES POPUPS ========================
+
 // `openStadiumPopup(s, lngLat)` : construit le contenu HTML d'un popup stade,
 // appelle l'API football-data.org pour afficher les résultats récents,
 // puis ouvre le popup.
@@ -730,7 +732,11 @@ async function openStadiumPopup(s, lngLat) {                       // Récupère
         <div class="popup-row"><i class="fas fa-shield-halved"></i> Home team: ${s.resident}</div>
         <div class="popup-row"><i class="fas fa-futbol"></i> ${s.matches}</div>
         ${badge}${resultsHtml}`;
+    // l'ordre en dessous est important :
+    // la popup s’ouvre, son ID est mémorisé après la suppression de l’éventuelle ancienne popup. Le survol de cet élément est bloqué.
+    // Si tu cliques sur un autre élément, l’ancien popup est fermé (son close efface l’ID), puis la nouvelle popup s’ouvre et l’ID du nouvel élément est mémorisé.
     openPopup(lngLat, html);
+    activePopupItemId = s.id;
 }
 
 // `openTeamPopup(t, lngLat)` : construit un popup pour une équipe nationale.
@@ -806,6 +812,7 @@ async function openTeamPopup(t, lngLat) {
         ${resultsHtml}`;
 
     openPopup(lngLat, html);
+    activePopupItemId = t.id;
 }
 
 // `openPopup(lngLat, html)` : crée un popup MapLibre avec le contenu donné.
@@ -817,7 +824,10 @@ function openPopup(lngLat, html) {
         .setLngLat(lngLat)
         .setHTML(html)
         .addTo(map);
-    activePopup.on('close', () => { activePopup = null; });
+    activePopup.on('close', () => {
+        activePopup = null;
+        activePopupItemId = null;   // ← AJOUTE CETTE LIGNE
+    });
 }
 
 // ======================== NETTOYAGE DES MARQUEURS ========================
@@ -830,6 +840,7 @@ function clearAll() {
     if (activePopup) { activePopup.remove(); activePopup = null; }
     document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
     activeCard = null;
+    activePopupItemId = null;   // ← AJOUTE CETTE LIGNE
 }
 
 // ======================== SÉLECTION D'UNE CARTE DANS LA SIDEBAR ========================
@@ -850,6 +861,7 @@ document.getElementById('reset-view-btn').addEventListener('click', () => {
         map.flyTo({ center: [10, 20], zoom: 2.0, pitch: 30, duration: 1300 });
     }
     if (activePopup) { activePopup.remove(); activePopup = null; }
+    activePopupItemId = null;   // ← AJOUTE CETTE LIGNE
     document.querySelectorAll('.item-card').forEach(c => c.classList.remove('active'));
     updateStats();
 });
@@ -1135,7 +1147,7 @@ function showStadiums() {
     STADIUMS.forEach(s => {
         const el = createStadiumMarkerEl();
         el.addEventListener('mouseenter', () => {
-            if (activePopup) return; // bloque si popup clic ouverte
+            if (activePopupItemId === s.id) return; // bloque si popup clic ouverte
             if (hoverPopup) hoverPopup.remove();
             hoverPopup = new maplibregl.Popup({ offset: 18, closeButton: false, closeOnClick: false, className: 'custom-popup' })
                 .setLngLat([s.lng, s.lat])
@@ -1214,7 +1226,7 @@ async function showTeams() {
         el.innerHTML = `<img src="${t.flag}" style="width:22px;height:14px;object-fit:cover;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">`;
         el.title = t.name;
         el.addEventListener('mouseenter', () => {
-            if (activePopup) return; // bloque si popup clic ouverte
+            if (activePopupItemId === t.id) return; // bloque si popup clic ouverte
             if (hoverPopup) hoverPopup.remove();
             hoverPopup = new maplibregl.Popup({ offset: 18, closeButton: false, closeOnClick: false, className: 'custom-popup' })
                 .setLngLat([t.lng, t.lat])
@@ -1411,7 +1423,7 @@ function filterItems() {
             }
         }
     }
-    
+
     // Mise à jour du compteur dans l'en-tête de la sidebar
     document.getElementById('sidebar-count').textContent = visibleCount;
 }
