@@ -746,50 +746,57 @@ async function openTeamPopup(t, lngLat) {
     const resultsHtml = renderMatchesForTeam(matches, t.code);
     updateStatsForTeam(t.code, matches);
 
-    // 🆕 STATUT CORRIGÉ
+    // STATUT CORRIGÉ – GESTION DES PHASES FINALES
     let statusHtml = '';
 
-    // Tous les matchs SCHEDULED ou LIVE de la compétition
+    // Matchs terminés de l'équipe
+    /* const finished = matches.filter(m => m.status === 'FINISHED' && (m.homeTeam?.tla === t.code || m.awayTeam?.tla === t.code));
+
+    // Prochain match de l'équipe
     const allUpcoming = matches.filter(m => m.status === 'SCHEDULED' || m.status === 'IN_PLAY' || m.status === 'PAUSED');
     const upcoming = allUpcoming.filter(m => m.homeTeam?.tla === t.code || m.awayTeam?.tla === t.code);
     upcoming.sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
     const nextMatch = upcoming[0];
 
-    // Matchs terminés de l'équipe
-    const finished = matches.filter(m => m.status === 'FINISHED' && (m.homeTeam?.tla === t.code || m.awayTeam?.tla === t.code));
-
-    // Nombre total de matchs de groupe (72 pour 2026, 12 groupes × 6 matchs)
+    // Phase de groupes terminée ?
     const TOTAL_GROUP_MATCHES = 72;
     const finishedGroupMatches = matches.filter(m => m.status === 'FINISHED' && m.stage === 'GROUP_STAGE').length;
     const groupStageFinished = finishedGroupMatches >= TOTAL_GROUP_MATCHES;
 
+    // Nombre de matchs de phase finale déjà chargés (tous statuts)
+    const knockoutMatchesCount = matches.filter(m => m.stage && m.stage !== 'GROUP_STAGE').length;
+    // Seuil minimum pour considérer que le planning des phases finales est complet
+    // (8 huitièmes + 4 quarts + 2 demies + 1 finale = 15, on prend 12 pour une marge de sécurité)
+    const MIN_KNOCKOUT_MATCHES = 20;
+    const knockoutStageFullyLoaded = knockoutMatchesCount >= MIN_KNOCKOUT_MATCHES;
+
     if (nextMatch) {
+        // L'équipe a un match programmé → on l'affiche normalement
         const date = new Date(nextMatch.utcDate);
         const formattedDate = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
         const opponent = nextMatch.homeTeam?.tla === t.code ? nextMatch.awayTeam?.name : nextMatch.homeTeam?.name;
         statusHtml = `<div class="popup-row"><i class="fas fa-clock"></i> Prochain match : vs ${opponent} le ${formattedDate}</div>`;
     } else {
-        // Aucun match à venir
+        // Aucun match à venir pour cette équipe
         if (finished.length === 0) {
-            // L'équipe n'a pas encore joué
+            // Elle n'a pas encore joué
             statusHtml = `<div class="popup-row"><i class="fas fa-hourglass-start"></i> En attente du 1er match</div>`;
-        } else if (!groupStageFinished) {
-            // La phase de poule n'est pas encore terminée
-            // L'équipe a déjà joué ses matchs de groupe et n'a pas de prochain match ? 
-            // Normalement les matchs de groupe restants apparaîtraient, mais si ce n'est pas le cas,
-            // on considère qu'elle est en attente des phases finales (car elle peut être qualifiée).
+        } else if (groupStageFinished && !knockoutStageFullyLoaded) {
+            // Les poules sont finies mais les phases finales ne sont pas encore entièrement chargées
+            statusHtml = `<div class="popup-row"><i class="fas fa-spinner"></i> En attente des phases finales</div>`;
+        } else if (groupStageFinished && knockoutStageFullyLoaded) {
+            // Les phases finales sont chargées et l'équipe n'a pas de match → éliminée
+            statusHtml = `<div class="popup-row"><i class="fas fa-times-circle"></i> TEST Éliminée</div>`;
+        } else {
+            // La phase de poules n'est pas terminée, mais l'équipe a déjà joué tous ses matchs
             const lastMatch = finished[finished.length - 1];
-            if (lastMatch.stage === 'GROUP_STAGE') {
+            if (lastMatch && lastMatch.stage === 'GROUP_STAGE') {
                 statusHtml = `<div class="popup-row"><i class="fas fa-spinner"></i> En attente des phases finales</div>`;
             } else {
-                // Cas rare (match de phase finale déjà joué)
                 statusHtml = `<div class="popup-row"><i class="fas fa-times-circle"></i> Éliminée</div>`;
             }
-        } else {
-            // Phase de groupes terminée, l'équipe n'a plus de match → elle n'est pas en phase finale
-            statusHtml = `<div class="popup-row"><i class="fas fa-times-circle"></i> Éliminée</div>`;
         }
-    }
+    } */
 
     const winsStr = t.wcWins > 0 ? `🏆 ${t.wcWins} titre${t.wcWins>1?'s':''}` : 'Aucun titre';
     const rank = FIFA_RANKINGS[t.code] || '—';
