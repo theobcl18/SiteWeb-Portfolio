@@ -1,7 +1,6 @@
-# 👋 Bonjour, je suis Théo
+# 👋 Bonjour,
 
-**Étudiant en Master SIGAT** (Systèmes d’Information Géographique et Analyse des Territoires)  
-Passionné par les données géographiques et leur valorisation, du terrain à la carte interactive.
+**Étudiant en Master SIGAT** (Systèmes d’Information Géographique et Analyse des Territoires)
 
 ---
 
@@ -13,7 +12,6 @@ Passionné par les données géographiques et leur valorisation, du terrain à l
 
 ## 📫 Me contacter
 
-- **Email** : [gtbe189@gmail.com](mailto:gtbe189@gmail.com)
 - **LinkedIn** : [Théo Bucaille](https://www.linkedin.com/in/théo-bucaille/)
 
 ---
@@ -24,10 +22,10 @@ Passionné par les données géographiques et leur valorisation, du terrain à l
 |---------|-------------------|
 | SIG & analyse spatiale | QGIS, ArcGIS, SNAP (télédétection), PostGIS |
 | Sémiologie graphique | Inkscape
-| Bases de données spatiales | PostgreSQL / pgAdmin, DBeaver |
-| Traitement & statistiques | R, Python (pandas, geopandas) |
+| Bases de données spatiales | PostgreSQL / DBeaver, pgAdmin |
+| Traitement & statistiques | R, Python |
 | Versionnement & collaboration | Git, GitHub |
-| Cartographie & diffusion | HTML/CSS, Leaflet (bases) |
+| Cartographie & diffusion | HTML/CSS/JAVASRIPT (Leaflet, MapLibre GL JS) |
 
 ---
 
@@ -54,7 +52,3 @@ Passionné par les données géographiques et leur valorisation, du terrain à l
 ## 🙏 Merci de votre visite
 
 N’hésitez pas à explorer mes projets et à me contacter pour toute collaboration, stage ou échange autour de la géomatique.
-
----
-
-*✨ Ce README sera complété au fil de l’eau – tout feedback est le bienvenu !*
