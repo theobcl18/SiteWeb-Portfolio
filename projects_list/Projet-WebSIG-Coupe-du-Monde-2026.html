@@ -245,7 +245,7 @@
 
         /* Legend nations */
         .legend {
-            position: fixed; bottom: 80px; right: 100px; z-index: 25;
+            position: fixed; bottom: 80px; right: 60px; z-index: 25;
             background: rgba(10,18,38,0.88);
             backdrop-filter: blur(10px);
             border-radius: 12px; padding: 10px 14px;
@@ -373,7 +373,7 @@
 
 <div class="legend" id="legend">
     <div style="font-weight:700; font-size:0.75rem; margin-bottom:7px; color:#eab308;">Legend</div>
-    <div class="legend-row"><div class="legend-color" style="background:#16a34a;"></div>Qualified nations (48)</div>
+    <div class="legend-row"><div class="legend-color" style="background:#16a34a;"></div>Participating nations (48)</div>
     <div class="legend-row"><div class="legend-color" style="background:rgba(148,163,184,0.25);"></div>Other countries</div>
 </div>
 
@@ -659,6 +659,27 @@ const FIFA_RANKINGS = {
     // 49 est libre
     'UZB': 50   // Ouzbékistan
 };
+
+// ======================== ÉQUIPES ÉLIMINÉES EN PHASE DE GROUPES ========================
+// Mis à jour manuellement à la fin de la phase de poules.
+const ELIMINATED_GROUP_STAGE = new Set([
+    'CZE', // Tchéquie - Groupe A
+    'KOR', // Corée du Sud - Groupe A
+    'QAT', // Qatar - Groupe B
+    'HAI', // Haïti - Groupe C
+    'SCO', // Écosse - Groupe C
+    'TUR', // Turquie - Groupe D
+    'CUW', // Curaçao - Groupe E
+    'TUN', // Tunisie - Groupe F
+    'IRN', // Iran - Groupe G
+    'NZL', // Nouvelle-Zélande - Groupe G
+    'URU', // Uruguay - Groupe H
+    'KSA', // Arabie Saoudite - Groupe H
+    'IRQ', // Irak - Groupe I
+    'JOR', // Jordanie - Groupe J
+    'UZB', // Ouzbékistan - Groupe K
+    'PAN', // Panama - Groupe L
+]);
 
 // ======================== MAPPING PAYS PARTICIPANTS ========================
 // Ces ensembles servent à colorier les pays qualifiés sur la carte.
@@ -1049,7 +1070,6 @@ async function fetchMatches() {
 // ======================== RENDU DES RÉSULTATS DANS LES POPUPS ========================
 // `renderMatchesForTeam` : affiche les derniers résultats de l'équipe.
 function renderMatchesForTeam(matches, teamCode) {
-    // Cherche les matchs de cette équipe (finis ou en cours)
     const relevant = matches.filter(m =>
         (m.status === 'FINISHED' || m.status === 'IN_PLAY') &&
         (m.homeTeam?.tla === teamCode || m.awayTeam?.tla === teamCode)
@@ -1061,9 +1081,23 @@ function renderMatchesForTeam(matches, teamCode) {
         const opponent = isHome ? m.awayTeam?.name : m.homeTeam?.name;
         const scoreH = m.score?.fullTime?.home ?? '–';
         const scoreA = m.score?.fullTime?.away ?? '–';
-        const result = m.status === 'IN_PLAY' ? '🟢 LIVE' :
-            (isHome ? (scoreH > scoreA ? '✅+3pt' : scoreH < scoreA ? '❌' : '🟡+1pt') :
-                      (scoreA > scoreH ? '✅+3pt' : scoreA < scoreH ? '❌' : '🟡+1pt'));
+
+        // Pendant les phases finales, on ne met plus de points
+        const isKnockout = m.stage && m.stage !== 'GROUP_STAGE';
+        let result;
+        if (m.status === 'IN_PLAY') {
+            result = '🟢 LIVE';
+        } else if (isKnockout) {
+            // Victoire ou défaite en phase finale, sans mention de points
+            const won = isHome ? (scoreH > scoreA) : (scoreA > scoreH);
+            result = won ? '✅' : '❌';
+        } else {
+            // Phase de groupes : avec points
+            result = isHome
+                ? (scoreH > scoreA ? '✅+3pt' : scoreH < scoreA ? '❌' : '🟡+1pt')
+                : (scoreA > scoreH ? '✅+3pt' : scoreA < scoreH ? '❌' : '🟡+1pt');
+        }
+
         const score = `${scoreH} – ${scoreA}`;
         return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
             <span style="font-size:0.68rem;opacity:0.8;">${result} vs ${opponent}</span>
@@ -1071,9 +1105,54 @@ function renderMatchesForTeam(matches, teamCode) {
         </div>`;
     }).join('');
 
+    // ── STATUT BASÉ SUR LE 4ÈME MATCH ──────────────────────────────────
+    let statusHtml = '';
+    const finished = relevant.filter(m => m.status === 'FINISHED');
+
+    if (finished.length === 3 && ELIMINATED_GROUP_STAGE.has(teamCode)) {
+    statusHtml = `
+        <div style="
+            margin-top:8px; padding:5px 9px; border-radius:8px;
+            background:rgba(239,68,68,0.12);
+            border:1px solid rgba(239,68,68,0.25);
+            font-size:0.7rem; font-weight:700; color:#ef4444;
+            text-align:center; letter-spacing:0.3px;
+        ">❌ Éliminé en phase de groupes</div>`;
+    } else if (finished.length >= 4) {
+        // On a un 4ème match → on est en phase finale
+        const match4 = finished[3]; // index 3 = 4ème match
+        const isHome4 = match4.homeTeam?.tla === teamCode;
+        const h4 = match4.score?.fullTime?.home ?? 0;
+        const a4 = match4.score?.fullTime?.away ?? 0;
+        const won4 = isHome4 ? (h4 > a4) : (a4 > h4);
+
+        // Détermine le stade atteint en fonction du nombre de matchs joués
+        const stageLabels = {
+            4: won4 ? '🏆 Qualifié en 8es de finale' : '❌ Éliminé en 16es de finale',
+            5: won4 ? '🏆 Qualifié en quarts de finale' : '❌ Éliminé en 8es de finale',
+            6: won4 ? '🏆 Qualifié en demi-finale' : '❌ Éliminé en quarts de finale',
+            7: won4 ? '🏆 Qualifié en finale' : '❌ Éliminé en demi-finale',
+        };
+        // Pour 8 matchs ou plus (cas de la finale elle-même)
+        const label = stageLabels[finished.length]
+            ?? (won4 ? '🏆 En lice' : '❌ Éliminé');
+
+        const color = won4 ? '#16a34a' : '#ef4444';
+        statusHtml = `
+            <div style="
+                margin-top:8px; padding:5px 9px; border-radius:8px;
+                background:${won4 ? 'rgba(22,163,74,0.12)' : 'rgba(239,68,68,0.12)'};
+                border:1px solid ${color}40;
+                font-size:0.7rem; font-weight:700; color:${color};
+                text-align:center; letter-spacing:0.3px;
+            ">${label}</div>`;
+    }
+    // Si l'équipe a exactement 3 matchs terminés → on n'affiche rien (comme demandé)
+
     return `<div style="margin-top:8px;">
         <div style="font-size:0.65rem;font-weight:700;color:#eab308;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Results</div>
         ${rows}
+        ${statusHtml}
     </div>`;
 }
 
