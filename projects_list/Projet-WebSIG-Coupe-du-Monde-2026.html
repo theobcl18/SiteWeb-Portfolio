@@ -1105,60 +1105,96 @@ function renderMatchesForTeam(matches, teamCode) {
         </div>`;
     }).join('');
 
-    // ── STATUT BASÉ SUR LE 4ÈME MATCH ──────────────────────────────────
+        // ── STATUT BASÉ SUR L'AVANCEMENT DANS LE TOURNOI ──────────────────
     let statusHtml = '';
     const finished = relevant.filter(m => m.status === 'FINISHED');
 
-    if (finished.length === 3 && ELIMINATED_GROUP_STAGE.has(teamCode)) {
-        statusHtml = `
-            <div style="
-                margin-top:8px; padding:5px 9px; border-radius:8px;
-                background:rgba(239,68,68,0.12);
-                border:1px solid rgba(239,68,68,0.25);
-                font-size:0.7rem; font-weight:700; color:#ef4444;
-                text-align:center; letter-spacing:0.3px;
-            ">❌ Eliminated in Group Stage</div>`;
-
-    } else if (finished.length === 3 && !ELIMINATED_GROUP_STAGE.has(teamCode)) {
-        statusHtml = `
-            <div style="
-                margin-top:8px; padding:5px 9px; border-radius:8px;
-                background:rgba(22,163,74,0.12);
-                border:1px solid rgba(22,163,74,0.25);
-                font-size:0.7rem; font-weight:700; color:#16a34a;
-                text-align:center; letter-spacing:0.3px;
-            ">✅ Qualified for Round of 16</div>`;
+    if (finished.length === 3) {
+        // Phase de groupes terminée
+        if (ELIMINATED_GROUP_STAGE.has(teamCode)) {
+            statusHtml = `
+                <div style="
+                    margin-top:8px; padding:5px 9px; border-radius:8px;
+                    background:rgba(239,68,68,0.12);
+                    border:1px solid rgba(239,68,68,0.25);
+                    font-size:0.7rem; font-weight:700; color:#ef4444;
+                    text-align:center; letter-spacing:0.3px;
+                ">❌ Eliminated in Group Stage</div>`;
+        } else {
+            statusHtml = `
+                <div style="
+                    margin-top:8px; padding:5px 9px; border-radius:8px;
+                    background:rgba(22,163,74,0.12);
+                    border:1px solid rgba(22,163,74,0.25);
+                    font-size:0.7rem; font-weight:700; color:#16a34a;
+                    text-align:center; letter-spacing:0.3px;
+                ">✅ Qualified for Round of 32</div>`;
+        }
 
     } else if (finished.length >= 4) {
-        // On a un 4ème match → on est en phase finale
-        const match4 = finished[3]; // index 3 = 4ème match
-        const isHome4 = match4.homeTeam?.tla === teamCode;
-        const h4 = match4.score?.fullTime?.home ?? 0;
-        const a4 = match4.score?.fullTime?.away ?? 0;
-        const won4 = isHome4 ? (h4 > a4) : (a4 > h4);
+        // Phase à élimination directe
+        const lastMatch = finished[finished.length - 1];
+        const isHomeLast = lastMatch.homeTeam?.tla === teamCode;
+        const hLast = lastMatch.score?.fullTime?.home ?? 0;
+        const aLast = lastMatch.score?.fullTime?.away ?? 0;
+        const wonLast = isHomeLast ? (hLast > aLast) : (aLast > hLast);
 
-        // Détermine le stade atteint en fonction du nombre de matchs joués
-        const stageLabels = {
-            4: won4 ? '✅ Qualified for Round of 16' : '❌ Eliminated in Round of 32',
-            5: won4 ? '✅ Qualified for Quarter-finals' : '❌ Eliminated in Round of 16',
-            6: won4 ? '✅ Qualified for Semi-finals' : '❌ Eliminated in Quarter-finals',
-            7: won4 ? '✅ Qualified for the Final' : '❌ Eliminated in Semi-finals',
-        };
-        // Pour 8 matchs ou plus (cas de la finale elle-même)
-        const label = stageLabels[finished.length]
-            ?? (won4 ? '✅ Still in the competition' : '❌ Eliminated');
+        // Cas particulier des 7 matchs (finale ou 3e place)
+        if (finished.length === 7) {
+            const semiMatch = finished[5]; // 6e match = demi-finale
+            const isHomeSemi = semiMatch.homeTeam?.tla === teamCode;
+            const hSemi = semiMatch.score?.fullTime?.home ?? 0;
+            const aSemi = semiMatch.score?.fullTime?.away ?? 0;
+            const wonSemi = isHomeSemi ? (hSemi > aSemi) : (aSemi > hSemi);
 
-        const color = won4 ? '#16a34a' : '#ef4444';
-        statusHtml = `
-            <div style="
-                margin-top:8px; padding:5px 9px; border-radius:8px;
-                background:${won4 ? 'rgba(22,163,74,0.12)' : 'rgba(239,68,68,0.12)'};
-                border:1px solid ${color}40;
-                font-size:0.7rem; font-weight:700; color:${color};
-                text-align:center; letter-spacing:0.3px;
-            ">${label}</div>`;
+            if (wonSemi) {
+                // A gagné la demi-finale → joue la finale
+                statusHtml = wonLast ?
+                    `<div style="margin-top:8px; padding:5px 9px; border-radius:8px;
+                        background:rgba(234,179,8,0.18); border:1px solid rgba(234,179,8,0.5);
+                        font-size:0.7rem; font-weight:700; color:#eab308;
+                        text-align:center; letter-spacing:0.3px;">
+                        🏆 Winner of the World Cup</div>` :
+                    `<div style="margin-top:8px; padding:5px 9px; border-radius:8px;
+                        background:rgba(148,163,184,0.15); border:1px solid rgba(148,163,184,0.3);
+                        font-size:0.7rem; font-weight:700; color:#cbd5e1;
+                        text-align:center; letter-spacing:0.3px;">
+                        🥈 Runner-up</div>`;
+            } else {
+                // A perdu la demi-finale → joue le match pour la 3e place
+                statusHtml = wonLast ?
+                    `<div style="margin-top:8px; padding:5px 9px; border-radius:8px;
+                        background:rgba(148,163,184,0.15); border:1px solid rgba(148,163,184,0.3);
+                        font-size:0.7rem; font-weight:700; color:#cbd5e1;
+                        text-align:center; letter-spacing:0.3px;">
+                        🥉 Third Place</div>` :
+                    `<div style="margin-top:8px; padding:5px 9px; border-radius:8px;
+                        background:rgba(148,163,184,0.08); border:1px solid rgba(148,163,184,0.2);
+                        font-size:0.7rem; font-weight:700; color:#94a3b8;
+                        text-align:center; letter-spacing:0.3px;">
+                        Fourth Place</div>`;
+            }
+        } else {
+            // 4, 5 ou 6 matchs
+            const stageLabels = {
+                4: wonLast ? '✅ Qualified for Round of 16' : '❌ Eliminated in Round of 32',
+                5: wonLast ? '✅ Qualified for Quarter-finals' : '❌ Eliminated in Round of 16',
+                6: wonLast ? '✅ Qualified for Semi-finals' : '❌ Eliminated in Quarter-finals',
+            };
+            const label = stageLabels[finished.length] || '';
+            const color = wonLast ? '#16a34a' : '#ef4444';
+            if (label) {
+                statusHtml = `
+                    <div style="
+                        margin-top:8px; padding:5px 9px; border-radius:8px;
+                        background:${wonLast ? 'rgba(22,163,74,0.12)' : 'rgba(239,68,68,0.12)'};
+                        border:1px solid ${color}40;
+                        font-size:0.7rem; font-weight:700; color:${color};
+                        text-align:center; letter-spacing:0.3px;
+                    ">${label}</div>`;
+            }
+        }
     }
-    // Si l'équipe a exactement 3 matchs terminés → on n'affiche rien (comme demandé)
 
     return `<div style="margin-top:8px;">
         <div style="font-size:0.65rem;font-weight:700;color:#eab308;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Results</div>
