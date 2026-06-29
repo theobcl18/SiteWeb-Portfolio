@@ -1110,14 +1110,25 @@ function renderMatchesForTeam(matches, teamCode) {
     const finished = relevant.filter(m => m.status === 'FINISHED');
 
     if (finished.length === 3 && ELIMINATED_GROUP_STAGE.has(teamCode)) {
-    statusHtml = `
-        <div style="
-            margin-top:8px; padding:5px 9px; border-radius:8px;
-            background:rgba(239,68,68,0.12);
-            border:1px solid rgba(239,68,68,0.25);
-            font-size:0.7rem; font-weight:700; color:#ef4444;
-            text-align:center; letter-spacing:0.3px;
-        ">❌ Éliminé en phase de groupes</div>`;
+        statusHtml = `
+            <div style="
+                margin-top:8px; padding:5px 9px; border-radius:8px;
+                background:rgba(239,68,68,0.12);
+                border:1px solid rgba(239,68,68,0.25);
+                font-size:0.7rem; font-weight:700; color:#ef4444;
+                text-align:center; letter-spacing:0.3px;
+            ">❌ Eliminated in Group Stage</div>`;
+
+    } else if (finished.length === 3 && !ELIMINATED_GROUP_STAGE.has(teamCode)) {
+        statusHtml = `
+            <div style="
+                margin-top:8px; padding:5px 9px; border-radius:8px;
+                background:rgba(22,163,74,0.12);
+                border:1px solid rgba(22,163,74,0.25);
+                font-size:0.7rem; font-weight:700; color:#16a34a;
+                text-align:center; letter-spacing:0.3px;
+            ">✅ Qualified for Round of 16</div>`;
+
     } else if (finished.length >= 4) {
         // On a un 4ème match → on est en phase finale
         const match4 = finished[3]; // index 3 = 4ème match
@@ -1128,14 +1139,14 @@ function renderMatchesForTeam(matches, teamCode) {
 
         // Détermine le stade atteint en fonction du nombre de matchs joués
         const stageLabels = {
-            4: won4 ? '🏆 Qualifié en 8es de finale' : '❌ Éliminé en 16es de finale',
-            5: won4 ? '🏆 Qualifié en quarts de finale' : '❌ Éliminé en 8es de finale',
-            6: won4 ? '🏆 Qualifié en demi-finale' : '❌ Éliminé en quarts de finale',
-            7: won4 ? '🏆 Qualifié en finale' : '❌ Éliminé en demi-finale',
+            4: won4 ? '✅ Qualified for Round of 16' : '❌ Eliminated in Round of 32',
+            5: won4 ? '✅ Qualified for Quarter-finals' : '❌ Eliminated in Round of 16',
+            6: won4 ? '✅ Qualified for Semi-finals' : '❌ Eliminated in Quarter-finals',
+            7: won4 ? '✅ Qualified for the Final' : '❌ Eliminated in Semi-finals',
         };
         // Pour 8 matchs ou plus (cas de la finale elle-même)
         const label = stageLabels[finished.length]
-            ?? (won4 ? '🏆 En lice' : '❌ Éliminé');
+            ?? (won4 ? '✅ Still in the competition' : '❌ Eliminated');
 
         const color = won4 ? '#16a34a' : '#ef4444';
         statusHtml = `
