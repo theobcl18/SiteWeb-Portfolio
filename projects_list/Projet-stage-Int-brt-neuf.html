@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atelier professionnel - Diagnostic de territoire </title>
+    <title>Stage - Intégration de branchements neufs (Veolia Eau)</title>
 
     <!-- Bootstrap CSS -->
     <link 
@@ -30,10 +30,10 @@
             --dark: #000000;
             --red: #b72a2a;
             --light: #f8f9fa;
-            --fond: #65594c;
             --gray: #3A3534;
             --gray-light: #adb5bd;
             --map-color: #c6a719;
+            --fond:#65594c;
         }
 
         * {
@@ -179,13 +179,6 @@
         .bg-section:hover {
             transform: translateY(-5px);
         }
-
-        .container {
-        max-width: 100%;
-        padding-left: clamp(1rem, 3vw, 2rem);
-        padding-right: clamp(1rem, 3vw, 2rem);
-        }
-
 
         .text-primary {
         --bs-text-opacity 1;
@@ -646,6 +639,22 @@
                 padding: 0 1rem 1rem;
             }
         }
+
+        /* Bloc dédié au schéma de workflow (remplace l'embed PDF du mémoire) */
+        .workflow-frame {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .workflow-frame img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            cursor: zoom-in;
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -677,15 +686,17 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold">Atelier professionnel - Diagnostic de territoire</h1>
+                    <h1 class="display-4 fw-bold">Stage - Intégration de branchements neufs</h1>
                     <p class="lead">
-                        Réalisation d'un diagnostic de territoire de la Communauté de Communes Seulles Terre et Mer
+                        Structuration, contrôle attributaire et intégration SIG de données de branchements neufs sur les réseaux 
+                        d'eau potable (AEP) et d'assainissement (ASS), au sein de Veolia Eau - Grand Ouest.
+                    </p>
                     <div class="d-flex flex-wrap">
                         <a href="../index.html#projects" class="btn btn-outline-primary btn-lg">
                             <i class="fas fa-arrow-left me-2"></i>Retour aux projets
                         </a>
-                        <a href="#rendu" class="btn btn-primary btn-lg ms-2">
-                            <i class="fas fa-file-pdf me-2"></i>Consulter le rendu
+                        <a href="#galerie" class="btn btn-primary btn-lg ms-2">
+                            <i class="fas fa-diagram-project me-2"></i>Voir la galerie du projet
                         </a>
                     </div>
                 </div>
@@ -701,20 +712,20 @@
                     
                     <!-- Section entreprise -->
                     <div class="company-section fade-in">
-                        <h3 class="mb-4">Atelier professionnel</h3>
+                        <h3 class="mb-4">Stage réalisé au sein de</h3>
 
                         <!-- Logo avec options d'affichage -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Communauté_de_communes_Seulles_Terre_et_Mer.png" 
-                             alt="Logo EPCI Seulles Terre et Mer" 
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Veolia_logo.svg" 
+                             alt="Logo Veolia" 
                              class="partner-logo no-bg"
                              id="partnerLogo">
                         
-                        <div class="company-name">Communauté de Communes Seulles Terre et Mer </div>
-                        <div class="company-sector">Établissement Public de Coopération Intercommunale</div>
+                        <div class="company-name">Veolia Eau - Direction Régionale Grand Ouest</div>
+                        <div class="company-sector">Gestion déléguée des services d'eau potable et d'assainissement • Rennes, Ille-et-Vilaine</div>
                         
                         <div class="mt-4">
-                            <p><i class="fas fa-users me-2"></i> 28 communes membres • 17 500 habitants</p>
-                            <p><i class="fas fa-map me-2"></i> Territoire de 195 km² située dans le nord du département du Calvados</p>
+                            <p><i class="fas fa-user-tie me-2"></i> Poste occupé : Géomaticien - Cartographe</p>
+                            <p><i class="fas fa-network-wired me-2"></i> Réseaux concernés : Eau Potable (AEP) et Assainissement (ASS)</p>
                         </div>
                     </div>
 
@@ -724,17 +735,22 @@
                             <div class="info-card">
                                 <i class="fas fa-calendar-alt"></i>
                                 <h5>Durée</h5>
-                                <p>6 mois</p>
+                                <p>3 mois</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h5>Localisation</h5>
+                                <p>Rennes, Ille-et-Vilaine</p>
                             </div>
                             <div class="info-card">
                                 <i class="fas fa-graduation-cap"></i>
                                 <h5>Niveau</h5>
-                                <p>Licence Pro SIG-DAT</p>
+                                <p>Master 1 SIGAT</p>
                             </div>
                             <div class="info-card">
                                 <i class="fas fa-clock"></i>
                                 <h5>Période</h5>
-                                <p>Septembre - Février 2025</p>
+                                <p>Mai - Août 2026</p>
                             </div>
                         </div>
                     </div>
@@ -745,13 +761,31 @@
                         
                         <h3 class="mt-4">Contexte</h3>
                         <p>
-                            Chaque année, les étudiant·e·s de la licence professionnelle Système d'information Géographique, Diagnostic et Aménagement des Territoires étudient un établissement public de coopération intercommunale (EPCI) dans le cadre d'un diagnostic de territoire. Ce travail fait partie de l'UE 13 de la formation. Il s'agit d'un travail de groupe devant aboutir au rendu d'un document et à une présentation orale d'environ 20 minutes, au cours de laquelle les 12 étudiant·e·s de la formation exposent l'étude réalisée. Cette année, l'EPCI sélectionné est la communauté de communes de Seulles Terre et Mer, situé dans le département du Calvados, entre Caen et Bayeux dans la région de Normandie.
+                            Dans le cadre de la gestion déléguée des réseaux d'eau potable et d'assainissement, chaque nouveau 
+                            raccordement (habitation, lotissement, aménageur, industriel) fait l'objet d'une demande d'intégration 
+                            transmise via un formulaire dédié qui assure le suivi du dossier. Ces demandes s'accompagnent de fichiers 
+                            géographiques regroupant les objets du branchement : vannes de branchement, points de desserte, purges, 
+                            hydrants et équipements publics. Ma mission consiste à intégrer ces données dans le SIG métier de Veolia, 
+                            VIGIE, en garantissant à la fois leur conformité au modèle de données de l'entreprise et leur cohérence 
+                            topologique avec le réseau existant.
                         </p>
                         
                         <h3 class="mt-4">Problématique centrale</h3>
                         <p class="fst-italic">
-                            Dans quelle mesure le territoire et les pratiques sociales des habitants de STM sont-ils polarisés ?
+                            "Comment garantir l'intégration fiable, traçable et topologiquement cohérente de données de branchements 
+                            neufs hétérogènes dans le référentiel SIG VIGIE, tout en respectant le modèle métier de Veolia et les 
+                            classes de précision de localisation des réseaux ?"
                         </p>
+                        
+                        <h3 class="mt-4">Objectifs du projet</h3>
+                        <ul>
+                            <li><strong>Fiabiliser</strong> la correspondance attributaire entre les données sources et le modèle SIG VIGIE</li>
+                            <li><strong>Transformer</strong> un référentiel historique au format ESRI vers le format GPKG utilisé par Veolia</li>
+                            <li><strong>Préserver</strong> l'intégrité de la donnée brute tout au long de la chaîne de traitement</li>
+                            <li><strong>Contrôler</strong> la cohérence topologique des réseaux AEP et assainissement</li>
+                            <li><strong>Résorber</strong> le retard d'intégration accumulé par les équipes</li>
+                            <li><strong>Vérifier</strong> systématiquement les imports réalisés dans VIGIE</li>
+                        </ul>
                     </div>
 
                     <!-- Missions principales -->
@@ -762,12 +796,59 @@
                             <div class="col-md-6">
                                 <div class="d-flex align-items-start mb-4">
                                     <div class="bg-primary rounded-circle p-3 me-3">
-                                        <i class="fas fa-users fa-lg text-white"></i>
+                                        <i class="fas fa-diagram-project fa-lg text-white"></i>
                                     </div>
                                     <div>
-                                        <h5>Collecte et analyse documentaire</h5>
+                                        <h5>Préparation des données sous FME</h5>
                                         <p>
-                                            Recueil et synthèse des documents stratégiques (SCoT, PLU, PLH), des données statistiques (INSEE) et des études préexistantes pour comprendre les enjeux territoriaux.
+                                            Reprise, amélioration et perfectionnement d'un workflow FME existant : transformation d'un 
+                                            modèle de données ESRI ancien vers le format GPKG, remodelage et mapping attributaire vers 
+                                            le modèle métier de Veolia.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-table-list fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Correspondance attributaire</h5>
+                                        <p>
+                                            Contrôle et mise en cohérence des attributs des objets réseau (branchements, vannes, points 
+                                            de desserte) avec le modèle SIG VIGIE, sans perte d'information par rapport à la donnée brute.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-layer-group fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Intégration QGIS - Import Objet</h5>
+                                        <p>
+                                            Import des données dans VIGIE via QGIS, table par table (branchements, puis vannes, puis 
+                                            points de desserte), toujours en mode simulation avant validation définitive.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-route fa-lg text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Correction topologique</h5>
+                                        <p>
+                                            Résolution des cas de topologie complexes (branchements en râteau notamment) en tenant 
+                                            compte des classes de précision de localisation (A, B, C) des données neuves et existantes.
                                         </p>
                                     </div>
                                 </div>
@@ -779,9 +860,11 @@
                                         <i class="fas fa-database fa-lg text-white"></i>
                                     </div>
                                     <div>
-                                        <h5>Analyse spatiale et cartographique</h5>
+                                        <h5>Vérification post-intégration</h5>
                                         <p>
-                                            Réalisation de cartes thématiques (occupation du sol, mobilités, équipements, dynamiques démographiques) avec QGIS pour visualiser les structures et dynamiques territoriales.
+                                            Contrôle des imports via requêtes SQL filtrées sur les tables VIGIE et comparaison 
+                                            systématique entre le nombre de branchements bruts et le nombre effectivement intégré 
+                                            (QGIS et DBeaver).
                                         </p>
                                     </div>
                                 </div>
@@ -790,54 +873,14 @@
                             <div class="col-md-6">
                                 <div class="d-flex align-items-start mb-4">
                                     <div class="bg-primary rounded-circle p-3 me-3">
-                                        <i class="fas fa-sync-alt fa-lg text-white"></i>
+                                        <i class="fas fa-list-check fa-lg text-white"></i>
                                     </div>
                                     <div>
-                                        <h5>Traitement et analyse statistique</h5>
+                                        <h5>Résorption du retard</h5>
                                         <p>
-                                            Exploitation des données INSEE (RP, Filosofi) et des bases locales (SIRENE, RGP) pour caractériser les profils socio-économiques des communes et identifier les disparités.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-start mb-4">
-                                    <div class="bg-primary rounded-circle p-3 me-3">
-                                        <i class="fas fa-map-marked-alt fa-lg text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h5>Enquêtes de terrain et entretiens</h5>
-                                        <p>
-                                            Conduite d'entretiens semi-directifs avec la population et création d'un questionnaire, réalisation d'observations terrain et d'enquêtes auprès des habitants pour recueillir les perceptions et usages.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-start mb-4">
-                                    <div class="bg-primary rounded-circle p-3 me-3">
-                                        <i class="fas fa-chalkboard-teacher fa-lg text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h5>Diagnostic thématique intégré</h5>
-                                        <p>
-                                            Analyse croisée des dimensions démographique, économique, sociale, environnementale et des mobilités pour identifier les atouts, faiblesses, opportunités et menaces du territoire.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-start mb-4">
-                                    <div class="bg-primary rounded-circle p-3 me-3">
-                                        <i class="fas fa-project-diagram fa-lg text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h5>Gestion de projet</h5>
-                                        <p>
-                                            Présentations des avancements, rédaction de comptes-rendus, coordination avec l'ensemble de la promotion.
+                                            Traitement méthodique de dizaines de dossiers en attente, de 2-3 branchements à plus de 
+                                            350 branchements par dossier, avec des échanges réguliers avec ma tutrice pour les cas 
+                                            terrain les plus complexes.
                                         </p>
                                     </div>
                                 </div>
@@ -845,9 +888,101 @@
                         </div>
                     </div>
 
+                    <!-- Architecture technique -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Architecture technique</h2>
+                        
+                        <h4 class="mt-4">Modèle de données</h4>
+                        <p>
+                            Les objets géographiques traités relèvent des réseaux AEP et assainissement :
+                        </p>
+                        <ul>
+                            <li><strong>Branchements</strong> : nouveaux raccordements AEP et ASS issus des dossiers d'intégration</li>
+                            <li><strong>Vannes de branchement</strong> : organes de sectionnement du réseau AEP</li>
+                            <li><strong>Points de desserte</strong> : points de raccordement au réseau existant</li>
+                            <li><strong>Purges et hydrants</strong> : équipements de maintenance et de défense incendie</li>
+                            <li><strong>Équipements publics</strong> : objets annexes du réseau intégrés au modèle VIGIE</li>
+                        </ul>
+                        
+                        <h4 class="mt-4">Technologies utilisées</h4>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h5>ETL & préparation des données</h5>
+                                <span class="badge bg-primary mb-2">FME</span>
+                                <span class="badge bg-primary mb-2">GPKG</span>
+                                <span class="badge bg-primary mb-2">Shapefile ESRI</span>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>SIG & intégration</h5>
+                                <span class="badge bg-primary mb-2">QGIS</span>
+                                <span class="badge bg-primary mb-2">VIGIE</span>
+                                <span class="badge bg-primary mb-2">DBeaver</span>
+                                <span class="badge bg-primary mb-2">SQL</span>
+                            </div>
+                        </div>
+                        
+                        <h4 class="mt-4">Fonctionnalités développées</h4>
+                        <ul>
+                            <li>Chaîne de transformation FME : mapping attributaire, contrôle de complétude, remodelage géométrique</li>
+                            <li>Import objet VIGIE en mode simulation pour la correction topologique avant validation</li>
+                            <li>Gestion différenciée selon les classes de précision de localisation (A, B, C)</li>
+                            <li>Traitement des cas topologiques complexes (branchements en râteau, correspondances multiples)</li>
+                            <li>Requêtes SQL de contrôle croisant les données brutes et les données importées</li>
+                        </ul>
+                    </div>
+
+                    <!-- Schéma du workflow FME -->
+                    <div class="bg-section fade-in" id="workflow">
+                        <h2 class="section-title">Workflow FME</h2>
+                        <p>
+                            Schéma du workflow FME repris et perfectionné pendant le stage : préparation, contrôle attributaire et 
+                            reformatage des données de branchements neufs, du format ESRI historique vers le modèle GPKG de Veolia.
+                        </p>
+                        <div class="workflow-frame mt-4">
+                            <img src="img/stage-branchements/workflow_fme.jpg" 
+                                 alt="Workflow FME de préparation des branchements neufs"
+                                 class="project-image"
+                                 data-fullsize="img/stage-branchements/workflow_fme.jpg"
+                                 data-title="Workflow FME"
+                                 data-description="Chaîne de transformation ETL : mapping attributaire, contrôle de complétude et reformatage vers le modèle GPKG VIGIE.">
+                        </div>
+                    </div>
+
+                    <!-- Résultats et réalisations -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Résultats et réalisations</h2>
+                        
+                        <h4 class="mt-4">Livrables et apports</h4>
+                        <ul>
+                            <li><strong>Workflow FME perfectionné</strong>, plus robuste face à l'hétérogénéité des données sources</li>
+                            <li><strong>Dizaines de dossiers de branchements intégrés</strong> dans VIGIE, de quelques unités à plus de 350 branchements</li>
+                            <li><strong>Méthodologie de contrôle</strong> de la correspondance attributaire et de la topologie, réutilisable par l'équipe</li>
+                            <li><strong>Procédure de vérification post-intégration</strong> par requêtes SQL, croisant les volumes bruts et importés</li>
+                        </ul>
+                        
+                        <h4 class="mt-4">Impacts pour Veolia</h4>
+                        <ul>
+                            <li><strong>Résorption du retard</strong> d'intégration accumulé sur les dossiers de branchements neufs</li>
+                            <li><strong>Fiabilité</strong> : données conformes au modèle métier VIGIE et à jour</li>
+                            <li><strong>Traçabilité</strong> : conservation de l'information issue de la donnée brute tout au long de la chaîne</li>
+                            <li><strong>Cohérence réseau</strong> : topologie corrigée en tenant compte des classes de précision</li>
+                        </ul>
+                        
+                        <h4 class="mt-4">Apports personnels</h4>
+                        <p>
+                            Ce stage me permet d'approfondir mes compétences en modélisation et intégration de données SIG appliquées 
+                            aux réseaux, ainsi que ma rigueur méthodologique. J'apprécie particulièrement :
+                        </p>
+                        <ul>
+                            <li>La montée en compétence FME sur un workflow métier réel et déjà en production</li>
+                            <li>L'acquisition de connaissances métier et terrain sur les réseaux AEP et assainissement</li>
+                            <li>La minutie exigée par les contraintes topologiques propres aux réseaux</li>
+                            <li>Les échanges réguliers avec ma tutrice pour traiter les cas de terrain les plus complexes</li>
+                        </ul>
+                    </div>
 
                     <!-- Galerie d'images -->
-                    <div class="bg-section fade-in">
+                    <div class="bg-section fade-in" id="galerie">
                         <h2 class="section-title">Galerie du projet</h2>
                         
                         <!-- Conteneur pour les images en grille -->
@@ -855,74 +990,65 @@
                             <!-- Image 1 -->
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="image-hover-container">
-                                    <img src="img/stage/modele_donnees.jpg"
-                                         alt="..." 
+                                    <img src="img/stage-branchements/import_objet_simulation.jpg"
+                                         alt="Import Objet - mode simulation" 
                                          class="project-image"
-                                         data-fullsize="img/stage/modele_donnees.jpg"
-                                         data-title="..."
-                                         data-description="...">
+                                         data-fullsize="img/stage-branchements/import_objet_simulation.jpg"
+                                         data-title="Import Objet - mode simulation"
+                                         data-description="Intégration des branchements dans VIGIE via QGIS, en mode simulation pour contrôle topologique">
                                     <div class="image-overlay">
                                         <div class="overlay-content">
-                                            <h5>...</h5>
-                                            <p>...</p>
+                                            <h5>Import Objet (simulation)</h5>
+                                            <p>Intégration des branchements dans VIGIE via QGIS, en mode simulation</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="text-center mt-2">
-                                    <p>Carte de présentation</p>
+                                    <p>Import Objet VIGIE - mode simulation</p>
                                 </div>
                             </div>
 
                             <!-- Image 2 -->
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="image-hover-container">
-                                    <img src="img/stage/websig_interface.jpg"
-                                         alt="..." 
+                                    <img src="img/stage-branchements/correction_topologie.jpg"
+                                         alt="Correction topologique" 
                                          class="project-image"
-                                         data-fullsize="img/stage/websig_interface.jpg"
-                                         data-title="..."
-                                         data-description="...">
+                                         data-fullsize="img/stage-branchements/correction_topologie.jpg"
+                                         data-title="Correction topologique"
+                                         data-description="Cas de branchement en râteau et gestion des classes de précision A, B, C">
                                     <div class="image-overlay">
                                         <div class="overlay-content">
-                                            <h5>...</h5>
-                                            <p>...</p>
+                                            <h5>Correction topologique</h5>
+                                            <p>Cas de branchement en râteau et gestion des classes de précision</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="text-center mt-2">
-                                    <p>...</p>
+                                    <p>Cas complexe de topologie réseau</p>
                                 </div>
                             </div>
 
                             <!-- Image 3 -->
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="image-hover-container">
-                                    <img src="img/stage/fiche_batiment.jpg"
-                                         alt="..." 
+                                    <img src="img/stage-branchements/verification_sql.jpg"
+                                         alt="Vérification SQL des imports" 
                                          class="project-image"
-                                         data-fullsize="img/stage/fiche_batiment.jpg"
-                                         data-title="..."
-                                         data-description="... ">
+                                         data-fullsize="img/stage-branchements/verification_sql.jpg"
+                                         data-title="Vérification SQL des imports"
+                                         data-description="Requêtes de contrôle sous DBeaver comparant les volumes bruts et importés">
                                     <div class="image-overlay">
                                         <div class="overlay-content">
-                                            <h5>...</h5>
-                                            <p>...</p>
+                                            <h5>Vérification SQL</h5>
+                                            <p>Requêtes de contrôle sous DBeaver comparant les volumes bruts et importés</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="text-center mt-2">
-                                    <p>...</p>
+                                    <p>Contrôle des imports (SQL / DBeaver)</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Lien vers le mémoire -->
-                    <div class="bg-section fade-in" id="rendu">
-                        <h2 class="section-title">Rendu du diagnostic</h2>
-                        <div class="text-center py-5">
-                            <embed src="../img/Diag compressé.pdf" type="application/pdf" width="100%" height="700px">
-                            </embed> 
                         </div>
                     </div>
 
@@ -933,22 +1059,47 @@
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <h4 class="mb-3">Compétences techniques</h4>
-                                <span class="badge bg-primary mb-2">QGIS</span>
-                                <span class="badge bg-primary mb-2">Cartographie</span>
-                                <span class="badge bg-primary mb-2">Nettoyage de données</span>
+                                <span class="badge bg-primary mb-2">FME</span>
+                                <span class="badge bg-primary mb-2">QGIS avancé</span>
+                                <span class="badge bg-primary mb-2">VIGIE (SIG Veolia)</span>
+                                <span class="badge bg-primary mb-2">SQL</span>
+                                <span class="badge bg-primary mb-2">DBeaver</span>
+                                <span class="badge bg-primary mb-2">Modélisation attributaire</span>
+                                <span class="badge bg-primary mb-2">Topologie réseau</span>
+                                <span class="badge bg-primary mb-2">Contrôle qualité de la donnée</span>
                             </div>
                             
                             <div class="col-md-6">
                                 <h4 class="mb-3">Compétences transversales</h4>
-                                <span class="badge bg-secondary mb-2">Gestion de projet</span>
-                                <span class="badge bg-secondary mb-2">Travail d'équipe</span>
-                                <span class="badge bg-secondary mb-2">Communication</span>
-                                <span class="badge bg-secondary mb-2">Terrain et techniques d'enquêtes</span>
-                                <span class="badge bg-secondary mb-2">Analyse territoriale</span>
-                                <span class="badge bg-secondary mb-2">Adaptation aux interlocuteurs</span>
+                                <span class="badge bg-secondary mb-2">Rigueur méthodologique</span>
+                                <span class="badge bg-secondary mb-2">Autonomie</span>
+                                <span class="badge bg-secondary mb-2">Communication technique</span>
+                                <span class="badge bg-secondary mb-2">Gestion de volumes de dossiers</span>
+                                <span class="badge bg-secondary mb-2">Acquisition de connaissances métier</span>
+                                <span class="badge bg-secondary mb-2">Résolution de problèmes</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Perspectives -->
+                    <div class="bg-section fade-in">
+                        <h2 class="section-title">Prochaines étapes</h2>
+                        
+                        <h4 class="mt-4">Suite du stage</h4>
+                        <ul>
+                            <li><strong>Poursuite du traitement</strong> des dossiers de branchements neufs en attente d'intégration</li>
+                            <li><strong>Fiabilisation continue</strong> du workflow FME au fil des cas rencontrés</li>
+                            <li><strong>Approfondissement</strong> des connaissances métier sur les réseaux AEP et assainissement</li>
+                        </ul>
+                        
+                        <h4 class="mt-4">Pistes d'amélioration identifiées</h4>
+                        <ul>
+                            <li>Automatisation renforcée de certains contrôles attributaires dans FME</li>
+                            <li>Documentation des cas topologiques complexes pour capitaliser les retours de la tutrice</li>
+                            <li>Standardisation des requêtes SQL de vérification post-intégration</li>
+                        </ul>
+                    </div>
+                    
                 </div>
             </div>
         </div>
