@@ -107,6 +107,7 @@
     section {
         padding: clamp(3rem, 8vw, 5rem) 0;
         position: relative;
+        scroll-margin-top: 100px;
     }
 
     .section-title {
