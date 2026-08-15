@@ -73,10 +73,12 @@
             z-index: -1;
         }
 
+ /* ---------------------- NAVBAR ---------------------- */
+
         .navbar {
-            background-color: var(--fond);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.459);
+            background-color: #83898f;
+            border-radius: 40px;
+            margin: clamp(0.75rem, 2vw, 1.25rem) clamp(1rem, 4vw, 2rem) 0;
             padding: 1rem 0;
             transition: all 0.3s ease;
         }
@@ -100,8 +102,14 @@
             font-size: clamp(0.9rem, 2vw, 1rem);
         }
 
+        .navbar-nav .nav-link.active,
         .navbar-nav .nav-link:hover {
             color: var(--primary) !important;
+        }
+
+        .navbar-nav .nav-link.active::after,
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
         }
 
         .navbar-nav .nav-link::after {
@@ -113,10 +121,6 @@
             height: 3px;
             background-color: var(--primary);
             transition: width 0.3s ease;
-        }
-
-        .navbar-nav .nav-link:hover::after {
-            width: 100%;
         }
 
         /* Header Hero */

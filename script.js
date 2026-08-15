@@ -50,6 +50,36 @@
         });
 
 // ========================================================================================
+// ============================== SCROLLSPY NAVBAR =========================================
+
+(function() {
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const sections = Array.from(navLinks)
+        .map(link => document.querySelector(link.getAttribute('href')))
+        .filter(Boolean);
+
+    function setActiveLink() {
+        const navbarHeight = document.getElementById('mainNav').offsetHeight + 40;
+        let currentSection = sections[0];
+
+        sections.forEach(section => {
+            if (section.getBoundingClientRect().top - navbarHeight <= 0) {
+                currentSection = section;
+            }
+        });
+
+        navLinks.forEach(link => {
+            const isActive = link.getAttribute('href') === '#' + currentSection.id;
+            link.classList.toggle('active', isActive);
+        });
+    }
+
+    window.addEventListener('scroll', setActiveLink);
+    window.addEventListener('load', setActiveLink);
+})();
+
+
+// ========================================================================================
 // ============================== CARTE INTERACTIVE =======================================
 
 
