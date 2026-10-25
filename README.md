@@ -29,7 +29,7 @@
 
 ---
 
-## 📌 Projets phares
+## 📌 Projets principaux
 
 ### 🏭 Mise en place d’une base de données foncière (EPCI)
 > *Conception et structuration d’une BD spatiale pour le suivi du foncier à l’échelle intercommunale.*  
@@ -51,4 +51,4 @@
 
 ## 🙏 Merci de votre visite
 
-N’hésitez pas à explorer mes projets et à me contacter pour toute collaboration, stage ou échange autour de la géomatique.
+N’hésitez pas à explorer mes projets et à me contacter pour des échanges autour de la géomatique.
