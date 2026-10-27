@@ -174,12 +174,13 @@
         <!------------------ CONTENEUR DES DIFFERENTS PROJETS ---------------------->
             <div class="row g-4" id="projects-container">
 
-                <!-- Projet 1 -->
+                <!-- Projet -->
                 <div class="col-md-6 col-lg-4 project-card" data-badges="qgis PostgreSQL PostGIS">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
                                 <i class="fa-solid fa-building-circle-check fa-2x text-primary"></i>
+                                <h4 class="text-primary mb-3">Projet de l'atlas en cours de publication</h4>
                             </div>
                             <h5 class="card-title"> STAGE - Mise en place d'une base de données foncier & Atlas cartographique des Servitudes d'Utilités publiques </h5>
                             <p class="card-text flex-grow-1">
@@ -197,11 +198,12 @@
                 </div>
 
                 <!-- Projet -->
-                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis PostgreSQL PostGIS">
+                <div class="col-md-6 col-lg-4 project-card" data-badges="qgis PostgreSQL PostGIS FME Dbeaver">
                     <div class="card h-100 shadow-sm fade-in">
                         <div class="card-body d-flex flex-column">
                             <div class="mb-3">
                                 <i class="fa-solid fa-circle-nodes fa-2x text-primary"></i>
+                                <h4 class="text-primary mb-3">Projet finalisé mais en cours de publication</h4>
                             </div>
                             <h5 class="card-title"> STAGE - Intégrer, gérer et automatiser des données réseaux d'AEP et d'ASS </h5>
                             <p class="card-text flex-grow-1">
@@ -229,7 +231,7 @@
                             </div>
                             <h5 class="card-title"> Atelier professionnel - Projet Atlas 360 (phase 2) </h5>
                             <p class="card-text flex-grow-1">
-                                Création d'un atlas départemental structuré autour de quelques thématiques sur le domaine des réseaux.
+                                Création d'un atlas départemental structuré autour de quelques thématiques sur le domaine des réseaux (maritime, ferroviaire, routière, énergie, réseau).
                             </p>
                             <div class="mt-auto">
                                 <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
@@ -257,6 +259,50 @@
                                 <span class="badge bg-primary mb-2" data-badge="enquêtes">enquêtes par questionnaire</span>
                                 <span class="badge bg-primary mb-2" data-badge="qgis">QGIS</span>
                                 <a href="projects_list\Projet-diagnostic-de-territoire-STM.html" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="R automatisation">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-sitemap fa-2x text-primary"></i>
+                                <h4 class="text-primary mb-3">Projet en cours</h4>
+                            </div>
+                            <h5 class="card-title"> Exploitation des données des demandes de Valeurs Foncières (DVF)</h5>
+                            <p class="card-text flex-grow-1">
+                                Analyse statistique de données territoriales - Apurement et structuration des données, représentation graphique et cartographique
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="R">R</span>
+                                <span class="badge bg-primary mb-2" data-badge="automatisation">Automatisation</span>
+                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet  -->
+                <div class="col-md-6 col-lg-4 project-card" data-badges="R cartographie automatisation">
+                    <div class="card h-100 shadow-sm fade-in">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-sitemap fa-2x text-primary"></i>
+                                <h4 class="text-primary mb-3">Projet finalisé mais en cours de publication</h4>
+                            </div>
+                            <h5 class="card-title"> Automatisation d'un atlas cartographique automatisé sur R</h5>
+                            <p class="card-text flex-grow-1">
+                                Analyse du statut résidentiel et économique des IRIS de Marseille
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary mb-2" data-badge="R">R</span>
+                                <span class="badge bg-primary mb-2" data-badge="cartographie">Cartographie</span>
+                                <span class="badge bg-primary mb-2" data-badge="automatisation">Automatisation</span>
+                                <a href="" class="btn btn-sm btn-primary mt-2">Voir le projet</a>
                             </div>
                         </div>
                     </div>
@@ -546,7 +592,7 @@
 
     <section id="cartotheque" class="py-5">
         <div class="container">
-            <h2 class="section-title">Cartothèque</h2>
+            <h2 class="section-title">Cartothèque & Infographie</h2>
 
             <!-- Filtres — même style que la section Projets (.filter-badge) -->
             <div class="badge-filter-container mb-4">
@@ -566,7 +612,7 @@
 
                 <!-- ── MASTER (les plus récentes, en haut) ── -->
 
-                <div class="carto-item" data-tags="Master" data-title="Infographie" data-desc="Infographie 24H du Mans · Master" data-href="img/Infographie_Barbieri_Bucaille_Menissez.pdf">
+                <div class="carto-item" data-tags="Master" data-title="Infographie" data-desc="The story of 2026 endurance greatest race · Master" data-href="img/Infographie_Barbieri_Bucaille_Menissez.pdf">
                     <img src="img/Infographie_Barbieri_Bucaille_Menissez.png" alt="GTFS">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -576,7 +622,7 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Master" data-title="GTFS" data-desc="Données GTFS · Master" data-href="img/BUCAILLE_Theo_GTFS.pdf">
+                <div class="carto-item" data-tags="Master" data-title="GTFS" data-desc="À la conquête de la Cité du Vin : Géographie du vin à portée de tram · Master" data-href="img/BUCAILLE_Theo_GTFS.pdf">
                     <img src="img/RENDU_GTFS.png" alt="GTFS">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -586,7 +632,7 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Master" data-title="Bivariée" data-desc="Bivariee · Master" data-href="img/Bucaille_Theo_BIVARIEE_2026_complet.pdf">
+                <div class="carto-item" data-tags="Master" data-title="Bivariée" data-desc="Capitaux et compétences : où se concentre l'Europe qui pense · Master" data-href="img/Bucaille_Theo_BIVARIEE_2026_complet.pdf">
                     <img src="img/Bucaille_Theo_BIVARIEE_2026.png" alt="Bivariée">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -596,7 +642,7 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Master" data-title="Cartogramme" data-desc="Cartogramme · Master" data-href="img/Bucaille_Theo_Cartogramme_2026_complet.pdf">
+                <div class="carto-item" data-tags="Master" data-title="Cartogramme" data-desc="La puissance militaire rime-t-elle avec gros budget ? · Master" data-href="img/Bucaille_Theo_Cartogramme_2026_complet.pdf">
                     <img src="img/Rendu_cartogramme_2026.png" alt="Cartogramme">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -606,12 +652,12 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Master" data-title="Atlas R" data-desc="Atlas de Marseille · Master" data-href="img/atlas_marseille_complet.pdf">
+                <div class="carto-item" data-tags="Master" data-title="Atlas R" data-desc="Statut résidentiel et économique des IRIS de Marseille · Master" data-href="img/atlas_marseille_complet.pdf">
                     <img src="img/atlas_R_marseille_carte_complete.png" alt="Atlas R">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
-                        <div class="carto-overlay-title">Atlas de Marseille</div>
-                        <div class="carto-overlay-desc"></div>
+                        <div class="carto-overlay-title">Atlas R</div>
+                        <div class="carto-overlay-desc">Statut résidentiel et économique des IRIS de Marseille</div>
                         <div class="carto-overlay-tags"><span class="carto-tag">Master</span></div>
                     </div>
                 </div>
@@ -676,20 +722,20 @@
                     </div>
                 </div>
 
-                <!-- ── STAGE ── -->
-                <div class="carto-item" data-tags="Stage" data-title="Saint-Prim" data-desc="Cartographie · Stage" data-href="img/SAINT-PRIM_SUP_page-0001.pdf">
+                <!-- ── STAGE EBER ── -->
+                <div class="carto-item" data-tags="Stage" data-title="Saint-Prim" data-desc="Cartographie · Stage EBER" data-href="img/SAINT-PRIM_SUP_page-0001.pdf">
                     <img src="img/SAINT-PRIM_SUP_page-0001.jpg" alt="Saint-Prim">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
                         <div class="carto-overlay-title">Saint-Prim</div>
-                        <div class="carto-overlay-desc">Cartographie · Stage</div>
+                        <div class="carto-overlay-desc">Cartographie · Stage EBER</div>
                         <div class="carto-overlay-tags"><span class="carto-tag">Stage</span></div>
                     </div>
                 </div>
 
                 <!-- ── LICENCE (les plus anciennes, en bas) ── -->
 
-                <div class="carto-item" data-tags="Licence" data-title="Obstruction des routes" data-desc="Analyse des routes" data-href="img/RenduV8paysage_CC_07_02_.pdf">
+                <div class="carto-item" data-tags="Licence" data-title="Obstruction des routes" data-desc="Analyse des routes · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
                     <img src="img/carte2V2_obstruction_routes copie.png" alt="Obstruction routes">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -699,7 +745,7 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Licence" data-title="Carte de localisation" data-desc="Localisation" data-href="img/RenduV8paysage_CC_07_02_.pdf">
+                <div class="carto-item" data-tags="Licence" data-title="Carte de localisation" data-desc="Localisation · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
                     <img src="img/carte_de_localisation.png" alt="Carte de localisation">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -709,7 +755,7 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Licence" data-title="Carte de localisation" data-desc="Localisation" data-href="img/RenduV8paysage_CC_07_02_.pdf">
+                <div class="carto-item" data-tags="Licence" data-title="Carte de localisation" data-desc="Localisation · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
                     <img src="img/présentation_clécy.png" alt="Carte de localisation">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -719,7 +765,7 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Licence" data-title="Carte 2015" data-desc="Cartographie · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
+                <div class="carto-item" data-tags="Licence" data-title="Carte OCS 2015" data-desc="Cartographie · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
                     <img src="img/carte_2015.png" alt="Carte 2015">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
@@ -729,21 +775,21 @@
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Licence" data-title="Densité de haie – Calvados" data-desc="Densité de haies dans le Calvados · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
+                <div class="carto-item" data-tags="Licence" data-title="Densité de haie" data-desc="Densité de haies dans le Calvados · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
                     <img src="img/Densité_de_haie_dans_le_calvados_carte_finale.png" alt="Densité haie Calvados">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
-                        <div class="carto-overlay-title">Densité de haie – Calvados</div>
+                        <div class="carto-overlay-title">Densité de haie</div>
                         <div class="carto-overlay-desc">Densité de haies dans le Calvados</div>
                         <div class="carto-overlay-tags"><span class="carto-tag">Licence</span></div>
                     </div>
                 </div>
 
-                <div class="carto-item" data-tags="Licence" data-title="Densité de haie – Cingal" data-desc="Densité de haies · Cingal Suisse Normande · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
+                <div class="carto-item" data-tags="Licence" data-title="Densité de haie" data-desc="Densité de haies · Cingal Suisse Normande · Licence" data-href="img/RenduV8paysage_CC_07_02_.pdf">
                     <img src="img/densité_de_haies_Cingal_Suisse_Normande_carte_finale.png" alt="Densité haie Cingal">
                     <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
                     <div class="carto-overlay">
-                        <div class="carto-overlay-title">Densité de haie – Cingal</div>
+                        <div class="carto-overlay-title">Densité de haie</div>
                         <div class="carto-overlay-desc">Cingal Suisse Normande</div>
                         <div class="carto-overlay-tags"><span class="carto-tag">Licence</span></div>
                     </div>
@@ -805,7 +851,7 @@
 
     <section id="poster" class="py-5">
         <div class="container">
-            <h2 class="section-title">Poster & infographie</h2>
+            <h2 class="section-title">Poster</h2>
 
             <div class="carto-grid fade-in">
 
@@ -815,16 +861,6 @@
                     <div class="carto-overlay">
                         <div class="carto-overlay-title">Quand l'incertitude guide la recherche</div>
                         <div class="carto-overlay-desc">Poster scientifique</div>
-                        <div class="carto-overlay-tags"><span class="carto-tag">Master</span></div>
-                    </div>
-                </div>
-
-                <div class="carto-item" data-tags="Master" data-title="24H_du-Mans" data-desc="Infographie · Master" data-href="img/Infographie_Barbieri_Bucaille_Menissez.pdf">
-                    <img src="img/Infographie_Barbieri_Bucaille_Menissez.png" alt="Infographie Master">
-                    <div class="carto-zoom-icon"><i class="fas fa-expand"></i></div>
-                    <div class="carto-overlay">
-                        <div class="carto-overlay-title">The story of 2026 endurance greatest race</div>
-                        <div class="carto-overlay-desc">Infographie</div>
                         <div class="carto-overlay-tags"><span class="carto-tag">Master</span></div>
                     </div>
                 </div>
