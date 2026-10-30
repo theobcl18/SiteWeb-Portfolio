@@ -215,10 +215,10 @@
         padding: clamp(1.5rem, 4vw, 3rem);
         margin-bottom: 2rem;
         /* box-shadow: 0 10px 30px rgb(205, 92, 0); */
-        box-shadow: 0 10px 30px var(--fond);
+        /*box-shadow: 0 10px 30px var(--fond);*/
         transition: transform 0.3s ease;
         backdrop-filter: blur(10px);
-        border: 0.5px solid var(--fond);
+        /*border: 0.5px solid var(--fond);*/
     }
 
     .bg-section:hover {
@@ -515,15 +515,15 @@
     }
 
     .education-item {
-        border-left-color: var(--primary);
+        border-bottom-color: var(--primary);
     }
 
     .internship-item {
-        border-left-color: var(--secondary);
+        border-bottom-color: var(--secondary);
     }
 
     .search-item {
-        border-left-color: #ffc107;
+        border-bottom-color: #ffc107;
     }
 
     /* Frise chronologique */
