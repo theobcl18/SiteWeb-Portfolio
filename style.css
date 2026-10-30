@@ -684,6 +684,32 @@
         transform: translateY(0);
     }
 
+
+
+    /* -------------------------------------------------- */
+    /* Styles pour les bordures de projets (Stages & Ateliers) */
+    /* -------------------------------------------------- */
+
+    /* Bordure blanche pour les stages */
+    .project-card.border-stage .card {
+        border: 2px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+    }
+    .project-card.border-stage .card:hover {
+        border-color: #ffffff !important;
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
+    }
+
+    /* Bordure grise pour les ateliers professionnels */
+    .project-card.border-atelier .card {
+        border: 2px solid rgba(173, 181, 189, 0.6) !important; /* Gris élégant */
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+    .project-card.border-atelier .card:hover {
+        border-color: #adb5bd !important;
+        box-shadow: 0 10px 30px rgba(173, 181, 189, 0.2);
+    }
+
     /* Styles pour la bande de compétences */
     .skills-scroll-container {
         position: relative;

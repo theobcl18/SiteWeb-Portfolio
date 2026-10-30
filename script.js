@@ -244,9 +244,8 @@
         // --------------------------------------------------------------
         var mapTimeline = L.map('timeline-map').setView([46.5, 2.5], 5.8);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
-            subdomains: 'abcd',
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(mapTimeline);
 
